@@ -1,0 +1,7 @@
+# folders and files to ignore for a release
+/img export-ignore
+mpmf-pipeline/.gitignore export-ignore
+mpmf-server/.gitignore export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore
+README.md export-ignore
