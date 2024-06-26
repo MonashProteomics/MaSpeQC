@@ -1,0 +1,2 @@
+Machine_1|thermo
+Machine_2|thermo

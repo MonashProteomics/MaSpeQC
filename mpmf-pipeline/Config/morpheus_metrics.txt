@@ -1,0 +1,5 @@
+MS/MS Spectra|spectrum from ms2 scans|1|MS/MS Spectra (Morpheus)|N|Y|The total number of spectra.
+Target PSMs|peptide spectrum matches|2|PSM (Morpheus)|N|Y|The total number of peptide spectrum matches (PSM) records the number of MS2 spectrum that match to a peptide sequence based on a database search.
+Unique Target Peptides|number of unique peptides identified|3|Unique Peptides (Morpheus)|N|Y|This metric records how many unique peptides have been identified by all PSMs.
+Target Protein Groups|number of protein groups identified|4|Protein Groups (Morpheus)|N|Y|This metric records the number of proteins or protein groups based on all available peptides.
+Precursor Mass Error|average precursor mass error in ppm|5|Precursor Mass Error ppm (Morpheus)|N|Y|This metric records the average mass error in ppm for all precursor ions.

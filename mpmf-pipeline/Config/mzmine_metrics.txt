@@ -1,0 +1,13 @@
+mz|mass to charge ratio|-1|Mass to Charge Ratio (mz)|Y|Y|
+rt|retention time|3|Retention Time|Y|Y|Elution time of the input component during chromatography.
+height|spectra peak height|-1|Height|Y|Y|
+area|spectra peak area|-1|Area|Y|Y|
+fwhm|full width half maximum|6|Full Width Half Maximum|Y|Y|Measure of chomatogram peak width.
+tf|tailing factor|7|Tailing|Y|Y|A measure of skewness of the chromatogram peak.
+af|asymmetry factor|8|Asymmetry|Y|Y|Another measure of skewness of the chomatogram peak.
+mz_min|mass to charge minimum|-1|mz Minimum|Y|Y|
+mz_max|mass to charge maximum|-1|mz Maximum|Y|Y|
+mass_error_ppm|relative error in parts per million|1|Mass Error (ppm)|Y|Y|A measure of instrument accuracy in parts-per-million defined as the difference between the observed m/z value, and the expected m/z value, as a ratio of the expected value multiplied by a million.
+mass_error_dalton|dalton measure of mass error|2|Mass Error (mDa)|Y|Y|A measure of accuracy defined in milli-Daltons.
+area_normalised|area normalised by median|4|Area (normalised)|Y|Y|Area of chromatogram peak normalised by the log of median values.
+height_normalised|height normalised by median|5|Height (normalised)|Y|Y|Height of chromatogram peak normalised by the log of median values.

@@ -1,0 +1,7 @@
+Machine_1|thermo
+Machine_2|thermo
+Machine_3|thermo
+Machine_4|thermo
+Machine_5|thermo
+Machine_6|thermo
+Machine_7|thermo

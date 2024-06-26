@@ -1,0 +1,17 @@
+sbp|loading pump|1|Starting Backpressure (Average)|N|Y|Average pressure in first few minutes.
+ep|loading pump|2|End Pressure (Average)|N|Y|Average pressure in last few minutes.
+ai|loading pump|3|Air Injection|N|Y|Difference b/w first reading and max reading in the 1st 30 seconds (expected value 0).
+vss|loading pump|4|Valve Spike Start|N|Y|Max increase (in 10 second windows) in first few minutes.
+vse|loading pump|5|Valve Spike End|N|Y|Max increase (in 10 second windows) in last few minutes.
+pd-lp|loading pump|6|Pressure Differential|N|Y|Pressure difference b/w median of 1st minute and median of last minute (expected value 0).
+sp|nano pump|1|Starting Pressure (Median)|N|Y|Median pressure in 1st 2 minutes.
+vd|nano pump|2|Valve Drop|N|Y|Difference b/w Starting Pressure and 1st profile trough.
+maxp|nano pump|3|Maximum Pressure|N|Y|Maximum recorded pressure.
+minp|nano pump|4|Minimum Pressure|N|Y|Minimum recorded pressure.
+pd|nano pump|5|Pressure Differential|N|Y|Pressure difference b/w median of 1st minute and median of last minute (expected value 0).
+il|nano pump|6|Inline Leak|N|Y|Difference b/w Starting Pressure and 1st peak after the 1st profile trough (expected value 0).
+co|column oven|-1|Column Oven|N|Y|
+maxp-metab|main pump|1|Maximum Pressure|Y|N|Max recorded pressure (peak of profile).
+rt-maxp|main pump|2|Retention Time at Maximum Pressure|Y|N|Retention time of max pressure.
+sp-metab|main pump|3|Starting Pressure (Median)|Y|N|Median of 1st minute.
+ep-metab|main pump|4|End Pressure (Median)|Y|N|Median of last minute.

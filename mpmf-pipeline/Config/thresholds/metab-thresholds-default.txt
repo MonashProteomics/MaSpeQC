@@ -1,0 +1,4 @@
+metric|trigger|threshold_low|threshold_high
+mass_error_ppm|3|-3|3
+rt|3|0.5|0.5
+area_normalised|3|10|10
