@@ -138,7 +138,12 @@
             .style("visibility", "hidden");
 
             // navbar
-            //create_navbar_dropdown();
+	    try{
+                create_navbar_dropdown();
+	    }
+	    catch{ // allow for reconfig when no data
+		pass;
+	    }
 
             // load jsons
             load_instruments();
