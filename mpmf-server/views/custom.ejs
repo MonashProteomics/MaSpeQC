@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include ('partials/custom-head') %>
+
+<body>
+    <% if (type == 'load') { %>
+        <%- include ('partials/navbar-process') %>
+      <% } %>
+
+    <% if (type == 'main') { %>
+        <%- include ('partials/navbar-head') %>
+      <% } %>
+
+      <% if (type == 'custom') { %>
+        <%- include ('partials/navbar-head') %>
+      <% } %>
+
+    
+
+</body>
+
+</html>

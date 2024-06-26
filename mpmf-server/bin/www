@@ -1,0 +1,146 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var app = require('../app');
+var debug = require('debug')('mbpf-server:server');
+var https = require('https');
+var http = require('http');
+var db = require('../models/modelDB');
+//const socket = require("socket.io");
+var db2 = require('../models/connection');
+var fs = require('fs');
+
+ /**
+ * Set Up
+ */
+
+/**
+ * Get port from environment and store in Express.
+ */
+
+//var port = normalizePort(process.env.PORT || '443');
+//app.set('port', port);
+
+/**
+ * Create HTTP server or HTTPS server.
+ */
+
+try{ // configure server for https
+    var key_read = fs.readFileSync('/etc/ssl/private/server.key');
+    var cert_read = fs.readFileSync('/etc/ssl/certs/server.crt');
+    var options = { key: key_read, cert: cert_read};
+    var port = 443;
+    var server = https.createServer(options, app).listen(port);
+}
+catch(error){
+    //console.log(error);
+    console.log("No https configuration, using http server");
+    var port = 80;
+    var server = http.createServer(app).listen(port);
+}
+
+
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.on('error', onError);
+server.on('listening', onListening);
+
+
+process.on('SIGINT', onExit);
+process.on('SIGQUIT', onExit);
+process.on('SIGTERM', onExit);
+
+/**
+ * Normalize a port into a number, string, or false.
+ */
+
+function normalizePort(val) {
+  var port = parseInt(val, 10);
+
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
+
+  if (port >= 0) {
+    // port number
+    return port;
+  }
+
+  return false;
+}
+
+/**
+ * Socket.io for server client comm.
+ */
+// Socket setup
+//const io = socket(server);
+
+/*
+io.on("connection", function (socket) {
+  console.log("Made socket connection");
+
+  socket.on("process_end", function (data) {
+    io.emit("process_end");
+  });
+});
+*/
+
+
+/**
+ * Event listener for HTTP server "error" event.
+ */
+
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
+
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
+
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+/**
+ * Event listener for HTTP/HTTPS server "listening" event.
+ */
+
+function onListening() {
+  var addr = server.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('Listening on ' + bind);
+}
+
+function onExit(signal) {
+  console.log(`\nReceived ${signal} signal`);
+  server.close(() => {
+    if (Object.keys(db2).length !== 0) {
+      console.log('Disconnecting database');
+      db2.end();
+    }
+    console.log('Closing http/https server');
+    process.exit(0);
+  });
+}

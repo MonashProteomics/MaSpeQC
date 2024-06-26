@@ -1,0 +1,620 @@
+body{
+  background-color: whitesmoke;
+  letter-spacing: 0.4vh;
+  font-size: 1.8vh;
+}
+
+/*TILE*/
+.tile{
+    /*box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);*/
+    padding: 0px;
+    background-color:transparent; 
+    height: 40vh;
+    opacity: 0;
+}
+
+.tile-inner{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+  text-align: center;
+}
+
+.tile-back{
+  transform: rotateY(180deg);
+  background-color:var(--dark);
+}
+
+.tile-front, .tile-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  overflow:auto;
+  box-shadow: 0.5vh 0.5vh 0.5vh var(--gray);
+  border: 1vh solid var(--dark);
+}
+
+.tile-front{ 
+  padding-top: 0.6em;
+  background-color: var(--dark);
+  color:white;
+}
+
+.profile-back{
+  transform: rotateY(180deg);
+}
+
+.profile-front, .profile-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.tile-back-display{
+  border: 0.2em solid var(--gray); 
+  letter-spacing: 0.2vh;
+  background-color: var(--white);
+  margin-left: 0.6em;
+  margin-right: 0.6em;
+  margin-bottom: 0.4em;
+  font-weight: 500;
+  font-size: 1.6vh;
+  padding: 0.2em;
+  border-radius: 0.2vh;
+}
+
+.tile-back-display-header{
+  margin-top: 0.6em;
+  margin-bottom: 0.4em;
+  margin-left: 0.6em;
+  margin-right: 0.6em;
+  text-align: center;
+  vertical-align: middle;
+  display: inline-block;
+  height: auto;
+  line-height:  1.5;
+  background-color: var(--dark);
+  color: white;
+  font-weight: 400;
+  padding: 0.4em;
+  font-size: 1.6vh;
+  width: 90%;
+}
+
+/* NAVBAR */
+.bg-black {
+  background-color: var(--dark);
+}
+
+.navbar-brand {
+  padding: 1vh 2vw;
+  font-size: 1.5vw;
+}
+
+.nav-item {
+  padding: 0px 1vh;
+  margin: 0px 0.5vh;
+  text-align: center;
+  border-radius: 0.5vh;
+}
+
+.nav-link {
+  padding: 0.1vh;
+}
+
+.navbar-collapse.collapse.in {
+  display: block !important;
+}
+
+.dropdown-toggle {
+  color: gray;
+  padding: 0.5vh 1vw;
+  position: absolute;
+}
+
+.dropdown-toggle:hover {
+  color: #fff;
+}
+
+.dropdown-menu {
+  margin-top: 0px;
+  left:auto;
+  background-color: lightskyblue;
+  opacity: 0.95;
+}
+
+.dropdown-item:hover {
+  background-color: #000;
+  color: #fff;
+}
+
+.dropdown-item, .dropdown-header {
+  font-size: 1vw;
+}
+
+.dropdown-divider{
+  border-top: 0.3vh solid var(--dark);
+}
+
+@media (max-width: 576px) {
+  .nav-item {
+      width: 100%;
+      text-align: left;
+  }
+}
+
+.fa-download{
+  padding-right: 0px;
+}
+
+p{
+  margin-bottom: 0;
+}
+
+.menu{
+  padding-right: 0px;
+  padding-left: 0px;
+}
+
+/* TOOLTIPS HERE ...*/
+.tooltipCustom {
+  position: fixed;
+  padding: 0.5vh;
+  letter-spacing: 0.3vh;
+  border: 0.1em solid whitesmoke;
+  border-radius: 0.5vh;
+  text-align: center;
+  max-width: 30em;
+  color: var(--white);
+  background-color: var(--dark);
+  font-size: 1.6vh;
+  /*box-shadow: 1vh 1vh 0.5vh var(--gray);*/
+}
+
+table.tooltipTable, th.tooltipTable, td.tooltipTable {
+  padding: 0.4em;
+  border-bottom: 1px solid #ddd;
+}
+
+tr.tooltipTable {
+  border-radius: 0.4em;
+}
+
+.chartTooltip{
+  position: absolute;
+  border: 0.2em solid var(--white);
+  letter-spacing: 0.3vh;
+  border-radius: 0.5vh;
+  font-size: 1.6vh;
+  padding: 0.5vh;
+  background-color: whitesmoke;
+  text-align: center;
+  z-index: 100;
+  top: 0em;
+  left:0em;
+  /*box-shadow: 1vh 1vh 0.5vh var(--gray);*/
+}
+
+.configTooltip{
+  position: absolute;
+  border: 0.2em solid gray;
+  letter-spacing: 0.3vh;
+  border-radius: 0.5vh;
+  font-size: 0.8vw;
+  padding: 0.5vh;
+  background-color: black;
+  color: var(--white);
+  text-align: center;
+  z-index: 100;
+  top:0em;
+  left:0em;
+  /*box-shadow: 1vh 1vh 0.5vh var(--gray);*/
+}
+
+.dragTooltip{
+  position: absolute;
+  border: 0.2em solid var(--dark);
+  letter-spacing: 0.3vh;
+  border-radius: 0.5vh;
+  font-size: 2vh;
+  padding: 0.5vh;
+  background-color: white;
+  color: var(--dark);
+  text-align: center;
+  z-index: 200;
+  cursor:move;
+  top:0em;
+  left:0em;
+}
+
+.dragMenu{
+  position: absolute;
+  top:0em;
+  left:0em;
+}
+
+.btn:focus,.btn:active {
+  outline: none !important;
+  box-shadow: none;
+}
+
+a:focus,a:active {
+  outline: none !important;
+  box-shadow: none;
+}
+
+.control:hover {
+  outline: 0.3em ridge var(--light);
+  outline-offset: 2px;
+}
+
+/* TRANSITIONS */
+.trans-o{
+  -webkit-transition: opacity 0.5s ease-in-out;
+  -moz-transition: opacity 0.5s ease-in-out;
+  -ms-transition: opacity 0.5s ease-in-out;
+  -o-transition: opacity 0.5s ease-in-out;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.trans-border{
+  -webkit-transition: border 0.5s ease-in-out;
+  -moz-transition: border 0.5s ease-in-out;
+  -ms-transition: border 0.5s ease-in-out;
+  -o-transition: border 0.5s ease-in-out;
+  transition: border 0.5s linear;
+}
+
+/* WINDOW */
+.cell{
+  border: 0.0em solid var(--gray);
+}
+
+.highlight{
+  border: 0.2em double var(--dark);
+}
+
+/* onload animatiom */
+@keyframes rotation {
+  from {
+    transform: rotateY(0deg); 
+  }
+  to {
+    transform: rotateY(360deg);   
+  }
+}
+
+/* CHART PAGE */
+.chart-cell{
+  border: 0px solid black;
+  padding: 0px;
+}
+
+.chartline{
+  shape-rendering: auto;
+}
+
+.hover-text{
+  font-size: 2vh;
+  font-weight: 600;
+}
+
+text{
+  letter-spacing: 0.1vh;
+  font-weight:800;
+}
+
+/*CUSTOM CHECKBOXES*/
+/* The container */
+.container {
+	display: block;
+	position: relative;
+	padding-left: 2.5em;
+  margin-bottom: 1.2em;
+  margin-top: 0.5em;
+  margin-left: 0.1em;
+	cursor: pointer;
+  font-size:1.4vh;
+  letter-spacing: 0.3vh;
+  font-weight: 800;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+  user-select: none;
+  /*background-color: lightgray;*/
+}
+
+/* Hide the browser's default checkbox */
+.container input {
+position: absolute;
+opacity: 0;
+cursor: pointer;
+height: 0;
+width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+position: absolute;
+top: 0;
+left: 0;
+height: 2.8vh;
+width: 2.8vh;
+background-color: whitesmoke;
+border-radius: 4vh;
+border-width: 0.4vh;
+border-style: solid;
+/*border: 0.1em solid whitesmoke;*/
+margin-left: 0.1em;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  }
+
+/* Show the checkmark when checked */
+.container input:checked ~ .checkmark:after {
+display: block;
+}
+
+/* Style the checkmark/indicator */
+.container .checkmark:after {
+background-color: whitesmoke;
+opacity:1;
+}
+
+.btn{
+  padding: 0px;
+  font-weight: 700;
+}
+
+.btn-custom{
+  padding: 0px;
+  font-weight: 700;
+}
+
+.btn-custom:after {
+  
+  position: absolute;
+  opacity: 0;  
+  transition: 0.5s;
+  font-family:FontAwesome;
+  content:"\f054";
+}
+
+.btn-custom:hover{
+  padding-right: 24px;
+  padding-left:8px;
+}
+
+.btn-custom:hover:after {
+  opacity: 1;
+  right: 8px;
+}
+
+/* The container */
+.radio {
+	display: block;
+	position: relative;
+	padding-left: 2.5em;
+  margin-bottom: 0.2em;
+  margin-top: 0.5em;
+  margin-left: 0.1em;
+	cursor: pointer;
+  letter-spacing: 0.3vh;
+  font-size: 1.6vh;
+  font-weight: bold;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+  user-select: none;
+  /*background-color: lightgray;*/
+}
+
+.radio-box {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 1.5em;
+  width: 1.5em;
+  background-color: #eee;
+  border-radius: 0.3em;
+  border: 0.1em solid var(--gray);
+  margin-left: 0.1em;
+  }
+
+  /* borders */
+  .chartBorder{
+    border-radius: 0.5em;
+    border: 1vh solid var(--dark);
+  }
+
+  .menuBorder{
+    border-radius: 0.5vh;
+    border: 0vh double darkgray;
+  }
+
+  .menuBorder2{
+    border-radius: 0.5vh;
+    border: 1vh double var(--dark);
+  }
+
+  .stroke-text{
+    stroke:black;
+    stroke-width:0.2vh;
+    fill:none;
+  }
+
+  pre{
+    margin:0;
+  }
+  
+.closeButton{
+  position: absolute;
+  right: 1vh;
+  top: 1vh;
+  cursor: pointer;
+}
+
+.menuButton{
+  position: absolute;
+  right: 1vh;
+  top: 1vh;
+  cursor: pointer;
+  font-size: 2vh;
+}
+
+.leftMenuButton{
+  position: absolute;
+  right: 6vh;
+  top: 1vh;
+  cursor: pointer;
+  font-size: 2vh;
+}
+
+.leftBottomMenuButton{
+  position: absolute;
+  right: 11vh;
+  top: 1vh;
+  cursor: pointer;
+  font-size: 2vh;
+}
+
+/* THEME */
+.darkTheme{
+  background-color: var(--dark);
+  box-shadow: 0.5vh 0.5vh 0.5vh var(--gray);
+  border-radius: 0.5em;
+  border: 1.5vh solid var(--dark);
+  color: white;
+  transition: color 1s, background-color 1s, border-color 1s;
+}
+
+.lightTheme{
+  background-color: white;
+  box-shadow: 0.5vh 0.5vh 0.5vh var(--gray);
+  border-radius: 0.5em;
+  border: 1.5vh solid white;
+  color: var(--dark);
+  transition: color 1s, background-color 1.5s, border-color 1.5s;
+}
+
+.chartLightTheme{
+  background-color: whitesmoke;
+  box-shadow: 0vh 0vh 0vh whitesmoke;
+  border-radius: 0.5em;
+  border: 1.5vh solid whitesmoke;
+}
+
+.headerDarkTheme{
+  font-weight: bold;
+  color: white;
+  background-color: var(--dark);
+  transition: color 1.5s, background-color 1.5s;
+}
+
+.headerLightTheme{
+  font-weight: bold;
+  color: var(--dark);
+  background-color: white;
+  transition: color 1.5s, background-color 1.5s;
+}
+
+.axis-chart{
+  font-weight: 700;
+  stroke-width: 0.5vh;
+}
+
+.axis-grid line {
+  stroke: #def;
+  stroke-width: 0.1vh;
+}
+
+.axis-grid-dark line{
+  stroke: var(--dark);
+  stroke-width: 0vh;
+}
+
+.axis-grid-light line{
+  stroke: #def;
+  stroke-width: 0vh;
+}
+
+text.label{
+  font-size: 1.6vh;
+  font-weight: 400;
+  letter-spacing: 0.1vh;
+}
+
+text.label-heat{
+  font-size: 1.6vh;
+  font-weight: 400;
+  letter-spacing: 0.1vh;
+}
+
+text.label-force{
+  font-size: 1.7vh;
+  font-weight: 600;
+  letter-spacing: 0.2vh;
+}
+
+text.label-average{
+  font-size: 1.7vh;
+  font-weight: 600;
+  letter-spacing: 0.2vh;
+}
+
+text.label-metric{
+  font-size: 2vh;
+  font-weight: 700;
+  letter-spacing: 0.6vh;
+}
+
+.axis-dark{
+  color: white;
+  stroke-width: 0.3vh;
+  opacity: 0.7;
+}
+
+.axis-light{
+  color: var(--dark);
+  stroke-width: 0.3vh;
+  opacity: 0.7;
+}
+
+rect.darkTheme{
+  fill: var(--dark);
+  transition: fill 1.5s;
+}
+
+rect.lightTheme{
+  fill: white;
+  transition: fill 1.5s;
+}
+
+.content_center {
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+}
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,169 @@
+<head>
+    <title>MaSpeQC</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://kit.fontawesome.com/f77ac44772.js" crossorigin="anonymous"></script> <!--Font Awesome icons-->
+    <script src="./javascripts/control.js"></script>
+    <script src="https://d3js.org/d3.v6.js"></script> <!--D3-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./stylesheets/style.css"  />
+    <!--CONFIG-->
+    <link rel="stylesheet" media="screen" type="text/css" href="./assets/jsgrid.min.css" />
+    <link rel="stylesheet" media="screen" type="text/css" href="./assets/jsgrid-theme.min.css" />
+    <link rel="stylesheet" href="./assets/style.css">
+    <script type="text/javascript" src="./assets/jquery-2.2.4.min.js"></script>
+    <script type="text/javascript" src="./assets/jsgrid.min.js"></script>
+    <script type="text/javascript" src="./assets/configurationeditor.js"></script>
+    <script type="text/javascript">
+
+        
+        // get all machine names from storage for nav bar
+        var proteomics = JSON.parse(sessionStorage.getItem("proteomics-machines"));
+        var metabolomics = JSON.parse(sessionStorage.getItem("metabolomics-machines"));
+        let myconfiguration = {};
+
+        // called when DOM is loaded
+        function load_metabolomics() {
+
+            // get configuration file from server (METABOLOMICS)
+            fetch("./data/reconfigMetab.json")
+                .then((configuration) => {
+                    if(configuration.ok){
+                        return configuration.json();
+                    }
+                    else{
+                        return false;
+                    }
+                })
+                .then((configuration) => {
+                    if(configuration){
+                        let configurationEditor = ConfigurationEditor.start("Metabolomics",
+                            configuration,
+                            () => { // callback, when Save button is pressed
+                                myconfiguration = configurationEditor.end();
+
+                                // create query string
+                                var query = new URLSearchParams();
+                                query.append("config", JSON.stringify(myconfiguration));
+                                query.append("experiment", "Metabolomics");
+                                
+                                // send to server
+                                var new_path = "http://" + window.location.hostname + ":" + window.location.port + "/reconfig"
+                                    + "?" + query.toString();
+                                window.location.assign(new_path);
+
+                            }, true, "");
+                    }
+                });
+
+            }
+
+        function load_proteomics() {
+            // get configuration file from server (PROTEOMICS)
+            fetch("./data/reconfigProt.json")
+                .then((configuration) => {
+                    if(configuration.ok){
+                        return configuration.json();
+                    }
+                    else{
+                        return false;
+                    }
+                })
+                .then((configuration) => {
+                    if(configuration){
+                        let configurationEditor = ConfigurationEditor.start("Proteomics", configuration,
+                        () => { // callback, when Save button is pressed
+                            myconfiguration = configurationEditor.end();
+
+                            // create query string
+                            var query = new URLSearchParams();
+                            query.append("config", JSON.stringify(myconfiguration));
+                            query.append("experiment", "Proteomics");
+                            
+                            // send to server
+                            var new_path = "http://" + window.location.hostname + ":" + window.location.port + "/reconfig"
+                                + "?" + query.toString();
+                            window.location.assign(new_path);
+
+                        }, true, "");
+                    }
+                });
+
+        }
+
+        function load_instruments() {
+            // get configuration file from server (INSTRUMENTS)
+            fetch("./data/instruments.json")
+                .then((configuration) => {
+                    if(configuration.ok){
+                        return configuration.json();
+                    }
+                    else{
+                        return false;
+                    }
+                })
+                .then((configuration) => {
+                    if(configuration){
+                        let configurationEditor = ConfigurationEditor.start("Instruments", configuration,
+                        () => { // callback, when Save button is pressed
+                            myconfiguration = configurationEditor.end();
+
+                            // create query string
+                            var query = new URLSearchParams();
+                            query.append("config", JSON.stringify(myconfiguration));
+                            query.append("experiment", "Instruments");
+                            
+                            // send to server
+                            var new_path = "http://" + window.location.hostname + ":" + window.location.port + "/reconfig"
+                                + "?" + query.toString();
+                            window.location.assign(new_path);
+
+                        }, true, "");
+                    }
+                });
+
+        }
+
+        // DOM loaded callback
+		document.addEventListener('DOMContentLoaded', function() {
+
+            // create a tooltip 
+            let tooltip = d3.select("body") 
+            .append("div")
+            .attr("class", "configTooltip")
+            .attr("id", "tooltip")
+            .style("visibility", "hidden");
+
+            // navbar
+            //create_navbar_dropdown();
+
+            // load jsons
+            load_instruments();
+            setTimeout(function(){
+                load_metabolomics();
+                load_proteomics();
+            }, 500);
+   
+        });
+
+
+        function loadCustom(){
+            var event = window.event;
+            var button = event.target;
+            event.stopImmediatePropagation();
+
+            var query = new URLSearchParams();
+            query.append("machine", button.getAttribute("data-name"));
+            query.append("caller", "main");
+
+            var new_path = "http://" + window.location.hostname + ":" + window.location.port + "/custom"
+                            + "?" + query.toString();
+            window.location.assign(new_path);
+        }
+
+    </script>
+
+</head>

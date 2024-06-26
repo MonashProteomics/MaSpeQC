@@ -1,0 +1,47 @@
+.config-editor {
+	width: 80%;
+}
+
+.config-editor-header {
+	height: 40px;
+	padding: 10px;
+	margin-bottom: 10px;
+	text-align: center;
+	
+}
+
+.config-editor-footer {
+	height: 40px;
+	margin-top: 10px;
+	text-align: center;
+	margin-bottom:3em;
+}
+
+.parameters {
+	display: grid;
+	grid-template-columns: max-content auto;
+	grid-auto-rows: max-content;
+	overflow-y: auto;
+	height: 100%;
+	background-color:lightgoldenrodyellow;
+}
+
+.parameters-name {
+	border: 1px solid #ddd;
+	padding: 9px;
+	padding-right: 5px;
+	font-size: 1em;
+	font-weight: bold;
+}
+
+.jsgrid-grid-header, .jsgrid-grid-body {
+	overflow-y: hidden;
+}
+
+.jsgrid-header-row > .jsgrid-header-cell {
+	background-color:lightsteelblue;
+}
+
+.jsgrid {
+	font-size: 0.8em;
+}

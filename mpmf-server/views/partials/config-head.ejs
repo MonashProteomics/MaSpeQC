@@ -1,0 +1,153 @@
+<head>
+    <title>MaSpeQC</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://kit.fontawesome.com/f77ac44772.js" crossorigin="anonymous"></script> <!--Font Awesome icons-->
+    <script src="./javascripts/control.js"></script>
+    <script src="https://d3js.org/d3.v6.js"></script> <!--D3-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./stylesheets/style.css"  />
+    <!--CONFIG-->
+    <link rel="stylesheet" media="screen" type="text/css" href="./assets/jsgrid.min.css" />
+    <link rel="stylesheet" media="screen" type="text/css" href="./assets/jsgrid-theme.min.css" />
+    <link rel="stylesheet" href="./assets/style.css">
+    <script type="text/javascript" src="./assets/jquery-2.2.4.min.js"></script>
+    <script type="text/javascript" src="./assets/jsgrid.min.js"></script>
+    <script type="text/javascript" src="./assets/configurationeditor.js"></script>
+    <script type="text/javascript">
+
+        let myconfiguration = {};
+        let exp;
+        
+
+        // called when DOM is loaded
+        function load_metabolomics() {
+
+            // get configuration file from server (METABOLOMICS)
+            fetch("./data/configurationMetab.json")
+                .then((configuration) => {
+                    return configuration.json();
+                })
+                .then((configuration) => {
+                    let configurationEditor = ConfigurationEditor.start("Metabolomics",
+                        configuration,
+                        () => { // callback, when Save button is pressed
+                            myconfiguration = configurationEditor.end();
+                            console.log(myconfiguration);
+
+                            // create query string
+                            var query = new URLSearchParams();
+                            query.append("config", JSON.stringify(myconfiguration));
+                            query.append("experiment", "Metabolomics");
+
+                            sessionStorage.setItem("experiment", "metabolomics");
+                            
+                            // send to server
+                            var new_path = "http://" + window.location.hostname + ":" + window.location.port + "/configuration"
+                                + "?" + query.toString();
+                            window.location.assign(new_path);
+
+                        }, false, "");
+                });
+
+            }
+
+        function load_proteomics() {
+            // get configuration file from server (PROTEOMICS)
+            fetch("./data/configurationProt.json")
+                .then((configuration) => {
+                    return configuration.json();
+                })
+                .then((configuration) => {
+                    let configurationEditor = ConfigurationEditor.start("Proteomics",
+                        configuration,
+                        () => { // callback, when Save button is pressed
+                            myconfiguration = configurationEditor.end();
+                            console.log(myconfiguration);
+
+                            // create query string
+                            var query = new URLSearchParams();
+                            query.append("config", JSON.stringify(myconfiguration));
+                            query.append("experiment", "Proteomics");
+
+                            sessionStorage.setItem("experiment", "proteomics");
+                            
+                            // send to server
+                            var new_path = "http://" + window.location.hostname + ":" + window.location.port + "/configuration"
+                                + "?" + query.toString();
+                            window.location.assign(new_path);
+
+                        }, false, "");
+                });
+
+        }
+
+        // callback from menu
+        function changeConfig(){
+
+            if(exp == "proteomics"){
+                
+                // change grid
+                var page_content = document.getElementById("config-editor-Proteomics");
+                page_content.remove();
+                load_metabolomics();
+                exp = "metabolomics";
+
+                // change link
+                var link = document.getElementById("config");
+                link.innerHTML = "<span class='fas fa-wrench'></span> Proteomics";
+            }
+            else{
+                // change grid
+                var page_content = document.getElementById("config-editor-Metabolomics");
+                page_content.remove();
+                load_proteomics();
+                exp = "proteomics";
+
+                // change link
+                var link = document.getElementById("config");
+                link.innerHTML = "<span class='fas fa-wrench'></span> Metabolomics";
+            }
+            
+        }
+
+        // DOM loaded callback
+		document.addEventListener('DOMContentLoaded', function() {
+
+            // create a tooltip 
+            let tooltip = d3.select("body") 
+            .append("div")
+            .attr("class", "configTooltip")
+            .attr("id", "tooltip")
+            .style("visibility", "hidden");
+
+            // so reloads same grid after save
+            let stored_exp = sessionStorage.getItem("experiment");
+            var link = document.getElementById("config");
+                
+            if(stored_exp){
+                exp = stored_exp;
+            }
+            else{
+                exp = "proteomics";
+            }
+
+            // load the grid
+            if(exp == "proteomics"){
+                load_proteomics();
+                link.innerHTML = "<span class='fas fa-wrench'></span> Metabolomics";
+            }
+            else{
+                load_metabolomics();
+                link.innerHTML = "<span class='fas fa-wrench'></span> Proteomics";
+            }
+            
+
+        });
+
+    </script>
+
+</head>
