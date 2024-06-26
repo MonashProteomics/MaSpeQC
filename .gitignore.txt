@@ -1,9 +1,10 @@
 
 # main folders
-Software
-Testing
+Software/
+Testing/
 #img
 data
+
 mpmf-server/database-login.json
 mpmf-server/.maspeqc_gen
 
