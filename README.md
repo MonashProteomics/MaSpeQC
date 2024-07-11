@@ -8,10 +8,10 @@ Suitable for proteomics, metabolomics and lipidomics workflows.
 
 Use the menu ![menu](img/menu-hint.PNG) at the top of this README for quick navigation.
 
-## Installation
-To install MaSpeQC on any _Windows_ system, download a Zip of this repository and unzip it at your desired location, then simply run the script ___start_maspeqc_setup.bat___ as administrator from the command line. This will install all of the necessary software and dependencies to use MaSpeQC. 
+## Installation on Windows
+To install MaSpeQC on any _Windows_ system, download the latest release from the link below into the C: drive, then simply run the script ___start_maspeqc_setup.bat___ as administrator from the command line. This will install all of the necessary software and dependencies to use MaSpeQC. 
 
-## Dependencies
+## Installation on Linux or MacOS
 To install MaSpeQC on a _Linux_ system, the following software dependencies are required. These need to be added to the _Software_ directory in the main directory.
 
 - __Proteowizard:__ to convert vendor raw files.
