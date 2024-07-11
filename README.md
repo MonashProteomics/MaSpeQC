@@ -6,6 +6,8 @@ Suitable for proteomics, metabolomics and lipidomics workflows.
 <img src="img/fullPage.PNG" alt="qc" height="80%" width="80%"/>  
 <img src="img/homePage.PNG" alt="qc" height="80%" width="80%"/>  
 
+Use the menu ![menu](img/menu-hint.PNG) at the top of this README for quick navigation.
+
 ## Installation
 To install MaSpeQC on any _Windows_ system, download a Zip of this repository and unzip it at your desired location, then simply run the script ___start_maspeqc_setup.bat___ as administrator from the command line. This will install all of the necessary software and dependencies to use MaSpeQC. 
 
