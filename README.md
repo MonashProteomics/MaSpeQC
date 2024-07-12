@@ -73,12 +73,13 @@ Before using MaSpeQC, it is necessary to fill in a configuration form. The confi
 	- _Contact Name_
 	- _Contatct Email_
 - #### INPUT FOLDER: The location of the directories that store the raw files for processing.
-	- An absolute path for the top-level storage location of raw files. See [link](#file-formats-and-directory-structure) for the required subfolder structure.
+	- An absolute path for the top-level storage location of raw files. See [File Formats and Directory Structure](#file-formats-and-directory-structure) for the required subfolder structure.
 - #### OUTPUT FOLDER: Storage for the outputs of the processing.
+  	- An absolute path for the top-level storage location of the output files generated during processing. 
 - #### EMAIL INFO: The details of the email account to use.
 	- _Port_ (eg. 465)
 	- _SMTP Server_ (eg. smtp.gmail.com)
-	- _Email Sender_ 
+	- _Email Sender_ (eg. maspeqc.user@gmail.com)
 	- _Email Password_
 
 __NOTE__: To trigger the configuration form manually, navigate to the server directory and type `npm start --setup`
