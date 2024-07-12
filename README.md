@@ -14,15 +14,23 @@ To install MaSpeQC on any _Windows_ system, download and unzip the latest releas
 <a href="https://github.com/MonashProteomics/MaSpecQC/archive/refs/tags/v1.0.1.zip">MaSpeQC Download</a>
 
 ## Installation on Linux or MacOS
-To install MaSpeQC on any _Linux_ or _MacOS_ system, download and unzip the latest release from the link below, then add the following software into the _Software_ directory in the main directory. Then simply run the script ___start_maspeqc_setup.bat___ as administrator from the command line. This will install all of the necessary software and dependencies to use MaSpeQC. 
+To install MaSpeQC on any _Linux_ or _MacOS_ system, download and unzip the latest release from the link below. 
 
 <a href="https://github.com/MonashProteomics/MaSpecQC/archive/refs/tags/v1.0.1.tar.gz">MaSpeQC Download</a>
+
+Then add the following software into the _Software_ directory in the main directory. 
 
 - __Proteowizard:__ to convert vendor raw files.
 - __MZmine 2.53:__ to extract and process chromatogram peaks.
 - __Morpheus (mzML):__ to search MS/MS spectrum.
 - __MySQL 5.7.41:__ for storage of processed data.
 - __Node.js 18.16:__ to manage the web interface.
+- __Python:__
+
+Next, navigate to the _mpmf-pipeline_ directory and create the Python environemnt from the _requirements.txt_ file.
+Finally, set-up the node.js server by runnining `npm install` from the _mpmf-server_ directory. 
+
+You can now configure MaSpeQC by running `npm start --setup` and opening a browser window at _http://localhost/configuration_.
 
 ## Configuration
 During installation, you will be prompted to fill in a configuration form before using MaSpeQC. The following inputs are required to configure the system:
