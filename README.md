@@ -18,7 +18,7 @@ To install MaSpeQC on any _Linux_ or _MacOS_ system, download and unzip the late
 
 <a href="https://github.com/MonashProteomics/MaSpecQC/archive/refs/tags/v1.0.1.tar.gz">MaSpeQC Tar Download</a>
 
-Then add the following software into the _Software_ directory in the main directory. 
+Then add the following software into a directory named _Software_ in the main directory. 
 
 - __Proteowizard:__ https://proteowizard.sourceforge.io/doc_users.html
 	- Follow the download instructions for Linux or MacOS
@@ -30,15 +30,19 @@ Then add the following software into the _Software_ directory in the main direct
 - __Python:__ https://www.python.org/downloads/
 	- Select a 3.11 release
    
- The desired folder structure should is:
+ The desired folder structure is:
 
  ```
-├── src
-│   ├── controller
-│   │   ├── **/*.css
-│   ├── views
-│   ├── model
-│   ├── index.js
+├── MaSpeQC-main
+│	├── mpmf-pipeline
+│	├── mpmf-server
+│	├── Software
+│	│   ├── Morpheus (mzML)
+│	│   ├── mysql-5.7.41
+│	│   ├── MZmine-2.53
+│	│   ├── node-v18.16.0
+│	│   ├── ProteoWizard
+│	│   ├── Python
 ```
 
 Next, navigate to the _mpmf-pipeline_ directory and create the Python environemnt from the _requirements.txt_ file.
