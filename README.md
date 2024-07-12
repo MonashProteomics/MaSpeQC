@@ -9,12 +9,14 @@ Suitable for proteomics, metabolomics and lipidomics workflows.
 Use the menu ![menu](img/menu-hint.PNG) at the top of this README for quick navigation.
 
 ## Installation on Windows
-To install MaSpeQC on any _Windows_ system, download the latest release from the link below into the C: drive, then simply run the script ___start_maspeqc_setup.bat___ as administrator from the command line. This will install all of the necessary software and dependencies to use MaSpeQC. 
+To install MaSpeQC on any _Windows_ system, download and unzip the latest release from the link below into the C: drive, then simply run the script ___start_maspeqc_setup.bat___ as administrator from the command line. This will install all of the necessary software and dependencies to use MaSpeQC. 
 
 <a href="https://github.com/MonashProteomics/MaSpecQC/archive/refs/tags/v1.0.1.zip">MaSpeQC Download</a>
 
 ## Installation on Linux or MacOS
-To install MaSpeQC on a _Linux_ system, the following software dependencies are required. These need to be added to the _Software_ directory in the main directory.
+To install MaSpeQC on any _Linux_ or _MacOS_ system, download and unzip the latest release from the link below, then add the following software into the _Software_ directory in the main directory. Then simply run the script ___start_maspeqc_setup.bat___ as administrator from the command line. This will install all of the necessary software and dependencies to use MaSpeQC. 
+
+<a href="https://github.com/MonashProteomics/MaSpecQC/archive/refs/tags/v1.0.1.tar.gz">MaSpeQC Download</a>
 
 - __Proteowizard:__ to convert vendor raw files.
 - __MZmine 2.53:__ to extract and process chromatogram peaks.
