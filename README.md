@@ -27,7 +27,19 @@ Then add the following software into the _Software_ directory in the main direct
 - __MySQL 5.7.41:__ https://downloads.mysql.com/archives/community/
 	- Select Product Version 5.7.41
 - __Node.js 18.16:__ https://nodejs.org/en/download/package-manager
-- __Python:__
+- __Python:__ https://www.python.org/downloads/
+	- Select a 3.11 release
+   
+ The desired folder structure should is:
+
+ ```
+├── src
+│   ├── controller
+│   │   ├── **/*.css
+│   ├── views
+│   ├── model
+│   ├── index.js
+```
 
 Next, navigate to the _mpmf-pipeline_ directory and create the Python environemnt from the _requirements.txt_ file.
 Finally, set-up the node.js server by runnining `npm install` from the _mpmf-server_ directory. 
