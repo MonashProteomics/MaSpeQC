@@ -51,7 +51,7 @@ Finally, set-up the node.js server by runnining `npm install` from the _mpmf-ser
 You can now configure MaSpeQC by running `npm start --setup` and opening a browser window at _http://localhost/configuration_.
 
 ## Configuration
-During installation, you will be prompted to fill in a configuration form before using MaSpeQC. The following inputs are required to configure the system:
+Before using MaSpeQC, it is necessary to fill in a configuration form. The configuration process is triggered automatically during Windows installation and can be initiated manually as shown above for Linux and MacOS. The following inputs are required to configure the system:
 
 - #### INSTRUMENTS : The LC-MS/MS instruments the system will monitor.
 	- _Instrument Name_ (Unique, No Spaces)
