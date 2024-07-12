@@ -11,20 +11,22 @@ Use the menu ![menu](img/menu-hint.PNG) at the top of this README for quick navi
 ## Installation on Windows
 To install MaSpeQC on any _Windows_ system, download and unzip the latest release from the link below into the C: drive, then simply run the script ___start_maspeqc_setup.bat___ as administrator from the command line. This will install all of the necessary software and dependencies to use MaSpeQC. 
 
-<a href="https://github.com/MonashProteomics/MaSpecQC/archive/refs/tags/v1.0.1.zip">MaSpeQC Download</a>
+<a href="https://github.com/MonashProteomics/MaSpecQC/archive/refs/tags/v1.0.1.zip">MaSpeQC Zip Download</a>
 
 ## Installation on Linux or MacOS
 To install MaSpeQC on any _Linux_ or _MacOS_ system, download and unzip the latest release from the link below. 
 
-<a href="https://github.com/MonashProteomics/MaSpecQC/archive/refs/tags/v1.0.1.tar.gz">MaSpeQC Download</a>
+<a href="https://github.com/MonashProteomics/MaSpecQC/archive/refs/tags/v1.0.1.tar.gz">MaSpeQC Tar Download</a>
 
 Then add the following software into the _Software_ directory in the main directory. 
 
-- __Proteowizard:__ to convert vendor raw files.
-- __MZmine 2.53:__ to extract and process chromatogram peaks.
-- __Morpheus (mzML):__ to search MS/MS spectrum.
-- __MySQL 5.7.41:__ for storage of processed data.
-- __Node.js 18.16:__ to manage the web interface.
+- __Proteowizard:__ https://proteowizard.sourceforge.io/doc_users.html
+	- Follow the download instructions for Linux or MacOS
+- __MZmine 2.53:__ https://github.com/mzmine/mzmine2/releases/tag/v2.53
+- __Morpheus (mzML):__ https://cwenger.github.io/Morpheus/
+- __MySQL 5.7.41:__ https://downloads.mysql.com/archives/community/
+	- Select Product Version 5.7.41
+- __Node.js 18.16:__ https://nodejs.org/en/download/package-manager
 - __Python:__
 
 Next, navigate to the _mpmf-pipeline_ directory and create the Python environemnt from the _requirements.txt_ file.
