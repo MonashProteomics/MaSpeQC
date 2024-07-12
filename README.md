@@ -82,8 +82,6 @@ Before using MaSpeQC, it is necessary to fill in a configuration form. The confi
 	- _Email Sender_ (eg. maspeqc.user@gmail.com)
 	- _Email Password_
 
-__NOTE__: To trigger the configuration form manually, navigate to the server directory and type `npm start --setup`
-
 ## Starting the Database
 To start the database for MaSpeQC, navigate to _/Software/mysql-5.7.41-winx64/bin_ and type:
 - `mysqld`
