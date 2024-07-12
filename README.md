@@ -73,7 +73,7 @@ Before using MaSpeQC, it is necessary to fill in a configuration form. The confi
 	- _Contact Name_
 	- _Contatct Email_
 - #### INPUT FOLDER: The location of the directories that store the raw files for processing.
-	- An absolute path for the top-level storage location of raw files. See (#file-formats-and-directory-structure) for the required subfolder structure.
+	- An absolute path for the top-level storage location of raw files. See [link](#file-formats-and-directory-structure) for the required subfolder structure.
 - #### OUTPUT FOLDER: Storage for the outputs of the processing.
 - #### EMAIL INFO: The details of the email account to use.
 	- _Port_ (eg. 465)
