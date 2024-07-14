@@ -92,13 +92,12 @@ Leave this window open when using MaSpeQC. It is also possible to run the MySQL 
 For more information see https://dev.mysql.com/doc/refman/8.4/en/windows-start-service.html
 
 #### On Linux and MacOS
-Cnosult the MySQL documentation for instructions on starting a database server for your system.
+Cnosult the MySQL documentation for instructions on starting a database server for your system.  
 https://dev.mysql.com/doc/mysql-getting-started/en/#mysql-getting-started-installing
 
 ## Processing Raw Files
-Make sure the database has been activated, then navigate to  _/mpmf-pipeline/.venv/Scripts_ and type:
-- `activate.bat`
-
+Make sure the database has been activated, then open a console window, navigate to  _/mpmf-pipeline/.venv/Scripts_ and type `activate.bat`. You can close the console window after the processing has finished.  
+  
 This will activate the Python environment needed to process raw files. QC runs can now be triggered from the _/mpmf-pipeline_ directory with the command `python MPMF_Process_Raw_Files.py` and the following __3 arguments__:  
 - metabolomics/proteomics
 - The number of most recent runs to process (-1 equals process all).
