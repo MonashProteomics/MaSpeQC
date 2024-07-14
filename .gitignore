@@ -28,6 +28,9 @@ mpmf-pipeline/Config/prot-machines.txt
 
 mpmf-pipeline/database
 
+# log files
+*.log
+
 # Runtime data
 pids
 *.pid
