@@ -92,7 +92,7 @@ Leave this window open when using MaSpeQC. It is also possible to run the MySQL 
 For more information see https://dev.mysql.com/doc/refman/8.4/en/windows-start-service.html
 
 #### On Linux and MacOS
-Cnosult the MySQL documentation for instructions on starting a database server for your system.  
+Consult the MySQL documentation for instructions on starting a database server for your system.  
 https://dev.mysql.com/doc/mysql-getting-started/en/#mysql-getting-started-installing
 
 ## Processing Raw Files
