@@ -4,6 +4,7 @@ import glob
 import json
 import logging
 import os
+import platform
 import shutil
 import subprocess
 import sys
@@ -111,8 +112,28 @@ class ProcessRawFile:
         return check_run
 
     def run_mzmine(self):
-        os.chdir(os.path.join(self.fs.sw_dir, "MZmine-2.53-Windows"))
-        command = 'startMZmine-Windows.bat ' + '"' + str(os.path.join(self.outfiles_dir, self.file_name + ".xml")) + '"'
+
+        # check platform for loc and command
+        platform_sys = platform.system()
+
+        mzmine_loc = ''
+        mzmine_command = ''
+        if platform_sys == 'Windows':
+            mzmine_loc = 'MZmine-2.53-Windows'
+            mzmine_command = 'startMZmine-Windows.bat '
+        elif platform_sys == 'Linux':
+            mzmine_loc = 'MZmine-2.53-Linux'
+            mzmine_command = 'startMZmine-Linux.bat '
+        elif platform_sys == 'Darwin':
+            mzmine_loc = 'MZmine-2.53-macOS'
+            mzmine_command = 'startMZmine-macOS.bat '
+
+        if mzmine_loc == '':
+            print("Unable to determine platform")
+            return False
+        
+        os.chdir(os.path.join(self.fs.sw_dir, mzmine_loc))
+        command = mzmine_command + '"' + str(os.path.join(self.outfiles_dir, self.file_name + ".xml")) + '"'
         returnvalue = os.system(command)
         if returnvalue:
             return False
@@ -125,7 +146,7 @@ class ProcessRawFile:
         p = subprocess.Popen(['startMZmine-Windows.bat',  str(os.path.join(self.outfiles_dir, self.file_name + ".xml"))], stdout=subprocess.PIPE)
         p.communicate()
         returnvalue = p.poll()
-        # stupid backward logic
+        # backward logic!
         if returnvalue:
             return False
         else:
