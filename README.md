@@ -107,18 +107,10 @@ This will activate the Python environment needed to process raw files. QC runs c
 
 ## Starting MaSpeQC
 After 5 QC runs have been processed for a machine, it is available for viewing in MaSpeQC. To start using MaSpeQC:
-- Navigate to the __mpmf-server__ directory.
+- Open a console window, navigate to the __mpmf-server__ directory.
 - Type `npm start`
 - Open a browser window at your _localhost_ to start using MaSpeQC
 - __NOTE__: An attempt will be made to establish a _https_ connection, however if this fails a _http_ connection is established. Modify the location of certificate/key in the _www_ file to establish a _https_ connection.
-
-## Automating MaSpeQC
-MaSpeQC can be configured to run automatically with the following steps:  
-- First, set the database to run as a service by navigating to _/Software/mysql-5.7.41-winx64/bin_ and typing `mysqld --install`
-- Then, configure the server to run continuously by navigating to _mpmf-server_ and typing:  
-	- `npm install forever -g`
-	- `forever start ./bin/www`
-- Finally, set the Task Scheduler to run the processing scripts in this repository periodically (_runMetabolomics.bat_, _runProteomics.bat_)
 
 ## File Formats and Directory Structure
 The raw QC input files are required to be stored in __instrument_name__ (defined in configuration) folders in the directory specified during configuration.
