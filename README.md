@@ -113,8 +113,16 @@ After 5 QC runs have been processed for a machine, it is available for viewing i
 - __NOTE__: An attempt will be made to establish a _https_ connection, however if this fails a _http_ connection is established. Modify the location of certificate/key in the _www_ file to establish a _https_ connection.
 
 ## File Formats and Directory Structure
-The raw QC input files are required to be stored in __instrument_name__ (defined in configuration) folders in the directory specified during configuration.
-- ![in-folders](img/in-folders.PNG)
+The raw QC input files are required to be stored in __instrument_name__ (defined in configuration) folders in the input folder specified during configuration.
+ ```
+├── Input Folder
+│   ├── instrument_name_1
+│   ├── instrument_name_2
+│   ├── instrument_name_3
+│   ├── instrument_name_4
+│   ├── instrument_name_5
+```
+For example, if there is an instrument named 'exploris', the raw files need to be stored in a folder named 'exploris' that is a subfolder of the top level input folder. 
 
 The required format for input file names is:
 - QC_Metabolomics_TIMESTAMP.vendor
