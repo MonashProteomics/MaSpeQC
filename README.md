@@ -135,9 +135,11 @@ Where,
 
 ## FASTA database (Proteomics only)
 The Morpheus search algorithm for MS/MS data which is used during the processing of proteomics QC files requires a FASTA proteome database.
-The database file needs to be named _CUSTOM.fasta_ and added to MaSpeQC in the following location:
+The database file needs to be named _CUSTOM.fasta_ and added to MaSpeQC in the following folder:
 
 - `\MaSpecQC-main\Software\Morpheus (mzML)`
+
+FASTA databases are available from many sources including <a href="https://www.uniprot.org/">UniProt</a>.
 
 ## Metric Definitions
 
