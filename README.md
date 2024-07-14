@@ -82,13 +82,18 @@ Before using MaSpeQC, it is necessary to fill in a configuration form. The confi
 	- _Email Sender_ (eg. maspeqc.user@gmail.com)
 	- _Email Password_
 
-## Starting the Database
-To start the database for MaSpeQC, navigate to _/Software/mysql-5.7.41-winx64/bin_ and type:
+## Running the Database Server
+
+#### On Windows
+To start the database for MaSpeQC, open a console window, navigate to _/Software/mysql-5.7.41-winx64/bin_ and type:
 - `mysqld`
 
-Leave this window open when using MaSpeQC. 
+Leave this window open when using MaSpeQC. It is also possible to run the MySQL database server as a service making it available without manual activation. 
+For more information see https://dev.mysql.com/doc/refman/8.4/en/windows-start-service.html
 
-__NOTE__: The database can be activated by setting it to run as a service making it available without manual activation. 
+#### On Linux and MacOS
+Cnosult the MySQL documentation for instructions on starting a database server for your system.
+https://dev.mysql.com/doc/mysql-getting-started/en/#mysql-getting-started-installing
 
 ## Processing Raw Files
 Make sure the database has been activated, then navigate to  _/mpmf-pipeline/.venv/Scripts_ and type:
