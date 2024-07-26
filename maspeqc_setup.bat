@@ -299,9 +299,9 @@ set nodejs_install=0
 echo ===== Configuring Node.js =====
 :check-nodejs
 echo == Checking Node.js configuration
-if exist node-v18.16.0-win-x64 (
-    echo Changing directory to node-v18.16.0-win-x64
-    cd node-v18.16.0-win-x64
+if exist node-v18.20.4-win-x64 (
+    echo Changing directory to node-v18.20.4-win-x64
+    cd node-v18.20.4-win-x64
     echo Running "node.exe -v"
     node.exe -v
     if !nodejs_install! equ 1 if errorlevel 1 (
@@ -320,22 +320,22 @@ if exist node-v18.16.0-win-x64 (
     cd ..
 )
 :get-nodejs
-if not exist node-v18.16.0-win-x64 (
-    if not exist node-v18.16.0-win-x64.zip (
-        echo Downloading Node.js 18.16.0 from https://nodejs.org/en/download
-        curl --output node-v18.16.0-win-x64.zip --location --ssl-no-revoke https://nodejs.org/dist/v18.16.0/node-v18.16.0-win-x64.zip
+if not exist node-v18.20.4-win-x64 (
+    if not exist node-v18.20.4-win-x64.zip (
+        echo Downloading Node.js 18.20.4 from https://nodejs.org/en/download
+        curl --output node-v18.20.4-win-x64.zip --location --ssl-no-revoke https://nodejs.org/dist/v18.20.4/node-v18.20.4-win-x64.zip
     )
-    if exist node-v18.16.0-win-x64.zip (
-        echo Unpacking node-v18.16.0-win-x64.zip
-        tar -xf node-v18.16.0-win-x64.zip
-        if !delete_downloads! equ 1 del node-v18.16.0-win-x64.zip
+    if exist node-v18.20.4-win-x64.zip (
+        echo Unpacking node-v18.20.4-win-x64.zip
+        tar -xf node-v18.20.4-win-x64.zip
+        if !delete_downloads! equ 1 del node-v18.20.4-win-x64.zip
         set nodejs_install=1
         goto check-nodejs
     )
 )
 :error-nodejs
-echo Could not download and unpack Node.js 18.16.0
-echo Please download Node.js 18.16.0 64-bit as zip from https://nodejs.org/en/download and put the downloaded zip file in !cd!
+echo Could not download and unpack Node.js 18.20.4
+echo Please download Node.js 18.20.4 64-bit as zip from https://nodejs.org/en/download and put the downloaded zip file in !cd!
 echo Run maspeqc_setup.bat again afterwards
 pause
 echo.
@@ -345,8 +345,8 @@ echo == Found Node.js !nodejs_version!
 rem Install node modules and run configuration
 if exist ..\mpmf-server if not exist ..\mpmf-server\node_modules (
     echo.
-    echo Changing directory to node-v18.16.0-win-x64
-    cd node-v18.16.0-win-x64
+    echo Changing directory to node-v18.20.4-win-x64
+    cd node-v18.20.4-win-x64
     echo Adding !cd! to PATH
     set PATH="!cd!";!PATH!
     echo Changing directory to ..\..\mpmf-server
