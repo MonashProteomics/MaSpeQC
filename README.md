@@ -9,7 +9,7 @@ Suitable for proteomics, metabolomics and lipidomics workflows.
 Use the menu ![menu](img/menu-hint.PNG) at the top of this README for quick navigation.
 
 ## Installation on Windows
-To install MaSpeQC on any _Windows_ system, download and unzip the latest release from the link below into the C: drive, then simply run the script ___start_maspeqc_setup.bat___ as administrator from the command line. This will install all of the necessary software and dependencies to use MaSpeQC. 
+To install MaSpeQC on any _Windows_ system, download and unzip the latest release from the link below, then simply run the script ___start_maspeqc_setup.bat___ as administrator from the command line. This will install all of the necessary software and dependencies to use MaSpeQC. 
 
 <a href="https://github.com/MonashProteomics/MaSpecQC/archive/refs/tags/v1.0.1.zip">MaSpeQC Zip Download</a>
 
@@ -26,7 +26,9 @@ Then add the following software into a directory named _Software_ in the main di
 - __Morpheus (mzML):__ https://cwenger.github.io/Morpheus/
 - __MySQL 5.7.41:__ https://downloads.mysql.com/archives/community/
 	- Select Product Version 5.7.41
-- __Node.js 18.16:__ https://nodejs.org/en/download/package-manager
+- __Node.js 18.20.4 (LTS):__ https://nodejs.org/en/download/package-manager
+	- Select 'Prebuilt Installer' for MacOS
+ 	- Select 'Package Manager' or 'Prebuilt Binaries' for Linux
 - __Python:__ https://www.python.org/downloads/
 	- Select a 3.11 release
    
@@ -40,7 +42,7 @@ Then add the following software into a directory named _Software_ in the main di
 │	│   ├── Morpheus (mzML)
 │	│   ├── mysql-5.7.41
 │	│   ├── MZmine-2.53
-│	│   ├── node-v18.16.0
+│	│   ├── node-v18.20.4
 │	│   ├── ProteoWizard
 │	│   ├── Python
 ```
