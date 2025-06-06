@@ -1592,21 +1592,23 @@
             }
         }
         
-        function update_pressure_profile(){
+        function update_pressure_profile_loading(){
             
-            if(pressure_type == "loading"){
-                var profile = machine_data.run_data[run_index].pressure_profile_lp;
-            }
-            else{
-                var profile = machine_data.run_data[run_index].pressure_profile_np;
-            }
+            
+            var profile = machine_data.run_data[run_index].pressure_profile_lp;
+            //var back_profile = machine_data.run_data[run_index].pressure_profile_np;
+            
 
             if(Object.keys(profile).length == 0){
                 draw_pressure_profile(true);
+
+                // draw back panel
+                pressure_type = "nano";
+                draw_pressure_profile(false);
                 return;
             }
 
-            // get values to plot
+            // get values to plot..
             var y_values = profile.intensities;
             var x_values_deltas = profile.rts;
 
@@ -1678,8 +1680,105 @@
                 .transition().duration(1000)
                 .attr('d', area);
             }
+
+            // draw back panel
+            pressure_type = "nano";
+            draw_pressure_profile(false);
+
+        }
+
+        function update_pressure_profile_nano(){
+            
+            
+            var profile = machine_data.run_data[run_index].pressure_profile_np;
+            //var back_profile = machine_data.run_data[run_index].pressure_profile_np;
             
 
+            if(Object.keys(profile).length == 0){
+                draw_pressure_profile(true);
+
+                // draw back panel
+                pressure_type = "loading";
+                draw_pressure_profile(false);
+                return;
+            }
+
+            // get values to plot..
+            var y_values = profile.intensities;
+            var x_values_deltas = profile.rts;
+
+            // transform x values from deltas
+            var total = 0;
+            var x_values = [];
+            for(let x in x_values_deltas){
+                x_values.push((total + x_values_deltas[x])/60)
+                total = total + x_values_deltas[x];
+            }
+            
+            // convert to d3 friendly format
+            var data = [];
+            for(let i = 0; i<y_values.length; i++){
+                let new_row = {'x': x_values[i], 'y': y_values[i]}
+                data.push(new_row);
+            }
+
+            // area under curve
+            if(pressure_type == "loading"){
+                var area = d3.area().curve(d3.curveMonotoneX)
+                        .x(function(d) {return xScale_pressure_load(d.x);})
+                        .y0(profileHeight)
+                        .y1(function(d) { return yScale_pressure_load(d.y);});
+            }
+            else{
+                var area = d3.area().curve(d3.curveMonotoneX)
+                    .x(function(d) {return xScale_pressure_nano(d.x);})
+                    .y0(profileHeight)
+                    .y1(function(d) { return yScale_pressure_nano(d.y);});
+            }
+
+            // reset y scales and transition y -axis
+            // transition needs fixing, logic due to draing back and front
+            // y-scale (nano)
+            if(pressure_type == "nano"){
+                
+                yScale_pressure_nano = d3.scaleLinear()
+                .domain([0, d3.max(y_values) + d3.max(y_values)/10])
+                .range([profileHeight, 0]);
+
+                //y_axis_pressure = d3.axisLeft().ticks(5).scale(yScale_pressure_nano).tickSize(v_height_unit/2);
+                //d3.select("#pressureY").transition().duration(1000).call(y_axis_pressure);
+                
+            }
+
+            // y-scale (loading)
+            if(pressure_type == "loading"){
+                
+                yScale_pressure_load = d3.scaleLinear()
+                .domain([0, d3.max(y_values) + d3.max(y_values)/10])
+                .range([profileHeight, 0]);
+
+                //y_axis_pressure = d3.axisLeft().ticks(5).scale(yScale_pressure_load).tickSize(v_height_unit/2);
+                //d3.select("#pressureY").transition().duration(1000).call(y_axis_pressure);
+                
+            }
+            
+            // redraw
+            if(pressure_type == "loading"){
+                d3.selectAll(".pressureLoad")
+                .datum(data)
+                .transition().duration(1000)
+                .attr('d', area);
+            }
+            else{
+                d3.selectAll(".pressureNano")
+                .datum(data)
+                .transition().duration(1000)
+                .attr('d', area);
+            }
+
+            // draw back panel
+            pressure_type = "loading";
+            draw_pressure_profile(false);
 
         }
         
@@ -2623,17 +2722,17 @@
                 // update pressure plots (both)
 
                 if(pressure_type == "loading"){
-                    update_pressure_profile();
-                    pressure_type = "nano";
-                    update_pressure_profile();
+                    update_pressure_profile_loading();
+
+                    // redraw to reset
                     pressure_type = "loading";
                     setTimeout(function(){
                         draw_pressure_profile(false);
                     }, 1000)
                 }else{
-                    update_pressure_profile();
-                    pressure_type = "loading";
-                    update_pressure_profile();
+                    update_pressure_profile_nano();
+                    
+                    // redraw to reset
                     pressure_type = "nano";
                     setTimeout(function(){
                         draw_pressure_profile(false);
@@ -3370,17 +3469,17 @@
             if(machine_data["machine_details"]["machine_type"] == "thermo"){
                 // update pressure plots (both)
                 if(pressure_type == "loading"){
-                    update_pressure_profile();
-                    pressure_type = "nano";
-                    update_pressure_profile();
+                    update_pressure_profile_loading();
+                    
+                    // redraw to reset
                     pressure_type = "loading";
                     setTimeout(function(){
                         draw_pressure_profile(false);
                     }, 1000)
                 }else{
-                    update_pressure_profile();
-                    pressure_type = "loading";
-                    update_pressure_profile();
+                    update_pressure_profile_nano();
+                    
+                    // redraw to reset
                     pressure_type = "nano";
                     setTimeout(function(){
                         draw_pressure_profile(false);
@@ -9737,15 +9836,11 @@
                     
                     // pressure profiles
                     if(pressure_type == "loading"){
-                        update_pressure_profile();
-                        pressure_type = "nano";
-                        update_pressure_profile();
-                        pressure_type = "loading";
+                        update_pressure_profile_loading();
+                        pressure_type = "loading"; // reset because the back panel gets updated too
                     }else{
-                        update_pressure_profile();
-                        pressure_type = "loading";
-                        update_pressure_profile();
-                        pressure_type = "nano";
+                        update_pressure_profile_nano();
+                        pressure_type = "nano"; // reset because the back panel gets updated too
                     }
                     
                     // top controls

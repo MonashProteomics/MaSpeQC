@@ -3,7 +3,7 @@
 Software/
 Testing/
 #img
-#data/
+data/
 
 mpmf-server/database-login.json
 mpmf-server/.maspeqc_gen
@@ -13,18 +13,19 @@ mpmf-server/.maspeqc_gen
 
 # python environment
 mpmf-pipeline/.venv/
+mpmf-pipeline/__pycache__/
 
 
 # All config files
-mpmf-pipeline/Config
+mpmf-pipeline/Config/
 
 # Config files
-mpmf-pipeline/Config/database-login.json
-mpmf-pipeline/Config/.maspeqc_gen
-mpmf-pipeline/Config/dir-metabolomics.csv
-mpmf-pipeline/Config/dir-proteomics.csv
-mpmf-pipeline/Config/metab-machines.txt
-mpmf-pipeline/Config/prot-machines.txt
+#mpmf-pipeline/Config/database-login.json
+#mpmf-pipeline/Config/.maspeqc_gen
+#mpmf-pipeline/Config/dir-metabolomics.csv
+#mpmf-pipeline/Config/dir-proteomics.csv
+#mpmf-pipeline/Config/metab-machines.txt
+#mpmf-pipeline/Config/prot-machines.txt
 
 mpmf-pipeline/database
 

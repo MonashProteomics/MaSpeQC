@@ -1,2 +1,1 @@
-Machine_1|thermo
-Machine_2|thermo
+plus2_demo|thermo
