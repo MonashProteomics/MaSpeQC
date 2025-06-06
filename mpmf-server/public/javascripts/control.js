@@ -248,12 +248,21 @@ function diff_days(date1){
 function get_time(date){
     // remove seconds (using strings)
     let full_time = date.toLocaleTimeString();
-    let end = full_time.substr(full_time.length-2);
+    //let end = full_time.substr(full_time.length-2);
     let start = full_time.substr(0, 5);
     if(start.charAt(start.length - 1) === ":"){
         start =start.substr(0, start.length-1);
     }
-    let display_time = start + " " + end;
+
+    // am/pm
+    if(parseInt(start.substr(0, 2)) > 11){
+       var meridian = "pm";
+    }
+    else{
+        var meridian = "am";
+    }
+
+    let display_time = start + " " + meridian;
     return display_time;
 }
 
