@@ -145,6 +145,7 @@ document.onmouseout = function(e) {
 };
 
 // handle change to chart page  and reload
+// NOTE: don't use backslashes as returns to domain not host
 document.onclick = function(event){
 
     var target = event.target;
@@ -172,13 +173,13 @@ document.onclick = function(event){
     }
     else if(target.hasAttribute("data-reload")){ // reload
         home_icon.className = "fa fa-spinner fa-spin";
-        var new_path = "/";
+        var new_path = ".";
         window.location.assign(new_path);
         return;
     }
     else if(target.hasAttribute("data-config")){ // reconfig
         //home_icon.className = "fa fa-spinner fa-spin";
-        var new_path = "/reconfig";
+        var new_path = "reconfig";
         //window.location.assign(new_path);
         window.open(new_path, '_blank');
         return;
@@ -186,10 +187,10 @@ document.onclick = function(event){
     else if(target.hasAttribute("data-user-config")){ // config or process (from userguides)
 
         if(target.getAttribute("data-user-config") == "true"){
-            var page = "/configuration";
+            var page = "configuration";
         }
         else{
-            var page = "/process";
+            var page = "process";
         }
 
         window.location.assign(page);
@@ -201,7 +202,7 @@ document.onclick = function(event){
         var query = new URLSearchParams();
         query.append("caller", "main");
 
-        var new_path = "/process" + "?" + query.toString();
+        var new_path = "process" + "?" + query.toString();
         //window.location.assign(new_path);
         window.open(new_path, '_blank');
         return;
@@ -211,7 +212,7 @@ document.onclick = function(event){
         var query = new URLSearchParams();
         query.append("caller", target.getAttribute("data-user"));
 
-        var new_path = "/userguide"  + "?" + query.toString();
+        var new_path = "userguide"  + "?" + query.toString();
         //window.location.assign(new_path);
         window.open(new_path, '_blank');
         return;
@@ -230,7 +231,7 @@ document.onclick = function(event){
     query.append("metric", metric);
 
     // redirect to new page with query string
-    var new_path = "/" + experiment.toLowerCase() + "?" + query.toString();
+    var new_path = experiment.toLowerCase() + "?" + query.toString();
     window.location.assign(new_path);
 
 };
