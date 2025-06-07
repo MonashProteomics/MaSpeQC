@@ -267,7 +267,7 @@ function get_time(date){
     return display_time;
 }
 
-/* STATS FUNCTIONS */
+/* STATS FUNCTIONS  */
 // https://snippets.bentasker.co.uk/page-1907020841-Calculating-Mean,-Median,-Mode,-Range-and-Percentiles-with-Javascript-Javascript.html
 
  function calcAverage(arr){
