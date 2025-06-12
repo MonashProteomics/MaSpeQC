@@ -104,8 +104,8 @@ This will activate the Python environment needed to process raw files. QC runs c
 - metabolomics/proteomics
 - The number of most recent runs to process (-1 equals process all).
 - Y/N for whether to send notification emails or not.
-- eg. `python MPMF_Process_Raw_Files.py 'metabolomics' '10' 'Y'`
-- eg. `python MPMF_Process_Raw_Files.py 'proteomics' '-1' 'N'`
+- eg. `python MPMF_Process_Raw_Files.py "metabolomics" "10" "Y"`
+- eg. `python MPMF_Process_Raw_Files.py "proteomics" "-1" "N"`
 
 ## Starting MaSpeQC
 After 5 QC runs have been processed for a machine, it is available for viewing in MaSpeQC. To start using MaSpeQC:
