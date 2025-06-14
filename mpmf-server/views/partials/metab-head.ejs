@@ -2858,14 +2858,27 @@
                     d3.select(".topoverlay")
                     .transition()
                     .duration(1000)
-                    .attr("height", yScale_box(thresholds.threshold_high))
+                    .attr("height", function(){
+                        var check_height = yScale_box(thresholds.threshold_high);
+                        if(check_height < 0){
+                            return 0;
+                        }
+                        return check_height;
+                    })
                     .attr("x",0)
                     .attr("y",0);
                     
                     d3.select(".bottomoverlay")
                     .transition()
                     .duration(1000)
-                    .attr("height", yScale_box.range()[0] - yScale_box(thresholds.threshold_low))
+                    .attr("height", function(){
+                        var check_height = yScale_box.range()[0] - yScale_box(thresholds.threshold_low);
+                        if(check_height < 0){
+                            return 0;
+                        }
+                        return check_height;
+
+                    })
                     .attr("x",0)
                     .attr("y",yScale_box(thresholds.threshold_low));
                     
@@ -6226,7 +6239,13 @@
                 .append("rect")
                 .attr("class", "topoverlay")
                 .attr("width", width)
-                .attr("height", yScale_box(thresholds.threshold_high))
+                .attr("height", function(){
+                    var check_height = yScale_box(thresholds.threshold_high);
+                    if(check_height < 0){
+                        return 0;
+                    }
+                    return check_height;
+                })
                 .attr("x",0)
                 .attr("y",0)
                 .style("opacity",0.5)
@@ -6243,7 +6262,14 @@
                     .append("rect")
                     .attr("class", "bottomoverlay")
                     .attr("width", width)
-                    .attr("height", box_area_height - yScale_box(thresholds.threshold_low))
+                    .attr("height", function(){
+                        var check_height = box_area_height - yScale_box(thresholds.threshold_low);
+                        if(check_height < 0){
+                            return 0;
+                        }
+                        return check_height;
+
+                    })
                     .attr("x",0)
                     .attr("y",yScale_box(thresholds.threshold_low))
                     .style("opacity",0.5)
@@ -8209,7 +8235,13 @@
                 .append("rect")
                 .attr("class", "topoverlay")
                 .attr("width", lineChartWidth)
-                .attr("height", yScale_chart(thresholds.threshold_high))
+                .attr("height", function(){
+                    var check_height = yScale_chart(thresholds.threshold_high);
+                    if(check_height < 0){
+                        return 0;
+                    }
+                    return check_height;
+                })
                 .attr("x",0)
                 .attr("y",0)
                 .style("opacity",0.5)
@@ -8225,7 +8257,14 @@
                     .append("rect")
                     .attr("class", "bottomoverlay")
                     .attr("width", lineChartWidth)
-                    .attr("height", height - yScale_chart(thresholds.threshold_low))
+                    .attr("height", function(){
+                        var check_height = height - yScale_chart(thresholds.threshold_low);
+                        if(check_height < 0){
+                            return 0;
+                        }
+                        return check_height;
+
+                    })
                     .attr("x",0)
                     .attr("y",yScale_chart(thresholds.threshold_low))
                     .style("opacity",0.5)
@@ -8658,7 +8697,13 @@
                         .transition()
                         .duration(1000)
                         .attr("width", lineChartWidth)
-                        .attr("height", yScale_chart(thresholds.threshold_high))
+                        .attr("height", function(){
+                            var check_height = yScale_chart(thresholds.threshold_high);
+                            if(check_height < 0){
+                                return 0;
+                            }
+                            return check_height;
+                        })
                         .attr("x",0)
                         .attr("y",0);
                     all_lines
@@ -8666,7 +8711,13 @@
                         .transition()
                         .duration(1000)
                         .attr("width", lineChartWidth)
-                        .attr("height", height - yScale_chart(thresholds.threshold_low))
+                        .attr("height", function(){
+                            var check_height = height - yScale_chart(thresholds.threshold_low);
+                            if(check_height < 0){
+                                return 0;
+                            }
+                            return check_height;
+                        })
                         .attr("x",0)
                         .attr("y",yScale_chart(thresholds.threshold_low));
                     all_lines

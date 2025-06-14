@@ -1099,6 +1099,9 @@ if __name__ == "__main__":
     db = MPMFDBSetUp(db_info["user"], db_info["password"], db_info["database"], "", db_info["port"])
 
     # get arguments
+    print(sys.argv[1])
+    print(sys.argv[2])
+    print(sys.argv[3])
     experiment_type = sys.argv[1].upper()
     depth = int(sys.argv[2])
     email = sys.argv[3].upper()

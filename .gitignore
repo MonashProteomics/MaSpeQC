@@ -17,9 +17,9 @@ mpmf-pipeline/__pycache__/
 
 
 # All config files
-mpmf-pipeline/Config/
+mpmf-pipeline/Config/thresholds/*.json
 
-# Config files
+# Config files (refuses to ignore any Config files??)
 #mpmf-pipeline/Config/database-login.json
 #mpmf-pipeline/Config/.maspeqc_gen
 #mpmf-pipeline/Config/dir-metabolomics.csv
@@ -116,4 +116,7 @@ typings/
 # database login
 database-login.json
 .maspeqc_gen
+
+# vscode
+mpmf-server/.vscode
 

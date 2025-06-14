@@ -3287,7 +3287,13 @@
                 return xScale_box(d.name) - box_width/2;
             })
             .attr("y", function(d){return(yScale_box(d["75_percent"]))})
-            .attr("height", function(d){return(yScale_box(d["25_percent"])-yScale_box(d["75_percent"]))})
+            .attr("height", function(d){
+                var check_height = yScale_box(d["25_percent"])-yScale_box(d["75_percent"]);
+                if(check_height < 0){
+                    return 0;
+                }
+                return check_height;
+            })
             .attr("width", box_width);
             
             
@@ -3391,14 +3397,26 @@
                 d3.select(".topoverlay")
                 .transition()
                 .duration(1000)
-                .attr("height", yScale_box(thresholds.threshold_high))
+                .attr("height", function(){
+                    var check_height = yScale_box(thresholds.threshold_high);
+                    if(check_height < 0){
+                        return 0;
+                    }
+                    return check_height;
+                })
                 .attr("x",0)
                 .attr("y",0);
                 
                 d3.select(".bottomoverlay")
                 .transition()
                 .duration(1000)
-                .attr("height", yScale_box.range()[0] - yScale_box(thresholds.threshold_low))
+                .attr("height", function(){
+                    var check_height = yScale_box.range()[0] - yScale_box(thresholds.threshold_low);
+                    if(check_height < 0){
+                        return 0;
+                    }
+                    return check_height;
+                })
                 .attr("x",0)
                 .attr("y",yScale_box(thresholds.threshold_low));
                 
@@ -8553,7 +8571,13 @@
                 .append("rect")
                 .attr("class", "topoverlay")
                 .attr("width", width)
-                .attr("height", yScale_box(thresholds.threshold_high))
+                .attr("height", function(){
+                    var check_height = yScale_box(thresholds.threshold_high);
+                    if(check_height < 0){
+                        return 0;
+                    }
+                    return check_height;
+                })
                 .attr("x",0)
                 .attr("y",0)
                 .style("opacity",0.5)
@@ -8570,7 +8594,13 @@
                     .append("rect")
                     .attr("class", "bottomoverlay")
                     .attr("width", width)
-                    .attr("height", box_area_height - yScale_box(thresholds.threshold_low))
+                    .attr("height", function(){
+                        var check_height = box_area_height - yScale_box(thresholds.threshold_low);
+                        if(check_height < 0){
+                            return 0;
+                        }
+                        return check_height;
+                    })
                     .attr("x",0)
                     .attr("y",yScale_box(thresholds.threshold_low))
                     .style("opacity",0.5)
@@ -9533,19 +9563,28 @@
                 }
             
                 // rect overlay (top)
-                all_lines.append("g")
-                .append("rect")
-                .attr("class", "topoverlay")
-                .attr("width", lineChartWidth)
-                .attr("height", yScale_chart(thresholds.threshold_high))
-                .attr("x",0)
-                .attr("y",0)
-                .style("opacity",0.5)
-                .attr("fill", function(){
-                    if(theme == "dark"){return "var(--dark)";}
-                    return "var(--dark)";
-                    //return 'url(#gradupper)';
-                });
+                if(display_metric != "Area (normalised)"){ // no top for area
+                    all_lines.append("g")
+                    .append("rect")
+                    .attr("class", "topoverlay")
+                    .attr("width", lineChartWidth)
+                    .attr("height", function(){
+                        // catch neg heights
+                        var check_height = yScale_chart(thresholds.threshold_high);
+                        if(check_height < 0){
+                            return 0;
+                        }
+                        return check_height;
+                    })
+                    .attr("x",0)
+                    .attr("y",0)
+                    .style("opacity",0.5)
+                    .attr("fill", function(){
+                        if(theme == "dark"){return "var(--dark)";}
+                        return "var(--dark)";
+                        //return 'url(#gradupper)';
+                    });
+                }
 
                 // rect overlay (bottom)
                 if(thresholds.threshold_low != 0){
@@ -9553,7 +9592,14 @@
                     .append("rect")
                     .attr("class", "bottomoverlay")
                     .attr("width", lineChartWidth)
-                    .attr("height", height - yScale_chart(thresholds.threshold_low))
+                    .attr("height", function(){
+                        // catch neg heights
+                        var check_height = yScale_chart(thresholds.threshold_low);
+                        if(check_height < 0){
+                            return 0;
+                        }
+                        return check_height;
+                    })
                     .attr("x",0)
                     .attr("y",yScale_chart(thresholds.threshold_low))
                     .style("opacity",0.5)
@@ -10002,7 +10048,14 @@
                         .transition()
                         .duration(1000)
                         .attr("width", lineChartWidth)
-                        .attr("height", yScale_chart(thresholds.threshold_high))
+                        .attr("height", function(){
+                            // catch for negative heights
+                            var check_height = yScale_chart(thresholds.threshold_high);
+                            if(check_height < 0){
+                                return 0;
+                            }
+                            return check_height;
+                        })
                         .attr("x",0)
                         .attr("y",0);
                     all_lines
@@ -10010,7 +10063,14 @@
                         .transition()
                         .duration(1000)
                         .attr("width", lineChartWidth)
-                        .attr("height", height - yScale_chart(thresholds.threshold_low))
+                        .attr("height", function(){
+                            // catch for negative heights
+                            var check_height = height - yScale_chart(thresholds.threshold_low);
+                            if(check_height < 0){
+                                return 0;
+                            }
+                            return check_height;
+                        })
                         .attr("x",0)
                         .attr("y",yScale_chart(thresholds.threshold_low));
                     all_lines
@@ -11157,7 +11217,14 @@
                 .append("rect")
                 .attr("class", "bottomoverlay")
                 .attr("width", lineChartWidth)
-                .attr("height", yScale_ms2(thresholds["threshold_low"]))
+                .attr("height", function(){
+                    // catch neg heights
+                    var check_height = yScale_ms2(thresholds["threshold_low"]);
+                    if(check_height < 0){
+                        return 0;
+                    }
+                    return check_height;
+                })
                 .attr("x",0)
                 .attr("y",yScale_ms2(thresholds["threshold_low"]))
                 .style("opacity",0.5)
@@ -11183,7 +11250,14 @@
                     .append("rect")
                     .attr("class", "topoverlay")
                     .attr("width", lineChartWidth)
-                    .attr("height", yScale_ms2(thresholds["threshold_high"]))
+                    .attr("height", function(){
+                        // catch neg heights
+                        var check_height = yScale_ms2(thresholds["threshold_high"]);
+                        if(check_height < 0){
+                            return 0;
+                        }
+                        return check_height;
+                    })
                     .attr("x",0)
                     .attr("y",0)
                     .style("opacity",0.5)
@@ -11208,7 +11282,14 @@
                     .append("rect")
                     .attr("class", "ms2overlay")
                     .attr("width", lineChartWidth)
-                    .attr("height", height - yScale_ms2(thresholds["lower_percentile"]))
+                    .attr("height", function(){
+                        // catch when threshold is off display
+                        var check_height = height - yScale_ms2(thresholds["lower_percentile"]);
+                        if(check_height < 0){
+                            return 0;
+                        }
+                        return check_height;
+                    })
                     .attr("x",0)
                     .attr("y",yScale_ms2(thresholds["lower_percentile"]))
                     .style("opacity",0.5)
@@ -11423,7 +11504,13 @@
                     .transition()
                     .duration(1000)
                     .attr("width", lineChartWidth)
-                    .attr("height", height - yScale_ms2(thresholds["lower_percentile"]))
+                    .attr("height", function(){
+                        var check_height = height - yScale_ms2(thresholds["lower_percentile"]);
+                        if(check_height < 0){
+                            return 0;
+                        }
+                        return check_height;
+                    })
                     .attr("x",0)
                     .attr("y",yScale_ms2(thresholds["lower_percentile"]));
                 all_lines
@@ -11441,7 +11528,14 @@
                     .transition()
                     .duration(1000)
                     .attr("width", lineChartWidth)
-                    .attr("height", yScale_ms2(thresholds["threshold_low"]))
+                    .attr("height", function(){
+                        // catch neg heights
+                        var check_height = yScale_ms2(thresholds["threshold_low"]);
+                        if(check_height < 0){
+                            return 0;
+                        }
+                        return check_height;
+                    })
                     .attr("x",0)
                     .attr("y",yScale_ms2(thresholds["threshold_low"]));
                 all_lines
@@ -11449,7 +11543,14 @@
                     .transition()
                     .duration(1000)
                     .attr("width", lineChartWidth)
-                    .attr("height", yScale_ms2(thresholds["threshold_high"]))
+                    .attr("height", function(){
+                        // catch neg heights
+                        var check_height = yScale_ms2(thresholds["threshold_high"]);
+                        if(check_height < 0){
+                            return 0;
+                        }
+                        return check_height;
+                    })
                     .attr("x",0)
                     .attr("y",0);
                 all_lines
@@ -12113,7 +12214,7 @@
             }
         }
 
-        function draw_pressure_box(transition){
+        function draw_pressure_box(transition){ // not used
             // get width and height of plot area
             var plot_area = document.getElementById("plot_chart");
             var chart_header = document.getElementById("chart_header");
