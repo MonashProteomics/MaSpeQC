@@ -157,9 +157,7 @@
         // get machine data from controller
         let machine_data = <%-JSON.stringify(ejs_machine_data)%>;
 
-        // get all machine names from storage for nav bar
-        var proteomics = JSON.parse(sessionStorage.getItem("proteomics-machines"));
-        var metabolomics = JSON.parse(sessionStorage.getItem("metabolomics-machines"));
+        //
         
         // state variables
         let run_index = 0; 
@@ -596,7 +594,7 @@
 		document.addEventListener('DOMContentLoaded', function() {
 
             console.log(machine_data);
-            
+
             // set layout variables
             var navHeight = document.getElementById("navcontainer").clientHeight;
             chart_height = parseInt((window.innerHeight-navHeight)*2/3)/16; // in rem at 16
@@ -643,13 +641,14 @@
             
             
             create_layout();
-            if(machine_data["machine_details"]["machine_type"] == "thermo"){
-                create_pressure_profile();
-            }
             create_header_display();
             create_navbar_dropdown();
             create_chromatogram();
 
+            if(machine_data["machine_details"]["machine_type"] == "thermo"){
+                create_pressure_profile();
+            }
+            
             // create checked components look up (initial all neg)
             for(let i=0; i<machine_data.components.length; i++){
                 if(machine_data.components[i].component_mode == "N"){
@@ -5660,9 +5659,8 @@
             // DIV for Collapse Menu
             var collapse_div1 = document.createElement("div");
             collapse_div1.id = "radios1";
-            collapse_div1.className = "collapse collapseDiv";
+            collapse_div1.className = "collapse collapseDiv text-center";
             collapse_div1.setAttribute("data-parent", "#metric_menu_inner");
-            collapse_div1.className = "text-center";
             collapse_div1.style.left = 0;
             collapse_div1.style.top = 0;
             //collapse_div1.style.backgroundColor = "var(--dark)";
@@ -9502,20 +9500,30 @@
                 else{
                     el.nextSibling.classList.add("show");
                 }
-                
-                // update menu state
-                if(el.innerText == "LC-MS METRICS"){
-                    metric_menu_display = "lcms";
-                    metric_type = "lcms";
+
+                // track state so can manage when redrawb from date controls
+                if(event.target.classList.contains("pressure")){
+                    metric_show_display = "pressure";
                 }else{
-                    metric_menu_display = "pressure";
-                    metric_type = "pressure";
+                    metric_show_display = "lcms";
                 }
-                menu_state[metric_menu_display] = !menu_state[metric_menu_display];
+                menu_state[metric_show_display] = !menu_state[metric_show_display];
+                
             }
 
             // update display metric
             if(event.target.getAttribute("type") == "radio"){ // only respond to input
+
+                // update menu state
+                // console.log(el);
+                if(event.target.classList.contains("pressure")){
+                    metric_menu_display = "pressure";
+                    metric_type = "pressure";
+                }else{
+                    metric_menu_display = "lcms";
+                    metric_type = "lcms";
+                }
+                //menu_state[metric_menu_display] = !menu_state[metric_menu_display];
 
                 // disable/enable box plots for normalised
                 display_metric = event.target.labels[0].innerText;
@@ -9555,6 +9563,13 @@
                     document.getElementById("stream").disabled = false;
                     document.getElementById("stream").style.boxShadow = "gray 0.2em 0.2em 0.4em";
                     document.getElementById("stream").classList = "btn btn-custom";
+                    document.getElementById("density").disabled = false;
+                    document.getElementById("density").style.boxShadow = "gray 0.2em 0.2em 0.4em";
+                    document.getElementById("density").classList = "btn btn-custom";
+                    document.getElementById("parallel").disabled = false;
+                    document.getElementById("parallel").style.boxShadow = "gray 0.2em 0.2em 0.4em";
+                    document.getElementById("parallel").classList = "btn btn-custom";
+
                 }
                 else{
                     document.getElementById("heat").disabled = false;

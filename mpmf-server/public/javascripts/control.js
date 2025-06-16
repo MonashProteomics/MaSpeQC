@@ -14,6 +14,10 @@ function create_navbar_dropdown(){
     // get dropdown
     let nav_dropdown = document.getElementById('navbar-machines');
 
+    // get all machine names from storage for nav bar (needed by create_navbar_Dropdown or will error)
+    var proteomics = JSON.parse(sessionStorage.getItem("proteomics-machines"));
+    var metabolomics = JSON.parse(sessionStorage.getItem("metabolomics-machines"));
+
     // add metabolomics
     if(metabolomics.length > 0){
         let new_header = document.createElement("div");

@@ -194,9 +194,7 @@
         // get machine data from controller
         let machine_data = <%-JSON.stringify(ejs_machine_data)%>;
      
-        // get all machine names from storage for nav bar
-        var proteomics = JSON.parse(sessionStorage.getItem("proteomics-machines"));
-        var metabolomics = JSON.parse(sessionStorage.getItem("metabolomics-machines"));
+        //
         
         // state variables
         let run_index = 0; 
@@ -627,7 +625,7 @@
 		document.addEventListener('DOMContentLoaded', function() {
 
             console.log(machine_data);
-            
+
             // set layout variables
             var navHeight = document.getElementById("navcontainer").clientHeight;
             chart_height = parseInt((window.innerHeight-navHeight)*2/3)/16; // in rem at 16
