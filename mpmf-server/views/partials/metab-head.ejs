@@ -9490,9 +9490,10 @@
             if(el.tagName == "SPAN"){
                 el = event.target.parentElement;
             }
-
+            
             // manually collapse from button (bootstrap method not working)
             if(el.getAttribute("type") == "button"){
+                
                 
                 if(el.nextSibling.classList.contains("show")){
                     el.nextSibling.classList.remove("show");
@@ -9502,7 +9503,7 @@
                 }
 
                 // track state so can manage when redrawb from date controls
-                if(event.target.classList.contains("pressure")){
+                if(el.innerText == "PRESSURE METRICS"){
                     metric_show_display = "pressure";
                 }else{
                     metric_show_display = "lcms";
@@ -9514,16 +9515,12 @@
             // update display metric
             if(event.target.getAttribute("type") == "radio"){ // only respond to input
 
-                // update menu state
-                // console.log(el);
+                // update menu type (only if input selected)
                 if(event.target.classList.contains("pressure")){
-                    metric_menu_display = "pressure";
                     metric_type = "pressure";
                 }else{
-                    metric_menu_display = "lcms";
                     metric_type = "lcms";
                 }
-                //menu_state[metric_menu_display] = !menu_state[metric_menu_display];
 
                 // disable/enable box plots for normalised
                 display_metric = event.target.labels[0].innerText;

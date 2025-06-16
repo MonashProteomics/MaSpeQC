@@ -11643,16 +11643,12 @@
                 // update menu state
                 if(el.innerText == "LC-MS METRICS"){
                     metric_menu_display = "lcms";
-                    metric_type = "lcms";
                 }else if(el.innerText == "MS2 METRICS"){
                     metric_menu_display = "ms2";
-                    metric_type = "ms2";
                 }else if(el.innerText == "LOADING PUMP"){
                     metric_menu_display = "loading";
-                    metric_type = "pressure";
                 }else if(el.innerText == "NANO PUMP"){
                     metric_menu_display = "nano";
-                    metric_type = "pressure";
                 }
                 menu_state[metric_menu_display] = !menu_state[metric_menu_display];
                 
@@ -11660,6 +11656,19 @@
             
             // update display metric from radio
             if(event.target.getAttribute("type") == "radio"){ // only respond to input
+                
+                // update menu type (only if input selected)
+                if(event.target.classList.contains("ms2")){
+                    metric_type = "ms2";
+                }else if(event.target.classList.contains("lp")){
+                    metric_type = "pressure";
+                    pressure_type = "loading";
+                }else if(event.target.classList.contains("np")){
+                    metric_type = "pressure";
+                    pressure_type = "nano";
+                }else{
+                    metric_type = "lcms";
+                }
 
                 // disable/enable box plots for normalised
                 display_metric = event.target.labels[0].innerText;
