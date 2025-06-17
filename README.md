@@ -263,8 +263,8 @@ __Line charts__ show metric values over time for each of the selected input comp
 - Double click anywhere to reset the chart.
 
 ### Stream Graph  
-<img src="img/stream.PNG" alt="line" height="80%" width="80%"/>
-<img src="img/streamExpand.PNG" alt="line" height="80%" width="80%"/>  
+<img src="img/stream2.PNG" alt="line" height="80%" width="80%"/>
+<img src="img/streamExpand2.PNG" alt="line" height="80%" width="80%"/>  
       
 __Stream graphs__ show metric values over time for each of the selected input components. They can be viewed as stacked area charts where the y-axis shows accumulated absolute totals, or as 100% stacked area charts where the y-axis shows the percentage of the total readings.
 
