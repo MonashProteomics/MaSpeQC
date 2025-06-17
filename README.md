@@ -232,7 +232,7 @@ The chart controls at the bottom of each chart can be used to change between the
 ## Charts
 
 ### Summary
-<img src="img/summary.PNG" alt="summary" height="80%" width="80%"/>  
+<img src="img/summaryDark.png" alt="summary" height="80%" width="80%"/>  
   
 The __network chart__ summarises all identification-free and identification-based metrics and reports the average metric value of the selected input components. 
 The length of each edge is determined by how far that input component is from its optimal value. Nodes with optimal readings will rest against their metric node.  
@@ -245,7 +245,7 @@ The length of each edge is determined by how far that input component is from it
 - The date controls will animate the summary chart by moving the nodes allowing comparison between runs.  
 
 ### Line Charts  
-<img src="img/linechart.png" alt="line" height="80%" width="80%"/>  
+<img src="img/linechartDark.png" alt="line" height="80%" width="80%"/>  
   
 __Line charts__ show metric values over time for each of the selected input components. Shaded areas represent threshold breaches where applicable.
 
@@ -263,8 +263,8 @@ __Line charts__ show metric values over time for each of the selected input comp
 - Double click anywhere to reset the chart.
 
 ### Stream Graph  
-<img src="img/stream2.png" alt="line" height="80%" width="80%"/>
-<img src="img/streamExpand2.png" alt="line" height="80%" width="80%"/>  
+<img src="img/streamDark.png" alt="line" height="80%" width="80%"/>
+<img src="img/streamExpandDark.png" alt="line" height="80%" width="80%"/>  
       
 __Stream graphs__ show metric values over time for each of the selected input components. They can be viewed as stacked area charts where the y-axis shows accumulated absolute totals, or as 100% stacked area charts where the y-axis shows the percentage of the total readings.
 
@@ -279,7 +279,7 @@ __Stream graphs__ show metric values over time for each of the selected input co
 - Click on a stream to reposition it as the top stream (identification-based metrics only).
 
 ### Parallel Graph  
-<img src="img/parallel.PNG" alt="line" height="80%" width="80%"/>  
+<img src="img/parallelDark.png" alt="line" height="80%" width="80%"/>  
      
 __Parallel graphs__ show all of the metrics (identification-free or identification-based) on the one chart for the selected components. The axes are centered around their optimal values where applicable. 
 
@@ -302,7 +302,7 @@ __Box plots__ show a metric value on the display date (circle) in relation to it
 - Hover over a box for the box stats.
 
 ### Heat Maps
-<img src="img/heatmap.png" alt="line" height="80%" width="80%"/>  
+<img src="img/heatmapDark.png" alt="line" height="80%" width="80%"/>  
   
 Each column of a __heat map__ shows an individual component over time for that metric, and each row shows an individual QC run.
 
@@ -315,7 +315,7 @@ Each column of a __heat map__ shows an individual component over time for that m
 - NOTE: The maximum number of runs viewable on a heat map is 40.
 	
 ### Ridge Lines
-<img src="img/ridge.png" alt="line" height="80%" width="80%"/>  
+<img src="img/ridgeDark.png" alt="line" height="80%" width="80%"/>  
   
 __Ridge lines__ show the chromatograms of the selected components on one chart ordered by their expected retention time. The heights of the peaks are normalised by default.
 
