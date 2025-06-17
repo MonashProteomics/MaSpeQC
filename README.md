@@ -289,7 +289,7 @@ __Parallel graphs__ show all of the metrics (identification-free or identificati
 - Hover over a line to highlight that component across all metrics.
 
 ### Box Plots
-<img src="img/boxplot.png" alt="line" height="80%" width="80%"/>  
+<img src="img/boxplot2.png" alt="line" height="80%" width="80%"/>  
   
 __Box plots__ show a metric value on the display date (circle) in relation to its median and interquartile range. Shaded areas represent threshold breaches where applicable.
 
