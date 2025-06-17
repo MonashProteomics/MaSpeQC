@@ -5,6 +5,8 @@ Testing/
 #img
 data/
 
+mpmf-pipeline/MPMF_Chromatogram_Test.py
+
 mpmf-server/database-login.json
 mpmf-server/.maspeqc_gen
 

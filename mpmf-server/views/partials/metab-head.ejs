@@ -7050,6 +7050,7 @@
 
         function update_stream_graph(selectOne){
             //** called to transition component change **//
+            // transition removed, see metab code
 
             // loop for d3 stacked data
             var component_indexes = getComponentIndexes();
@@ -7116,6 +7117,7 @@
             }
 
             // streams
+            /*
             d3.selectAll(".streams")
             .data(stack)
             .transition().duration(1000)
@@ -7125,6 +7127,7 @@
             .style("stroke", function(d) {return colourByKey[d.key];})
             .style("opacity", 1)
             .attr("d", area);
+            */
 
             // re-draw to reset
             setTimeout(function(){

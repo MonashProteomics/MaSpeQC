@@ -5610,6 +5610,8 @@
 
         function update_stream_graph(selectOne){
             //** called to transition component change **//
+            // NOTE: transition not working and is just commented out below (tricky to get right and adds nothing)
+            //       chart just get redrawn
 
             // loop for d3 stacked data
             var component_indexes = getComponentIndexes();
@@ -5675,7 +5677,8 @@
                 d3.selectAll(".streams").style("opacity", 0);
             }
 
-            // streams
+            // streams (error transition code)
+            /*
             d3.selectAll(".streams")
             .data(stack)
             .transition().duration(1000)
@@ -5685,8 +5688,9 @@
             .style("stroke", function(d) {return colourByKey[d.key];})
             .style("opacity", 1)
             .attr("d", area);
+            */
 
-            // re-draw to reset
+            // just re-draw
             setTimeout(function(){
                 draw_stream_graph(false);
             }, 1000);
