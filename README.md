@@ -65,7 +65,8 @@ The 4 files that are required are named:
 - ThermoFisher.CommonCore.MassPrecisionEstimator.dll
 - ThermoFisher.CommonCore.RawFileReader.dll
 
-Finally, to unblock the files for use, Right Mouse click on each file and check 'Unblock'  
+Finally, to unblock the files for use on Windows machines, Right Mouse click on each file and check 'Unblock'  
+  
 ![thermounblock](img/thermoUnblock.PNG)
 
 
