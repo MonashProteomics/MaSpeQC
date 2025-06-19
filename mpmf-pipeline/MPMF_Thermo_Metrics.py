@@ -1,8 +1,13 @@
-import clr
-clr.AddReference("ThermoFisher.CommonCore.RawFileReader")
-from ThermoFisher.CommonCore.RawFileReader import RawFileReaderAdapter
-clr.AddReference("ThermoFisher.CommonCore.Data")
-from ThermoFisher.CommonCore.Data.Business import * # can probably more specific than '*'
+try:
+    import clr
+    clr.AddReference("ThermoFisher.CommonCore.RawFileReader")
+    from ThermoFisher.CommonCore.RawFileReader import RawFileReaderAdapter
+    clr.AddReference("ThermoFisher.CommonCore.Data")
+    from ThermoFisher.CommonCore.Data.Business import * # can probably more specific than '*'
+    dlls = True
+except:
+    print("No ThermoFisher libraries found")
+    dlls = False
 
 import numpy as np
 import os
@@ -13,6 +18,10 @@ import json
 class ThermoMetrics:
 
     def __init__(self, filepath, filename, exp, db, fs, machine):
+
+        # retur if no dlls
+        if not dlls:
+            return None
 
         self.exp = exp
         self.filepath = filepath

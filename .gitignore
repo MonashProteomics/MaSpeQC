@@ -6,6 +6,7 @@ Testing/
 data/
 
 mpmf-pipeline/MPMF_Chromatogram_Test.py
+mpmf-pipeline/MPMF_Thermo_Metrics_Test.py
 
 mpmf-server/database-login.json
 mpmf-server/.maspeqc_gen
