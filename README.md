@@ -65,6 +65,9 @@ The 4 files that are required are named:
 - ThermoFisher.CommonCore.MassPrecisionEstimator.dll
 - ThermoFisher.CommonCore.RawFileReader.dll
 
+Finally, to unblock the files for use, Right Mouse click on each file and check 'Unblock'  
+![thermounblock](img/thermoUmblock.png)
+
 
 ## Configuration
 Before using MaSpeQC, it is necessary to fill in a configuration form. The configuration process is triggered automatically during Windows installation and can be initiated manually as shown above for Linux and MacOS. The following inputs are required to configure the system:
@@ -115,7 +118,7 @@ https://dev.mysql.com/doc/mysql-getting-started/en/#mysql-getting-started-instal
 Make sure the database has been activated, then open a console window, navigate to  _/mpmf-pipeline/.venv/Scripts_ and type `activate.bat`.  
   
 This will activate the Python environment needed to process raw files. QC runs can now be triggered from the _/mpmf-pipeline_ directory with the command `python MPMF_Process_Raw_Files.py` and the following __3 arguments__:  
-- EXPERIMET TYPE: metabolomics/proteomics
+- EXPERIMENT TYPE: metabolomics/proteomics
 - NUMBER OF RUNS: The number of most recent runs to process (-1 equals process all).
 - EMAIL ALERT: Y/N for whether to send notification emails or not.
   
