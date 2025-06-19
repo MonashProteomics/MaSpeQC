@@ -66,7 +66,7 @@ The 4 files that are required are named:
 - ThermoFisher.CommonCore.RawFileReader.dll
 
 Finally, to unblock the files for use, Right Mouse click on each file and check 'Unblock'  
-![thermounblock](img/thermoUmblock.PNG)
+![thermounblock](img/thermoUnblock.PNG)
 
 
 ## Configuration
