@@ -115,24 +115,6 @@ For more information see https://dev.mysql.com/doc/refman/8.4/en/windows-start-s
 Consult the MySQL documentation for instructions on starting a database server for your system.  
 https://dev.mysql.com/doc/mysql-getting-started/en/#mysql-getting-started-installing
 
-## Processing Raw Files
-Make sure the database has been activated, then open a console window, navigate to  _/mpmf-pipeline/.venv/Scripts_ and type `activate.bat`.  
-  
-This will activate the Python environment needed to process raw files. QC runs can now be triggered from the _/mpmf-pipeline_ directory with the command `python MPMF_Process_Raw_Files.py` and the following __3 arguments__:  
-- EXPERIMENT TYPE: metabolomics/proteomics
-- NUMBER OF RUNS: The number of most recent runs to process (-1 equals process all).
-- EMAIL ALERT: Y/N for whether to send notification emails or not.
-  
-eg. `python MPMF_Process_Raw_Files.py "metabolomics" "10" "Y"`  
-eg. `python MPMF_Process_Raw_Files.py "proteomics" "-1" "N"`
-
-## Starting MaSpeQC
-After 5 QC runs have been processed for a machine, it is available for viewing in MaSpeQC. To start using MaSpeQC:
-- Open a console window, navigate to the __mpmf-server__ directory.
-- Type `npm start`
-- Open a browser window at your _localhost_ to start using MaSpeQC
-- __NOTE__: An attempt will be made to establish a _https_ connection, however if this fails a _http_ connection is established. Modify the location of certificate/key in the _www_ file to establish a _https_ connection.
-
 ## File Formats and Directory Structure
 The raw QC input files are required to be stored in __instrument_name__ (defined in configuration) folders in the input folder specified during configuration.
  ```
@@ -153,6 +135,25 @@ Where,
 - __TIMESTAMP__ = YYYYMMDDHHMMSS or YYYYMMDDHHMM
 	- The Timestamp defines the time of the QC run. 
 - __vendor__ is the vendor file format of the machine (.raw, .wiff, .d, .mzML)
+
+## Processing Raw Files
+Make sure the database has been activated, then open a console window, navigate to  _/mpmf-pipeline/.venv/Scripts_ and type `activate.bat`.  
+  
+This will activate the Python environment needed to process raw files. QC runs can now be triggered from the _/mpmf-pipeline_ directory with the command `python MPMF_Process_Raw_Files.py` and the following __3 arguments__:  
+- EXPERIMENT TYPE: metabolomics/proteomics
+- NUMBER OF RUNS: The number of most recent runs to process (-1 equals process all).
+- EMAIL ALERT: Y/N for whether to send notification emails or not.
+  
+eg. `python MPMF_Process_Raw_Files.py "metabolomics" "10" "Y"`  
+eg. `python MPMF_Process_Raw_Files.py "proteomics" "-1" "N"`
+
+## Starting MaSpeQC
+After 5 QC runs have been processed for a machine, it is available for viewing in MaSpeQC. To start using MaSpeQC:
+- Open a console window, navigate to the __mpmf-server__ directory.
+- Type `npm start`
+- Open a browser window at your _localhost_ to start using MaSpeQC
+- __NOTE__: An attempt will be made to establish a _https_ connection, however if this fails a _http_ connection is established. Modify the location of certificate/key in the _www_ file to establish a _https_ connection.
+
 
 ## FASTA database (Proteomics only)
 The Morpheus search algorithm for MS/MS data which is used during the processing of proteomics QC files requires a FASTA proteome database.
