@@ -1,5 +1,4 @@
 @echo off
-rem TODO: adjust links to MaSpeQC
 
 rem This batch file should be used to set up MaSpeQC initially.
 rem It supports the user by downloading and configuring all required software.
@@ -191,7 +190,7 @@ if not exist ..\data (
     echo == Starting MySQL server ^(in a new console window^)
     echo Do not stop the server and do not close the new window
     echo ^(You might be asked by the Windows Firewall to allow network access for mysqld.exe, please "Allow access"^)
-    echo TODO: We need to check if network access is necessary for mysqld.exe
+    rem TODO: We need to check if network access is necessary for mysqld.exe (TESTED see docs, access not necessary?)
     pause
     echo.
     echo == Checking if MySQL server is running already
@@ -202,7 +201,7 @@ if not exist ..\data (
         echo MySQL server is running already
         echo Cannot start a new instance of MySQL server
         echo It seems there is already a MySQL server running which cannot be used by the script
-        echo You will need to configure MySQL manually as described on https://github.com/CodeCaven/lc-ms-quality-control-visual-analytics/
+        echo You will need to configure MySQL manually as described on https://github.com/MonashProteomics/MaSpeQC
         echo Skipping MySQL configuration
         pause
         cd ..\..
@@ -221,7 +220,7 @@ if not exist ..\data (
         echo.
         echo MySQL server is not running
         echo It seems the MySQL server cannot be started by the script
-        echo You will need to configure MySQL manually as described on https://github.com/CodeCaven/lc-ms-quality-control-visual-analytics/
+        echo You will need to configure MySQL manually as described on https://github.com/MonashProteomics/MaSpeQC
         echo Skipping MySQL configuration
         pause
         cd ..\..
@@ -238,7 +237,7 @@ if not exist ..\data (
         if not "!output:maspeqc=!"=="!output!" (
             echo MaSpeQC database "maspeqc" exists already
             echo It seems a MaSpeQC database exists already
-            echo You will need to configure MySQL manually as described on https://github.com/CodeCaven/lc-ms-quality-control-visual-analytics/
+            echo You will need to configure MySQL manually as described on https://github.com/MonashProteomics/MaSpeQC
             echo Skipping MySQL configuration
             pause
             cd ..\..
@@ -255,7 +254,7 @@ if not exist ..\data (
     )
     echo MaSpeQC database "maspeqc" still does not exist
     echo It seems the MaSpeQC database could not be created by the script
-    echo You will need to configure MySQL manually as described on https://github.com/CodeCaven/lc-ms-quality-control-visual-analytics/
+    echo You will need to configure MySQL manually as described on https://github.com/MonashProteomics/MaSpeQC
     echo Skipping MySQL configuration
     pause
     cd ..\..
@@ -343,6 +342,7 @@ goto python
 :found-nodejs
 echo == Found Node.js !nodejs_version!
 rem Install node modules and run configuration
+rem TODO: We need to check which network access is necessary for Node.js JavaScript Runtime ^("Private", "Public"^) 
 if exist ..\mpmf-server if not exist ..\mpmf-server\node_modules (
     echo.
     echo Changing directory to node-v18.20.4-win-x64
@@ -359,7 +359,6 @@ if exist ..\mpmf-server if not exist ..\mpmf-server\node_modules (
         echo == Starting MaSpeQC server configuration
         echo Running "start call npm start --setup" ^(starts the MaSpeQC server in a new console window^)
         echo ^(You might be asked by the Windows Firewall to allow network access for Node.js JavaScript Runtime, please "Allow access"^)
-        echo TODO: We need to check which network access is necessary for Node.js JavaScript Runtime ^("Private", "Public"^)
         start call npm start --setup
         echo A Node.js server for the MaSpeQC configuration has been started ^(in a new console window^)
         echo A browser window will be opened now and the configuration for MaSpeQC will be loaded
@@ -770,7 +769,7 @@ if !success_msconvert! equ 1 (
 echo.
 if !success! equ 1 (
     echo MaSpeQC 1.0 has been configured successfully
-    echo You should be able to use MaSpeQC as described on https://github.com/CodeCaven/lc-ms-quality-control-visual-analytics/
+    echo You should be able to use MaSpeQC as described on https://github.com/MonashProteomics/MaSpeQC
 ) else (
     echo Could not configure MaSpeQC 1.0
     echo Please check the output above for errors
