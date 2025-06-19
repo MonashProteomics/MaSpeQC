@@ -52,6 +52,20 @@ Finally, set-up the node.js server by runnining `npm install` from the _mpmf-ser
 
 You can now configure MaSpeQC by running `npm start --setup` and opening a browser window at _http://localhost/configuration_.
 
+## Additional Installation Instructions for Thermo Fisher Scientific Instruments Only
+In order to process the pressure metrics and profiles which are a feature for Thermo Fisher Scientific instruments, the standard libraries for raw file access need to be included in MaSpeQC.  
+  
+Firstly, download and extract the available libraries from <a href="https://github.com/thermofisherlsms/RawFileReader/archive/refs/heads/main.zip">here</a>  
+
+Then, navigate to the folder for the .NET framework that is installed on the system (Net471, NetCore/Net5 or NetCore/Net8) and move the 4 _ThermoFisher_ dll files to the __mpmf-pipeline__ folder in MaSpeQC.  
+
+The 4 files that are required are named:
+- ThermoFisher.CommonCore.BackgroundSubtraction.dll
+- ThermoFisher.CommonCore.Data.dll
+- ThermoFisher.CommonCore.MassPrecisionEstimator.dll
+- ThermoFisher.CommonCore.RawFileReader.dll
+
+
 ## Configuration
 Before using MaSpeQC, it is necessary to fill in a configuration form. The configuration process is triggered automatically during Windows installation and can be initiated manually as shown above for Linux and MacOS. The following inputs are required to configure the system:
 
@@ -163,7 +177,7 @@ FASTA databases are available from many sources including <a href="https://www.u
 - __Target Protein Groups__: The number of identified protein groups.
 - __Precursor Mass Error__: The average mass error (in ppm) for all precursor ions.
 
-### Pressure Metrics (Thermo Scientific Only)
+### Pressure Metrics (Thermo Fisher Scientific Only)
 All pressure metrics are derived from the pressure profile displayed in the top right corner of the charts page.
 #### Main Pump (Metabolomics/Lipidomics Only)
 - __Max Pressure__: Maximum recorded pressure during the run.
