@@ -5,11 +5,34 @@ import sys
 
 from MPMF_File_System import FileSystem
 
+# LOGGING
+# create module logger 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+# create file handler which logs even debug messages
+fh = logging.FileHandler('database.log')
+fh.setLevel(logging.DEBUG)
+
+# create console handler with a higher log level
+ch = logging.StreamHandler()
+ch.setLevel(logging.INFO)
+
+# create formatter and add it to the handlers
+formatter = logging.Formatter('%(levelname)s - %(name)s - %(asctime)s - %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+fh.setFormatter(formatter)
+ch.setFormatter(formatter)
+
+# add the handlers to the logger
+logger.addHandler(fh)
+logger.addHandler(ch)
+
 try:
     import pymysql as MySQLdb
     MySQLdb.install_as_MySQLdb()
-except ImportError:
-    pass
+except ImportError as e:
+    logger.exception(e)
+    sys.exit(1)
 
 
 class MPMFDBSetUp:
@@ -27,18 +50,18 @@ class MPMFDBSetUp:
         self.database = database
         self.fs = filesystem
         self.port = portnumber
-        logging.basicConfig(filename='database.log', format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',
-                            level=logging.INFO)
         self.connected = False
         try:
             self.db = MySQLdb.connect(host="localhost", user=self.username, password=self.password, db=self.database, port=self.port)
             self.cursor = self.db.cursor()
             self.connected = True
+            logger.info("Database Connection Made")
         except Exception as e:
-            logging.info(e)
+            logger.exception(e)
+            sys.exit(1)
 
     def set_up(self):
-        #self.drop_all_tables()
+        self.drop_all_tables()
         self.create_all_tables()
         self.insert_all()
         self.cursor.close()
@@ -72,7 +95,7 @@ class MPMFDBSetUp:
         try:
             self.cursor.execute(sql)
         except Exception as e:
-            logging.exception(e)
+            logger.exception(e)
 
     def create_table_digest(self):
 
@@ -88,10 +111,9 @@ class MPMFDBSetUp:
         try:
             self.cursor.execute(sql)
         except Exception as e:
-            logging.exception(e)
+            logger.exception(e)
 
     def create_table_qc_run(self):
-        # no id to avoid accidental duplicates ??
         sql = "CREATE TABLE IF NOT EXISTS qc_run(" \
         "run_id INT AUTO_INCREMENT NOT NULL," \
         "file_name TINYTEXT NOT NULL," \
@@ -107,7 +129,7 @@ class MPMFDBSetUp:
         try:
             self.cursor.execute(sql)
         except Exception as e:
-            logging.exception(e)
+            logger.exception(e)
 
     def create_table_metric(self):
         sql = "CREATE TABLE IF NOT EXISTS metric (" \
@@ -125,7 +147,7 @@ class MPMFDBSetUp:
         try:
             self.cursor.execute(sql)
         except Exception as e:
-            logging.exception(e)
+            logger.exception(e)
 
     def create_table_measurement(self):
         # watch FLOAT for value for range, powers in area metric
@@ -143,7 +165,7 @@ class MPMFDBSetUp:
         try:
             self.cursor.execute(sql)
         except Exception as e:
-            logging.exception(e)
+            logger.exception(e)
 
     def create_table_stat(self):
 
@@ -167,7 +189,7 @@ class MPMFDBSetUp:
         try:
             self.cursor.execute(sql)
         except Exception as e:
-            logging.exception(e)
+            logger.exception(e)
 
     def create_table_machine(self):
 
@@ -184,7 +206,7 @@ class MPMFDBSetUp:
         try:
             self.cursor.execute(sql)
         except Exception as e:
-            logging.exception(e)
+            logger.exception(e)
 
     def create_table_experiment(self):
         sql = "CREATE TABLE IF NOT EXISTS experiment (" \
@@ -195,7 +217,7 @@ class MPMFDBSetUp:
         try:
             self.cursor.execute(sql)
         except Exception as e:
-            logging.exception(e)
+            logger.exception(e)
 
     def create_table_pressure_profile(self):
         sql = "CREATE TABLE IF NOT EXISTS pressure_profile (" \
@@ -209,7 +231,7 @@ class MPMFDBSetUp:
         try:
             self.cursor.execute(sql)
         except Exception as e:
-            logging.exception(e)
+            logger.exception(e)
 
     def create_table_chromatogram(self):
         sql = "CREATE TABLE IF NOT EXISTS chromatogram (" \
@@ -225,7 +247,7 @@ class MPMFDBSetUp:
         try:
             self.cursor.execute(sql)
         except Exception as e:
-            logging.exception(e)
+            logger.exception(e)
 
 
     # DROP TABLES
@@ -235,7 +257,7 @@ class MPMFDBSetUp:
         try:
             self.cursor.execute(sql)
         except Exception as e:
-            logging.exception(e)
+            logger.exception(e)
         self.db.commit()
 
     def drop_all_tables(self):
@@ -265,14 +287,14 @@ class MPMFDBSetUp:
             self.cursor.execute(sql)
             metab_exp_id = self.cursor.fetchone()[0]
         except Exception as e:
-            logging.exception(e)
+            logger.exception(e)
 
         sql = "SELECT experiment_id FROM experiment where experiment_type = 'proteomics'"
         try:
             self.cursor.execute(sql)
             prot_exp_id = self.cursor.fetchone()[0]
         except Exception as e:
-            logging.exception(e)
+            logger.exception(e)
 
         # get all machines
         sql = "SELECT * FROM machine"
@@ -280,7 +302,7 @@ class MPMFDBSetUp:
             self.cursor.execute(sql)
             machines = self.cursor.fetchall()
         except Exception as e:
-            logging.exception(e)
+            logger.exception(e)
 
         # HERE inserts, plus digest ID for insert components
         for machine in machines:
@@ -289,14 +311,14 @@ class MPMFDBSetUp:
             try:
                 self.cursor.execute(sql)
             except Exception as e:
-                logging.exception(e)
+                logger.exception(e)
 
             # prot
             sql = "INSERT INTO DIGEST VALUES ('2', '" + str(machine[0]) + "', '" + str(prot_exp_id) + "',NULL)"
             try:
                 self.cursor.execute(sql)
             except Exception as e:
-                logging.exception(e)
+                logger.exception(e)
 
         self.db.commit()
 
@@ -309,7 +331,7 @@ class MPMFDBSetUp:
         try:
             self.cursor.execute(sql)
         except Exception as e:
-            logging.exception(e)
+            logger.exception(e)
 
         # insert metab default digest
         sql = "INSERT INTO sample_component(component_id, component_name, exp_mass_charge, exp_rt, digest_id) " \
@@ -318,7 +340,7 @@ class MPMFDBSetUp:
         try:
             self.cursor.execute(sql)
         except Exception as e:
-            logging.exception(e)
+            logger.exception(e)
 
         # insert neg metab components
         with open(os.path.join(self.fs.databases, "negative-db-Default.csv"), 'r') as infile:
@@ -332,7 +354,7 @@ class MPMFDBSetUp:
                     try:
                         self.cursor.execute(sql)
                     except Exception as e:
-                        logging.exception(e)
+                        logger.exception(e)
 
             self.db.commit()
 
@@ -348,7 +370,7 @@ class MPMFDBSetUp:
                     try:
                         self.cursor.execute(sql)
                     except Exception as e:
-                        logging.exception(e)
+                        logger.exception(e)
 
             self.db.commit()
 
@@ -364,7 +386,7 @@ class MPMFDBSetUp:
                     try:
                         self.cursor.execute(sql)
                     except Exception as e:
-                        logging.exception(e)
+                        logger.exception(e)
 
             self.db.commit()
 
@@ -386,7 +408,7 @@ class MPMFDBSetUp:
                     try:
                         self.cursor.execute(sql)
                     except Exception as e:
-                        logging.exception(e)
+                        logger.exception(e)
 
                 self.db.commit()
 
@@ -403,7 +425,7 @@ class MPMFDBSetUp:
                         self.cursor.execute(sql)
                         check = self.cursor.fetchone()
                     except Exception as e:
-                        logging.exception(e)
+                        logger.exception(e)
 
                     # update
                     if check:
@@ -411,7 +433,7 @@ class MPMFDBSetUp:
                         try:
                             self.cursor.execute(sql)
                         except Exception as e:
-                            logging.exception(e)
+                            logger.exception(e)
                     else: # insert
                         sql = "INSERT INTO machine(machine_id, machine_name, use_metab, use_prot, machine_type) " \
                               "VALUES (NULL, " + "'" + machine[0].strip() + \
@@ -420,7 +442,7 @@ class MPMFDBSetUp:
                         try:
                             self.cursor.execute(sql)
                         except Exception as e:
-                            logging.exception(e)
+                            logger.exception(e)
 
                 self.db.commit()
 
@@ -431,14 +453,14 @@ class MPMFDBSetUp:
         try:
             self.cursor.execute(sql)
         except Exception as e:
-            logging.exception(e)
+            logger.exception(e)
 
         sql = "INSERT INTO experiment(experiment_id, experiment_type) " \
               "VALUES (NULL, " + "'metabolomics')"
         try:
             self.cursor.execute(sql)
         except Exception as e:
-            logging.exception(e)
+            logger.exception(e)
 
         self.db.commit()
 
@@ -456,7 +478,7 @@ class MPMFDBSetUp:
                 try:
                     self.cursor.execute(sql)
                 except Exception as e:
-                    logging.exception(e)
+                    logger.exception(e)
             self.db.commit()
 
     def insert_morpheus_metrics(self):
@@ -473,7 +495,7 @@ class MPMFDBSetUp:
                 try:
                     self.cursor.execute(sql)
                 except Exception as e:
-                    logging.exception(e)
+                    logger.exception(e)
             self.db.commit()
 
     def insert_thermo_metrics(self):
@@ -490,7 +512,7 @@ class MPMFDBSetUp:
                 try:
                     self.cursor.execute(sql)
                 except Exception as e:
-                    logging.exception(e)
+                    logger.exception(e)
             self.db.commit()
 
     # SELECTS
@@ -504,7 +526,7 @@ class MPMFDBSetUp:
             for line in result:
                 print(line)
         except Exception as e:
-            logging.exception(e)
+            logger.exception(e)
 
     # GETS
     def get_run_id(self, datafile):
@@ -514,7 +536,7 @@ class MPMFDBSetUp:
             run_id = self.cursor.fetchone()
             return run_id[0]
         except Exception as e:
-            print(e)
+            logger.exception(e)
             return False
 
     def get_metric_id(self, name):
@@ -524,7 +546,7 @@ class MPMFDBSetUp:
             metric_id = self.cursor.fetchone()
             return metric_id[0]
         except Exception as e:
-            print(e)
+            logger.exception(e)
             return False
 
     def get_component_id(self, name):
@@ -534,7 +556,7 @@ class MPMFDBSetUp:
             comp_id = self.cursor.fetchone()
             return comp_id[0]
         except Exception as e:
-            print(e)
+            logger.exception(e)
             return False
 
     def get_measurement(self, cid, mid, rid):
@@ -552,7 +574,7 @@ class MPMFDBSetUp:
             measurement = self.cursor.fetchone()
             return measurement
         except Exception as e:
-            print(e)
+            logger.exception(e)
             return False
 
 
@@ -568,7 +590,7 @@ class MPMFDBSetUp:
                 try:
                     self.cursor.execute(sql)
                 except Exception as e:
-                    print(e)
+                    logger.exception(e)
             self.db.commit()
 
     def update_morpheus_metrics(self):
@@ -582,7 +604,7 @@ class MPMFDBSetUp:
                 try:
                     self.cursor.execute(sql)
                 except Exception as e:
-                    logging.exception(e)
+                    logger.exception(e)
             self.db.commit()
 
     def update_thermo_metrics(self):
@@ -596,7 +618,7 @@ class MPMFDBSetUp:
                 try:
                     self.cursor.execute(sql)
                 except Exception as e:
-                    logging.exception(e)
+                    logger.exception(e)
             self.db.commit()
 
 if __name__ == "__main__":
@@ -606,7 +628,7 @@ if __name__ == "__main__":
         with open(os.path.join(os.getcwd(), "Config", "database-login.json"), 'r') as f:
             db_details = json.load(f)
     except Exception as e:
-        print(e)
+        logger.exception(e)
         sys.exit(1)
 
     # db details
@@ -618,14 +640,12 @@ if __name__ == "__main__":
         with open(os.path.join(os.getcwd(), "Config", ".maspeqc_gen"), "r") as f:
             password = f.read()
     except Exception as e:
-        print(e)
+        logger.exception(e)
         sys.exit(1)
 
 
-    # file system and logging
+    # file system obj
     fs = FileSystem("", "", "", "")
-    logging.basicConfig(filename='database.log', format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',
-                        level=logging.INFO)
 
     # connect to db
     db = MPMFDBSetUp(user, password, database_name, fs, port)
@@ -633,9 +653,7 @@ if __name__ == "__main__":
     if db.connected:
         # add tables and data
         db.set_up()
-        logging.info("Database Loaded Successfully")
+        logger.info("Database Loaded Successfully")
     
         # close conenction  
         db.db.close()
-    else:
-        print("No database connection")
