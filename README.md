@@ -52,6 +52,24 @@ Finally, set-up the node.js server by runnining `npm install` from the _mpmf-ser
 
 You can now configure MaSpeQC by running `npm start --setup` and opening a browser window at _http://localhost/configuration_.
 
+## Additional Installation Instructions for Thermo Fisher Scientific Instruments Only
+In order to process the pressure metrics and profiles which are a feature for Thermo Fisher Scientific instruments, the standard libraries for raw file access need to be included in MaSpeQC.  
+  
+Firstly, download and extract the available libraries from <a href="https://github.com/thermofisherlsms/RawFileReader/archive/refs/heads/main.zip">here</a>  
+
+Then, navigate to the folder for the .NET framework that is installed on the system (Net471, NetCore/Net5 or NetCore/Net8) and move the 4 _ThermoFisher_ dll files to the __mpmf-pipeline__ folder in MaSpeQC.  
+
+The 4 files that are required are named:
+- ThermoFisher.CommonCore.BackgroundSubtraction.dll
+- ThermoFisher.CommonCore.Data.dll
+- ThermoFisher.CommonCore.MassPrecisionEstimator.dll
+- ThermoFisher.CommonCore.RawFileReader.dll
+
+Finally, to unblock the files for use on Windows machines, Right Mouse click on each file and check 'Unblock'  
+  
+![thermounblock](img/thermoUnblock.PNG)
+
+
 ## Configuration
 Before using MaSpeQC, it is necessary to fill in a configuration form. The configuration process is triggered automatically during Windows installation and can be initiated manually as shown above for Linux and MacOS. The following inputs are required to configure the system:
 
@@ -97,23 +115,6 @@ For more information see https://dev.mysql.com/doc/refman/8.4/en/windows-start-s
 Consult the MySQL documentation for instructions on starting a database server for your system.  
 https://dev.mysql.com/doc/mysql-getting-started/en/#mysql-getting-started-installing
 
-## Processing Raw Files
-Make sure the database has been activated, then open a console window, navigate to  _/mpmf-pipeline/.venv/Scripts_ and type `activate.bat`. You can close the console window after the processing has finished.  
-  
-This will activate the Python environment needed to process raw files. QC runs can now be triggered from the _/mpmf-pipeline_ directory with the command `python MPMF_Process_Raw_Files.py` and the following __3 arguments__:  
-- metabolomics/proteomics
-- The number of most recent runs to process (-1 equals process all).
-- Y/N for whether to send notification emails or not.
-- eg. `python MPMF_Process_Raw_Files.py "metabolomics" "10" "Y"`
-- eg. `python MPMF_Process_Raw_Files.py "proteomics" "-1" "N"`
-
-## Starting MaSpeQC
-After 5 QC runs have been processed for a machine, it is available for viewing in MaSpeQC. To start using MaSpeQC:
-- Open a console window, navigate to the __mpmf-server__ directory.
-- Type `npm start`
-- Open a browser window at your _localhost_ to start using MaSpeQC
-- __NOTE__: An attempt will be made to establish a _https_ connection, however if this fails a _http_ connection is established. Modify the location of certificate/key in the _www_ file to establish a _https_ connection.
-
 ## File Formats and Directory Structure
 The raw QC input files are required to be stored in __instrument_name__ (defined in configuration) folders in the input folder specified during configuration.
  ```
@@ -134,6 +135,25 @@ Where,
 - __TIMESTAMP__ = YYYYMMDDHHMMSS or YYYYMMDDHHMM
 	- The Timestamp defines the time of the QC run. 
 - __vendor__ is the vendor file format of the machine (.raw, .wiff, .d, .mzML)
+
+## Processing Raw Files
+Make sure the database has been activated, then open a console window, navigate to  _/mpmf-pipeline/.venv/Scripts_ and type `activate.bat`.  
+  
+This will activate the Python environment needed to process raw files. QC runs can now be triggered from the _/mpmf-pipeline_ directory with the command `python MPMF_Process_Raw_Files.py` and the following __3 arguments__:  
+- EXPERIMENT TYPE: metabolomics/proteomics
+- NUMBER OF RUNS: The number of most recent runs to process (-1 equals process all).
+- EMAIL ALERT: Y/N for whether to send notification emails or not.
+  
+eg. `python MPMF_Process_Raw_Files.py "metabolomics" "10" "Y"`  
+eg. `python MPMF_Process_Raw_Files.py "proteomics" "-1" "N"`
+
+## Starting MaSpeQC
+After 5 QC runs have been processed for a machine, it is available for viewing in MaSpeQC. To start using MaSpeQC:
+- Open a console window, navigate to the __mpmf-server__ directory.
+- Type `npm start`
+- Open a browser window at your _localhost_ to start using MaSpeQC
+- __NOTE__: An attempt will be made to establish a _https_ connection, however if this fails a _http_ connection is established. Modify the location of certificate/key in the _www_ file to establish a _https_ connection.
+
 
 ## FASTA database (Proteomics only)
 The Morpheus search algorithm for MS/MS data which is used during the processing of proteomics QC files requires a FASTA proteome database.
@@ -163,7 +183,7 @@ FASTA databases are available from many sources including <a href="https://www.u
 - __Target Protein Groups__: The number of identified protein groups.
 - __Precursor Mass Error__: The average mass error (in ppm) for all precursor ions.
 
-### Pressure Metrics (Thermo Scientific Only)
+### Pressure Metrics (Thermo Fisher Scientific Only)
 All pressure metrics are derived from the pressure profile displayed in the top right corner of the charts page.
 #### Main Pump (Metabolomics/Lipidomics Only)
 - __Max Pressure__: Maximum recorded pressure during the run.
