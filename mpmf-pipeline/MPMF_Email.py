@@ -4,6 +4,8 @@ import ssl
 import json
 from email.message import EmailMessage
 from bs4 import BeautifulSoup
+import logging
+logger = logging.getLogger('processing.email')
 
 
 class SendEmail:
@@ -61,8 +63,7 @@ class SendEmail:
                     msg['To'] = email[0].strip()
                     server.send_message(msg)
                 except Exception as e:
-                    print(email[0])
-                    print(e)
+                    logger.exception(e)
 
     def create_subject(self):
         return "WARNING:" + self.email_data['metadata']['experiment'].upper() + " QC for " + \
@@ -157,8 +158,6 @@ class SendEmail:
                         row_tag.append(col_tag)
                         table_tag.append(row_tag)
                 tag_tables.append(table_tag)
-                #print(self.email_data)
-
-        #print(self.soup.prettify())
+                
         return str(self.soup)
 

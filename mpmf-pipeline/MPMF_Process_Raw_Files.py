@@ -8,15 +8,35 @@ import platform
 import shutil
 import subprocess
 import sys
-#import time
 from MPMF_File_System import FileSystem
 from MPMF_Database_SetUp import MPMFDBSetUp
 from MPMF_Stats import Stat
 from MPMF_Chromatogram import Chromatogram
 from MPMF_Email import SendEmail
 from MPMF_Thermo_Metrics import ThermoMetrics
-
 getcontext().prec = 12
+
+# LOGGING
+# create module logger 
+logger = logging.getLogger('processing')
+logger.setLevel(logging.DEBUG)
+
+# create file handler which logs even debug messages
+fh = logging.FileHandler('processing.log')
+fh.setLevel(logging.DEBUG)
+
+# create console handler with a higher log level
+ch = logging.StreamHandler()
+ch.setLevel(logging.INFO)
+
+# create formatter and add it to the handlers
+formatter = logging.Formatter('%(levelname)s - %(name)s - %(asctime)s - %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+fh.setFormatter(formatter)
+ch.setFormatter(formatter)
+
+# add the handlers to the logger
+logger.addHandler(fh)
+logger.addHandler(ch)
 
 
 class ProcessRawFile:
@@ -71,8 +91,8 @@ class ProcessRawFile:
                                         email_data['metadata'] = self.metadata
                                         SendEmail(email_data, self.db, self.fs)
                                     else:
-                                        print("No Thresholds breached, No Email Sent")
-                                print("Inserted Data for " + self.machine + " " + self.file_name)
+                                        logger.info("No Thresholds breached, No Email Sent")
+                                logger.info("Inserted Data for " + self.machine + " " + self.file_name)
                                 check_run = True
                             elif self.experiment == "PROTEOMICS":
                                 self.insert_pos_csv()
@@ -86,22 +106,22 @@ class ProcessRawFile:
                                             email_data['metadata'] = self.metadata
                                             SendEmail(email_data, self.db, self.fs)
                                         else:
-                                            print("No Thresholds breached, No Email Sent")
-                                    print("Inserted Data for " + self.machine + " " + self.file_name)
+                                            logger.info("No Thresholds breached, No Email Sent")
+                                    logger.info("Inserted Data for " + self.machine + " " + self.file_name)
                                     check_run = True
                                 else:
                                     self.delete_run()
-                                    print("Morpheus error " + self.file_name)
+                                    logger.error("Morpheus error " + self.file_name)
                         else:
-                            print("Insert run details error " + self.file_name)
+                            logger.error("Insert run details error " + self.file_name)
                     else:
-                        print("mzMine: processing error " + self.file_name)
+                        logger.error("mzMine: processing error " + self.file_name)
                 else:
-                    print("msconvert: file too small or still writing  " + self.file_name)
+                    logger.error("msconvert: file too small or still writing  " + self.file_name)
             else:
-                print("Already Inserted " + self.file_name)
+                logger.info("Already Inserted " + self.file_name)
         else:
-            print("Incorrect file format " + self.file_name)
+            logger,error("Incorrect file format " + self.file_name)
 
         os.chdir(self.fs.main_dir)
         
@@ -129,7 +149,7 @@ class ProcessRawFile:
             mzmine_command = 'startMZmine-macOS.bat '
 
         if mzmine_loc == '':
-            print("Unable to determine platform")
+            logger.error("Unable to determine platform for mzMine")
             return False
         
         os.chdir(os.path.join(self.fs.sw_dir, mzmine_loc))
@@ -165,7 +185,7 @@ class ProcessRawFile:
         # search database 
         morph_db = os.path.join(self.fs.sw_dir, "Morpheus (mzML)", "CUSTOM.fasta")
         if not os.path.exists(morph_db):
-            print("Please add a CUSTOM.fasta file to the Morpheus(mzML) folder and process again")
+            logger.error("Please add a CUSTOM.fasta file to the Morpheus(mzML) folder and process again")
             return False
 
         # software location
@@ -255,7 +275,7 @@ class ProcessRawFile:
             self.db.cursor.execute(sql)
             data = self.db.cursor.fetchall()
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
         return len(data)
         
@@ -267,7 +287,7 @@ class ProcessRawFile:
             self.db.cursor.execute(sql)
             self.db.db.commit()
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
     def check_file_name(self):
         # QC_Metabolomics_Timestamp
@@ -281,7 +301,7 @@ class ProcessRawFile:
                 datetime.datetime.strptime(self.file_name[-12:], "%Y%m%d%H%M")
                 return True
             except ValueError as e:
-                print("Not a valid timestamp " + self.file_name)
+                logger.error("Not a valid timestamp " + self.file_name)
                 return False
 
     # CREATE
@@ -294,18 +314,11 @@ class ProcessRawFile:
         outfile_xml = os.path.join(self.outfiles_dir, self.file_name + ".xml")
         pos_output_file = os.path.join(self.outfiles_dir, "posoutput.csv")
         neg_output_file = os.path.join(self.outfiles_dir, "negoutput.csv")
-        #print(batch)
-        #print(outfile_xml)
-        #print(pos_file)
-        #print(pos_file)
-        #print(neg_db)
-        #print(neg_file)
 
         new_xml = []
         os.chdir(self.fs.main_dir)
         with open(self.fs.xml_template_metab, 'r') as infile:
             for line in infile:
-                #print(line)
                 new_line = line.strip()
                 new_line = new_line.replace('POSINPUTFILE', self.pos_file)
                 new_line = new_line.replace('NEGINPUTFILE', self.neg_file)
@@ -319,8 +332,7 @@ class ProcessRawFile:
         with open(outfile_xml, 'w') as outfile:
             for line in new_xml:
                 outfile.write(line + "\n")
-                #print("XML")
-                #print(line)
+        
 
     def create_proteo_xml(self):
         self.pos_file = os.path.join(self.outfiles_dir, self.file_name + "_pos.mzML")
@@ -333,7 +345,6 @@ class ProcessRawFile:
         os.chdir(self.fs.main_dir)
         with open(self.fs.xml_template_proteo, 'r') as infile:
             for line in infile:
-                #print(line)
                 new_line = line.strip()
                 new_line = new_line.replace('POSINPUTFILE', self.pos_file)
                 new_line = new_line.replace('POSDATABASEFILE', pos_db)
@@ -344,8 +355,6 @@ class ProcessRawFile:
         with open(outfile_xml, 'w') as outfile:
             for line in new_xml:
                 outfile.write(line + "\n")
-                #print("XML")
-                #print(line)
 
     # INSERT
     def insert_morpheus(self):
@@ -370,7 +379,7 @@ class ProcessRawFile:
             self.db.cursor.execute(sql)
             hela_id = self.db.cursor.fetchone()[0]
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
         for key in summary:
             # get metric_id
@@ -379,19 +388,17 @@ class ProcessRawFile:
                 self.db.cursor.execute(sql)
                 met_id = self.db.cursor.fetchone()
             except Exception as e:
-                print(e)
+                logger.exception(e)
 
             # insert measurement
             if met_id is not None:
-                #print(met_id[0])
-                #print(summary[key])
                 sql = "INSERT INTO measurement VALUES ( '" + str(met_id[0]) + "','" + str(hela_id) + \
                       "','" + str(run_id) + "','" + str(summary[key]) + "')"
 
                 try:
                     self.db.cursor.execute(sql)
                 except Exception as e:
-                    print(e)
+                    logger.exception(e)
 
                 self.db.db.commit()
 
@@ -423,7 +430,6 @@ class ProcessRawFile:
             if ppm > -50 and ppm < 50 and target == 'True' and score > 13: # constraints
                 total += ppm
                 count +=1
-                #print(ppm, target, score)
 
         if count > 0:
             average = total/count
@@ -437,7 +443,7 @@ class ProcessRawFile:
             self.db.cursor.execute(sql)
             mid = self.db.cursor.fetchone()
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
         # insert
         sql = "INSERT INTO measurement VALUES ( '" + str(mid[0]) + "','" + str(hid) + \
@@ -446,7 +452,7 @@ class ProcessRawFile:
         try:
             self.db.cursor.execute(sql)
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
         self.db.db.commit()
 
@@ -461,15 +467,13 @@ class ProcessRawFile:
         with open(os.path.join(self.outfiles_dir, "posoutput.csv"), "r") as incsv:
             for line in incsv:
                 in_data = line.strip().split("|")
-                #print(in_data)
                 if in_data[0][0] != 'r': # skip first line
                     sql = "SELECT component_id FROM sample_component WHERE component_name = " + "'" + in_data[0] + "'"
                     try:
                         self.db.cursor.execute(sql)
                         comp_id = self.db.cursor.fetchone()
-                        #print(comp_id)
                     except Exception as e:
-                        print(e)
+                        logger.exception(e)
 
                     for i in range(1, 10): # watch i as metric id here REFACTOR change metric names to mzmine and get ids
                         # handle nulls, put to 0, other values ??
@@ -482,7 +486,7 @@ class ProcessRawFile:
                             self.db.cursor.execute(ins_sql)
                             self.db.db.commit()
                         except Exception as e:
-                            print(e)
+                            logger.exception(e)
 
                     self.insert_derived_errors(run_id, comp_id[0])
 
@@ -497,15 +501,13 @@ class ProcessRawFile:
         with open(os.path.join(self.outfiles_dir, "negoutput.csv"), "r") as incsv:
             for line in incsv:
                 in_data = line.strip().split("|")
-                #print(in_data)
                 if in_data[0][0] != 'r': # skip first line
                     sql = "SELECT component_id FROM sample_component WHERE component_name = " + "'" + in_data[0] + "'"
                     try:
                         self.db.cursor.execute(sql)
                         comp_id = self.db.cursor.fetchone()
-                        #print(comp_id)
                     except Exception as e:
-                        print(e)
+                        logger.exception(e)
 
                     for i in range(1, 10):
                         # handle nulls, put to 0, other values ??
@@ -518,7 +520,7 @@ class ProcessRawFile:
                             self.db.cursor.execute(ins_sql)
                             self.db.db.commit()
                         except Exception as e:
-                            print("Database from Process: insert neg csv")
+                            logger.exception(e)
 
                     self.insert_derived_errors(run_id, comp_id[0])
 
@@ -528,7 +530,7 @@ class ProcessRawFile:
             self.db.cursor.execute(sql)
             emc = self.db.cursor.fetchone()
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
 
         sql2 = "SELECT value FROM measurement WHERE component_id = " + str(c_id) + " AND run_id = " \
@@ -537,18 +539,13 @@ class ProcessRawFile:
             self.db.cursor.execute(sql2)
             m_value = self.db.cursor.fetchone()
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
         # data type nightmare c/o mysql and python
         diff = Decimal(m_value[0]) - Decimal(emc[0])
         ppm = (diff/emc[0]) * Decimal(1e6)
         dalton = diff * Decimal(1e3)
-        #print(diff)
-        #print(ppm)
-        #print(dalton)
 
-        # WATCH: hard coded metric ids based on order from config file
-        #        change to selects from db
         ins_sql1 = "INSERT INTO measurement VALUES( " + "'" + "10" + "', '" + str(c_id) \
                                     + "', '" + str(r_id) + "', '" + str(ppm) + "')"
 
@@ -560,7 +557,7 @@ class ProcessRawFile:
             self.db.cursor.execute(ins_sql2)
             self.db.db.commit()
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
     def insert_qc_run_data(self):
 
@@ -572,7 +569,7 @@ class ProcessRawFile:
             eid = self.db.cursor.fetchone()
             self.eid = eid[0] # store for stats
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
         # get machine id
         m_sql = "SELECT machine_id FROM machine WHERE machine_name = " + "'" + self.machine + "'"
@@ -581,7 +578,7 @@ class ProcessRawFile:
             self.db.cursor.execute(m_sql)
             self.mid = self.db.cursor.fetchone() # store machine id
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
 
         run_date = self.get_run_date_time()
@@ -592,7 +589,7 @@ class ProcessRawFile:
         try:
             self.db.cursor.execute(sql)
         except Exception as e:
-            print(e)
+            logger.exception(e)
             return False
 
         self.db.db.commit()
@@ -611,7 +608,7 @@ class ProcessRawFile:
             self.db.cursor.execute(sql)
             self.db.db.commit()
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
     # EMAIL
     def check_email_thresholds_prot(self):
@@ -1008,7 +1005,7 @@ class ProcessRawFile:
             self.db.cursor.execute(sql)
             fwhm_id = self.db.cursor.fetchone()[0]
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
         sql = "SELECT run_id FROM qc_run WHERE file_name = " + "'" + self.file_name + "'"
 
@@ -1016,7 +1013,7 @@ class ProcessRawFile:
             self.db.cursor.execute(sql)
             run_id = self.db.cursor.fetchone()[0]
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
         update_sql = "UPDATE measurement SET value = value*60 WHERE run_id = " + "'" + str(run_id) + "'" + \
                     " AND metric_id = " + "'" + str(fwhm_id) + "'"
@@ -1025,9 +1022,8 @@ class ProcessRawFile:
         try:
             self.db.cursor.execute(update_sql)
             self.db.db.commit()
-            #print("Updated fwhm  for " + str(self.file_name))
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
     def get_run_date_time(self):
     
@@ -1039,7 +1035,7 @@ class ProcessRawFile:
                 datetime.datetime.strptime(self.file_name[-12:], "%Y%m%d%H%M")
                 return self.file_name[-12:] + "00" # add seconds for mysql DATETIME
             except ValueError as e:
-                print("Not a valid timestamp " + self.file_name)
+                logger.exception("Not a valid timestamp " + self.file_name)
                 return False
     
 
@@ -1052,29 +1048,11 @@ class ProcessRawFile:
             if self.experiment == 'METABOLOMICS':
                 os.remove(os.path.join(self.outfiles_dir, self.file_name + "_neg.mzXML"))
         except Exception as e:
-            print(e)
-
-    def convert_chromatogram(self, run_id, comp_id):
-        # get chrom
-        # convert its x values
-        # create standard x values
-        # plot with scipy
-        # interpolate (below)
-        # restore
-        # update DB (on VM first ??)
-
-        #import scipy.interpolate
-        #y_interp = scipy.interpolate.interp1d(x, y)
-
-        # find y-value associated with x-value of 13
-        # print(y_interp(13))
-        pass
+            logger.exception(e)
 
 
 if __name__ == "__main__":
-    # logging (put fisrt, sigh, not working otherwise)
-    logging.basicConfig(filename='processing.log', format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',
-                        level=logging.INFO)
+   
     # Arguments: experiment (proteomics, metabolomics)
     #            depth (number of files to process, -1 equals all)
     #            email (Y N)
@@ -1088,7 +1066,6 @@ if __name__ == "__main__":
 
     db_info = {}
     db_info["user"] = db_details["User"]
-    #db_info["password"] = db_details["Password"]
     db_info["port"] = db_details["Database Port"]
     db_info["database"] = db_details["Database Name"]
 
@@ -1099,9 +1076,6 @@ if __name__ == "__main__":
     db = MPMFDBSetUp(db_info["user"], db_info["password"], db_info["database"], "", db_info["port"])
 
     # get arguments
-    print(sys.argv[1])
-    print(sys.argv[2])
-    print(sys.argv[3])
     experiment_type = sys.argv[1].upper()
     depth = int(sys.argv[2])
     email = sys.argv[3].upper()
@@ -1112,12 +1086,12 @@ if __name__ == "__main__":
 
     # check if running
     if os.path.exists(experiment_type + ".txt"):
-        logging.info("Script already running for {}".format(experiment_type))
+        logger.info("Script already running for {}".format(experiment_type))
         sys.exit(1)
     else:
         with open(experiment_type + ".txt", "w") as f:
             f.write("")
-        logging.info("Starting processing for {}. Number of runs = {}. Sending email = {}.".format(experiment_type, depth, email))
+        logger.info("Starting processing for {}. Number of runs = {}. Sending email = {}.".format(experiment_type, depth, email))
 
     # read in directories
     if experiment_type == "METABOLOMICS":
@@ -1145,7 +1119,7 @@ if __name__ == "__main__":
     elif experiment_type.strip() == "PROTEOMICS":
         sql = "SELECT machine_name, machine_type FROM machine WHERE use_prot = 'Y'"
     else:
-        print("Enter metabolomics or proteomics")
+        logger.error("Enter metabolomics or proteomics")
         run_check = False
 
     if run_check:
@@ -1153,9 +1127,8 @@ if __name__ == "__main__":
             db.cursor.execute(sql)
             machine_names = db.cursor.fetchall()
         except Exception as e:
-            logging.info(e)
-            print(e)
-            print("Could not get machines")
+            logger.info("Could not get machines")
+            logger.exception(e)
             run_check = False
 
     # get raw files for each machine
@@ -1190,10 +1163,8 @@ if __name__ == "__main__":
     # loop through machines and process raw files
     if run_check:
         for machine in machines:
-            logging.info("Machine: " + machine)
-            logging.info("Found " + str(len(machines[machine][0])) + " files")
-            print("Found " + str(len(machines[machine][0])) + " files")
-            print("Machine: " + machine)
+            logger.info("Machine: " + machine)
+            logger.info("Found " + str(len(machines[machine][0])) + " files")
             fs = FileSystem(in_dir, out_dir, machine, experiment_type)  # used in processing and chrom and stats
 
             # set loop variable
@@ -1208,8 +1179,6 @@ if __name__ == "__main__":
             for k in range(loop-1, -1, -1):
 
                 # get file name
-                # path_array = machines[machine][0][k].split('\\')
-                # file_id = path_array[len(path_array) - 1][:-ext_length]# removes extension (.raw etc)
                 _, tail = os.path.split(machines[machine][0][k])
                 file_id = tail[:-ext_length]
 
@@ -1231,7 +1200,7 @@ if __name__ == "__main__":
             
             
 
-        logging.info("FINISHED")
+        logger.info("FINISHED PROCESSING")
         
     # close database connection and cursor
     db.cursor.close()

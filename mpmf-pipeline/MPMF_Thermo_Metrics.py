@@ -1,3 +1,11 @@
+import numpy as np
+import os
+import math
+import glob
+import json
+import logging
+logger = logging.getLogger('processing.thermo')
+
 try:
     import clr
     clr.AddReference("ThermoFisher.CommonCore.RawFileReader")
@@ -6,14 +14,9 @@ try:
     from ThermoFisher.CommonCore.Data.Business import * # can probably more specific than '*'
     dlls = True
 except:
-    print("No ThermoFisher libraries found")
+    logger.exception("No ThermoFisher libraries found")
     dlls = False
 
-import numpy as np
-import os
-import math
-import glob
-import json
 
 class ThermoMetrics:
 
@@ -41,7 +44,7 @@ class ThermoMetrics:
             elif self.rawfile.GetInstrumentCountOfType(Device.Analog) > 0:
                 self.controller_type = Device.Analog
             else:
-                print("No Profile Data")
+                logger.warning("No Profile Data")
 
             if self.exp.upper() == "PROTEOMICS":
                 # set controllers
@@ -63,7 +66,7 @@ class ThermoMetrics:
                 self.mp_cont = 1
                 self.mp_data = self.set_mp_data()
         else:
-            print('FileReader Error', self.rawfile.FileError)
+            logger.error('FileReader Error', self.rawfile.FileError)
 
         self.run()
         self.rawfile.Dispose()
@@ -79,8 +82,8 @@ class ThermoMetrics:
             self.all_main_pump()
             self.insert_pressure_profile("mp")
             
-        print("INSTRUMENT METRICS INSERTED FOR " + self.filename)
-        print("PROFILE DATA INSERTED FOR " + self.filename)
+        logger.info("INSTRUMENT METRICS INSERTED FOR " + self.filename)
+        logger.info("PROFILE DATA INSERTED FOR " + self.filename)
 
     def set_lp_data(self):
         self.rawfile.SelectInstrument(self.controller_type, self.lp_cont)
@@ -126,7 +129,7 @@ class ThermoMetrics:
             self.db.cursor.execute(sql)
             return self.db.cursor.fetchone()[0]
         except Exception as e:
-            print(e)
+            logger.exception(e)
             return False
             
     def get_valve_limits(self):
@@ -495,7 +498,7 @@ class ThermoMetrics:
         # set-up dict for metrics and insert
         metrics = {"sbp": sbp, "ep": ep, "ai": ai, "vss": vss, "vse": vse, "pd-lp": pd_lp}
         self.insert_metrics(metrics)
-        print("Inserted Loading Pump")
+        logger.info("Inserted Loading Pump")
 
     def all_nano_pump(self):
 
@@ -512,7 +515,7 @@ class ThermoMetrics:
         # set up dict for metrics and insert
         metrics = {"sp": sp, "vd": vd, "maxp": maxp, "minp": minp, "il": il, "pd": pd}
         self.insert_metrics(metrics)
-        print("Inserted Nano Pump")
+        logger.info("Inserted Nano Pump")
 
     def all_main_pump(self):
         # mp_names = ["maxp-metab", "rt-maxp", "sp-metab", "ep-metab"]
@@ -527,7 +530,7 @@ class ThermoMetrics:
         # set up dict for metrics
         metrics = {"maxp-metab": maxp, "rt-maxp": rt, "sp-metab": sp, "ep-metab": ep}
         self.insert_metrics(metrics)
-        print("Inserted Main Pump")
+        logger.info("Inserted Main Pump")
 
         
     # INSERT FUNCTIONS  
@@ -542,7 +545,7 @@ class ThermoMetrics:
         try:
             self.db.cursor.execute(sql)
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
         self.db.db.commit()
         
@@ -550,7 +553,7 @@ class ThermoMetrics:
         co_temp = self.create_column_range()
         metrics = {"co": co_temp}
         self.insert_metrics(metrics)
-        print("Inserted Column Temp")
+        logger.info("Inserted Column Temp")
 
     
     def insert_metrics(self, metrics):
@@ -561,7 +564,7 @@ class ThermoMetrics:
                 self.db.cursor.execute(sql)
                 metric_id = self.db.cursor.fetchone()[0]
             except Exception as e:
-                print(e)
+                logger.exception(e)
 
             insert_sql = "INSERT INTO measurement VALUES('" + str(metric_id) + "','" + \
                          str(self.comp_id) + "','" + str(self.run_id) + "','" + str(metrics[metric]) + "')"
@@ -569,7 +572,7 @@ class ThermoMetrics:
             try:
                 self.db.cursor.execute(insert_sql)
             except Exception as e:
-                print(e)
+                logger.exception(e)
 
         self.db.db.commit()
         

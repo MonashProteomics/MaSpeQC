@@ -6,6 +6,8 @@ import struct # data is stored in binary form
 import sys
 import xml.etree.ElementTree as et # descriptions of the scans are stored as xml
 import zipfile # mzmine files are zip files
+import logging
+logger = logging.getLogger('processing.chromatograms')
 
 
 class Chromatogram:
@@ -26,12 +28,12 @@ class Chromatogram:
         self.rawdatafiles = []
 
         if not os.path.isfile(self.path):
-            print("file " + self.path + " does not exist")
+            logger,error("file " + self.path + " does not exist")
             sys.exit(1)
 
         self.unzip_files()
         self.create_xic()
-        print("INSERTED CHROMATOGRAMS for " + self.file_name)
+        logger.info("INSERTED CHROMATOGRAMS for " + self.file_name)
 
     def unzip_files(self):
         with zipfile.ZipFile(self.path, "r") as _zip:
@@ -113,10 +115,6 @@ class Chromatogram:
                     # (2) unpack binary data
                     # data is stored as float -> "f", data is stored big endian -> ">" => format description ">f"
                     heights = struct.unpack(">" + str(quantity) + "f", base64.b64decode(heightbin))
-                    #print(scanids)
-                    #print(mzvalues)
-                    #print(heights)
-                    #print()
 
                     # add peak data to xic
                     xic["scanids"] = scanids
@@ -126,7 +124,7 @@ class Chromatogram:
                     peaksdict["peaks"][peakdict["id"]] = peakdict
 
             if k != peaksdict["numberofpeaks"]:
-                print("mismatch between number of peaks and peaks read")
+                logger.error("mismatch between number of peaks and peaks read")
 
             scansfile = None
             rawdatafile = None
@@ -161,7 +159,7 @@ class Chromatogram:
                 scansdict["numberofscans"] = int(root.find("num_scans").text)
                 # validata number of data points against number of scans
                 if scansdict["numberofscans"] != numdatapoints:
-                    print("mismatch between number of data points and number of scans")
+                    logger.error("mismatch between number of data points and number of scans")
 
                 scansdict["scans"] = {}
                 # open the scans file as binary file
@@ -180,7 +178,7 @@ class Chromatogram:
                     scandict["numberofdatapoints"] = int(scan.find("num_dp").text)
                     # validata number of data points from storage against number of data points from scan metadata
                     if scandict["numberofdatapoints"] != storage[storageid - 1]["numberofdatapoints"]:
-                        print("mismatch between number of data points in storage and number of data points in scan")
+                        logger.error("mismatch between number of data points in storage and number of data points in scan")
                     if scandict["numberofdatapoints"] == 0:
                         continue
                     scandict["polarity"] = scan.find("polarity").text
@@ -316,7 +314,7 @@ class Chromatogram:
         try:
             self.db.cursor.execute(sql)
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
         self.db.db.commit()
 

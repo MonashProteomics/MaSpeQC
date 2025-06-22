@@ -2,6 +2,8 @@ import json
 import os
 import numpy as np
 import pandas as pd
+import logging
+logger = logging.getLogger('processing.stats')
 
 
 class Stat:
@@ -23,27 +25,27 @@ class Stat:
     def run(self):
     
         if not self.check_number_runs():
-            print("5 runs or more needed for stats and normalised metrics")
+            logger.warning("5 runs or more needed for stats and normalised metrics")
             return False
             
         if self.check_for_updates():
             self.compute_stats()
             self.insert_update_stats()
             self.compute_derived_metrics()
-            print("Updated stats and normalised metrics for mzmine " + self.machine + " " + self.e_type)
+            logger.info("Updated stats and normalised metrics for mzmine " + self.machine + " " + self.e_type)
             if self.machine_type == 'thermo':
                 self.compute_thermo_stats()
                 self.insert_update_stats()
-                print('Updated thermo stats')
+                logger.info('Updated thermo stats')
             if self.e_type == 'PROTEOMICS':
                 self.compute_morpheus_stats()
                 self.update_current_thresholds()
                 self.insert_update_morpheus_stats()
-                print("Updated morpheus stats " + self.machine + " " + self.e_type)
+                logger.info("Updated morpheus stats " + self.machine + " " + self.e_type)
             self.update_completed()
 
         else:
-            print("No new data for " + self.machine + " " + self.e_type)
+            logger.info("No new data for " + self.machine + " " + self.e_type)
             
     def check_number_runs(self):
         sql = "SELECT COUNT(*) FROM qc_run WHERE machine_id = " + \
@@ -56,9 +58,8 @@ class Stat:
             self.db.db.commit() # not picking up commits in processing from other processes?
             self.db.cursor.execute(sql)
             count = int(self.db.cursor.fetchone()[0])
-            #print(count)
         except Exception as e:
-            print(e)
+            logger.exception(e)
         
         if count > 4:
             return True
@@ -77,9 +78,8 @@ class Stat:
             self.db.db.commit() # not picking up commits in processing from other processes?
             self.db.cursor.execute(sql)
             count = int(self.db.cursor.fetchone()[0])
-            #print(count)
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
         if count > 0:
             return True
@@ -105,13 +105,13 @@ class Stat:
             self.db.cursor.execute(sql_m)
             metrics = self.db.cursor.fetchall()
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
         try:
             self.db.cursor.execute(sql_c)
             comp_id = self.db.cursor.fetchone()[0]
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
         all_stats = []
         for metric in metrics:
@@ -140,14 +140,12 @@ class Stat:
                     new_line.append(stat)
                 all_stats.append(new_line)
             except Exception as e:
-                print(e)
+                logger.exception(e)
 
         # a pandas table
         self.df = pd.DataFrame(all_stats,
                                columns=['Component', 'Metric', 'Machine', 'count', 'mean', 'std', 'min', '25%',
                                         '50%', '75%', 'max'])
-
-        #print(self.df)
 
     def compute_stats(self):
         # creates a pandas table of stats for the stats table for mzmine metrics
@@ -170,13 +168,13 @@ class Stat:
             self.db.cursor.execute(sql_m)
             metrics = self.db.cursor.fetchall()
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
         try:
             self.db.cursor.execute(sql_c)
             components = self.db.cursor.fetchall()
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
         all_stats = []
         for metric in metrics:
@@ -206,15 +204,13 @@ class Stat:
                         new_line.append(stat)
                     all_stats.append(new_line)
                 except Exception as e:
-                    print(e)
+                    logger.exception(e)
 
         # a pandas table
         self.df = pd.DataFrame(all_stats,
                           columns=['Component', 'Metric', 'Machine', 'count', 'mean', 'std', 'min', '25%',
                                    '50%', '75%', 'max'])
         #df = df.sort_values(by=['Metric', 'Venue'])
-        #print(self.df)
-        #print(len(metrics) * len(components) * len(venues))
         #df.to_csv('stats.csv')
 
     def compute_morpheus_stats(self):
@@ -225,7 +221,7 @@ class Stat:
             self.db.cursor.execute(sql)
             metrics = self.db.cursor.fetchall()
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
         all_stats = []
         for metric in metrics:
@@ -263,7 +259,7 @@ class Stat:
                 new_line.append(thresh_reading)
                 all_stats.append(new_line)
             except Exception as e:
-                print(e)
+                logger.exception(e)
 
         # a pandas table
         self.hela_df = pd.DataFrame(all_stats,
@@ -278,7 +274,7 @@ class Stat:
             self.db.cursor.execute(sql_c)
             cid = self.db.cursor.fetchone()
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
         sql_mac = "SELECT machine_id FROM machine WHERE machine_name = '" + self.machine + "'"
 
@@ -286,7 +282,7 @@ class Stat:
             self.db.cursor.execute(sql_mac)
             macid = self.db.cursor.fetchone()
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
         for i in range(len(self.hela_df)):
             sql_m = "SELECT metric_id FROM metric WHERE metric_name = " + "'" + self.hela_df.iloc[i]['Metric'] + "'"
@@ -295,7 +291,7 @@ class Stat:
                 self.db.cursor.execute(sql_m)
                 mid = self.db.cursor.fetchone()
             except Exception as e:
-                print(e)
+                logger.exception(e)
 
             mean = round(self.hela_df.iloc[i]['mean'], 8)
             std = round(self.hela_df.iloc[i]['std'], 8)
@@ -323,7 +319,7 @@ class Stat:
             try:
                 self.db.cursor.execute(sql)
             except Exception as e:
-                print(e)
+                logger.exception(e)
 
             self.db.db.commit()
 
@@ -337,7 +333,7 @@ class Stat:
             self.db.cursor.execute(sql_mac)
             macid = self.db.cursor.fetchone()
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
         for i in range(len(self.df)):
             mean = round(self.df.iloc[i]['mean'], 8)
@@ -365,7 +361,7 @@ class Stat:
             try:
                 self.db.cursor.execute(sql)
             except Exception as e:
-                print(e)
+                logger.exception(e)
 
             self.db.db.commit()
 
@@ -383,7 +379,7 @@ class Stat:
             else:
                 return True
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
     def compute_derived_metrics(self):
         # call after insert_update_stats
@@ -420,7 +416,7 @@ class Stat:
                         self.db.cursor.execute(get_median)
                         median = self.db.cursor.fetchone()
                     except Exception as e:
-                        print(e)
+                        logger.exception(e)
 
                     # compute normalised median
                     # handle missed values by setting to -100
@@ -444,7 +440,7 @@ class Stat:
                         self.db.cursor.execute(get_mid)
                         mid = self.db.cursor.fetchone()
                     except Exception as e:
-                        print(e)
+                        logger.exception(e)
 
                     # deleting means all values are updated using current stats
                     if self.is_inserted_measurement(mid[0], value[1], value[3]):
@@ -455,14 +451,11 @@ class Stat:
                     try:
                         self.db.cursor.execute(insert_med)
                     except Exception as e:
-                        print(e)
-                        # print(norm)
+                        logger.exception(e)
 
             except Exception as e:
-                print(e)
+                logger.exception(e)
 
-            #print("Max Norm " + metric + " = " + str(norm_max))
-            #print("Min Norm " + metric + " = " + str(norm_min))
 
         self.db.db.commit()
 
@@ -480,7 +473,7 @@ class Stat:
             else:
                 return True
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
     def delete_measurement(self, mid, cid, rid):
 
@@ -491,7 +484,7 @@ class Stat:
         try:
             self.db.cursor.execute(sql)
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
         self.db.db.commit()
 
@@ -506,7 +499,7 @@ class Stat:
             self.db.db.commit()
             return True
         except Exception as e:
-            print(e)
+            logger.exception(e)
 
     def update_current_thresholds(self):
         # read in current thresholds
