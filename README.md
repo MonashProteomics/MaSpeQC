@@ -57,7 +57,7 @@ In order to process the pressure metrics and profiles which are a feature for Th
   
 Firstly, download the available libraries as a zip file from <a href="https://github.com/thermofisherlsms/RawFileReader/archive/refs/heads/main.zip">here</a>, extract the zip file, and read the license.  
 
-Then, navigate to the folder for the .NET framework that is installed on the system (Libs/Net471, Libs/NetCore/Net5 or Libs/NetCore/Net8) and copy the 4 _ThermoFisher_ dll files to the __mpmf-pipeline__ folder in MaSpeQC.  
+Then, navigate to the folder for the .NET framework that is installed on the system (`Libs/Net471`, `Libs/NetCore/Net5` or `Libs/NetCore/Net8`) and copy the 4 _ThermoFisher_ dll files to the __mpmf-pipeline__ folder in MaSpeQC.  
 
 The 4 files that are required are named:
 - ThermoFisher.CommonCore.BackgroundSubtraction.dll
@@ -65,7 +65,7 @@ The 4 files that are required are named:
 - ThermoFisher.CommonCore.MassPrecisionEstimator.dll
 - ThermoFisher.CommonCore.RawFileReader.dll
 
-Finally, you need to unblock the files for use on Windows machines. Right mouse click on each file in Windows Explorer, select _Properties_ and check 'Unblock' (see image below).  
+Finally, you need to unblock the files for use on Windows machines. Right mouse click on each file in Windows Explorer, select _Properties_ and check `Unblock` (see image below).  
   
 ![thermounblock](img/thermoUnblock.PNG)
 
