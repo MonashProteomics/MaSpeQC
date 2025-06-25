@@ -53,11 +53,11 @@ Finally, set-up the node.js server by runnining `npm install` from the _mpmf-ser
 You can now configure MaSpeQC by running `npm start --setup` and opening a browser window at _http://localhost/configuration_.
 
 ## Additional Installation Instructions for Thermo Fisher Scientific Instruments Only
-In order to process the pressure metrics and profiles which are a feature for Thermo Fisher Scientific instruments, the standard libraries for raw file access need to be included in MaSpeQC.  
+In order to process the pressure metrics and profiles which are a feature for Thermo Fisher Scientific instruments, the standard libraries for raw file access provided by Thermo Fisher Scientific <a href="https://github.com/thermofisherlsms/RawFileReader/">here</a> need to be included in MaSpeQC.  
   
-Firstly, download and extract the available libraries from <a href="https://github.com/thermofisherlsms/RawFileReader/archive/refs/heads/main.zip">here</a>  
+Firstly, download the available libraries as a zip file from <a href="https://github.com/thermofisherlsms/RawFileReader/archive/refs/heads/main.zip">here</a>, extract the zip file, and read the license.  
 
-Then, navigate to the folder for the .NET framework that is installed on the system (Net471, NetCore/Net5 or NetCore/Net8) and move the 4 _ThermoFisher_ dll files to the __mpmf-pipeline__ folder in MaSpeQC.  
+Then, navigate to the folder (`Libs/Net471`, `Libs/NetCore/Net5` or `Libs/NetCore/Net8`) for the .NET environment (`.NET Framework` or `.NET Core`) that is installed on the system and copy the 4 _ThermoFisher_ dll files to the __mpmf-pipeline__ folder in MaSpeQC. On most systems `.NET Framework` or `.NET Core` are installed by default, and `.NET Core` is backward compatible to `.NET Framework`. Thus it is very likely that the dll files from `Libs/Net471` work on your system.  
 
 The 4 files that are required are named:
 - ThermoFisher.CommonCore.BackgroundSubtraction.dll
@@ -65,7 +65,7 @@ The 4 files that are required are named:
 - ThermoFisher.CommonCore.MassPrecisionEstimator.dll
 - ThermoFisher.CommonCore.RawFileReader.dll
 
-Finally, to unblock the files for use on Windows machines, Right Mouse click on each file and check 'Unblock'  
+Finally, you need to unblock the files for use on Windows machines. Right mouse click on each file in Windows Explorer, select _Properties_ and check `Unblock` (see image below).  
   
 ![thermounblock](img/thermoUnblock.PNG)
 
