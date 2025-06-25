@@ -489,8 +489,8 @@ function dragElement(elmnt) {
      .style("stroke", "white");
 
      // force labels
-     d3.selectAll(".background_rect").transition(t)
-     .style("stroke", "white");
+     //d3.selectAll(".background_rect").transition(t)
+     //.style("stroke", "white");
 
      // chart text and labels
      d3.selectAll("text.statText").transition(t)
@@ -616,8 +616,8 @@ function dragElement(elmnt) {
      .style("stroke", "var(--dark)");
 
      // force labels
-     d3.selectAll(".background_rect").transition(t)
-     .style("stroke", "var(--dark)");
+     //d3.selectAll(".background_rect").transition(t)
+     //.style("stroke", "var(--dark)");
 
 
       // chart text and labels

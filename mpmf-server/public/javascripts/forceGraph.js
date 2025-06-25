@@ -218,16 +218,19 @@ function draw_force_main(transition){
     .attr("class", "background_rect")
     .attr("x", d => d.x - d.bbox.width/2)
     .attr("y", d => d.y + currentRadius*8)
+    .attr("rx", 5)
+    .attr("ry", 2)
     .attr("width", d => d.bbox.width + 2 * xMargin)
     .attr("height", d => d.bbox.height + 2 * yMargin)
     .attr("fill", function(){
-        if(theme == "dark"){return "var(--dark)";}
-        return "var(--dark)";
+        if(theme == "dark"){return "black";}
+        return "black";
     })
     .attr("stroke", function(){
-        if(theme == "dark"){return "white";}
-        return "var(--dark)";
+        if(theme == "dark"){return "var(--info)";}
+        return "var(--info)";
     })
+    .attr("stroke-width", "2")
     .style("fill-opacity", function(d){
         if(d.nodeType == 2){
             return 0.8;
@@ -259,6 +262,7 @@ function draw_force_main(transition){
         }
         mainForce = false;
         chart_type = "line";
+        metric_type = "lcms";
         display_metric = d.name;
         updateRadiosLineChart(display_metric);
         draw_line_chart(true);
@@ -643,16 +647,19 @@ function draw_force_main(transition){
         .attr("class", "background_rect")
         .attr("x", d => d.x - d.bbox.width/2)
         .attr("y", d => d.y + currentRadius*8)
+        .attr("rx", 5)
+        .attr("ry", 2)
         .attr("width", d => d.bbox.width + 2 * xMargin)
         .attr("height", d => d.bbox.height + 2 * yMargin)
         .attr("fill", function(){
-            if(theme == "dark"){return "var(--dark)";}
-            return "var(--dark)";
+            if(theme == "dark"){return "black";}
+            return "black";
         })
         .attr("stroke", function(){
-            if(theme == "dark"){return "white";}
-            return "var(--dark)";
+            if(theme == "dark"){return "var(--info)";}
+            return "var(--info)";
         })
+        .attr("stroke-width", "2")
         .style("fill-opacity", function(d){
             if(d.nodeType == 2){
                 return 0.7;
@@ -683,6 +690,7 @@ function draw_force_main(transition){
             }
             mainForce = false;
             chart_type = "line";
+            metric_type = "lcms";
             display_metric = d.name;
             updateRadiosLineChart(display_metric);
             draw_line_chart(true);

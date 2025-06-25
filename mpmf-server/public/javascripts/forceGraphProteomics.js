@@ -231,16 +231,19 @@ function draw_force_main(transition){
     .attr("class", "background_rect")
     .attr("x", d => d.x - d.bbox.width/2)
     .attr("y", d => d.y + currentRadius*8)
+    .attr("rx", 5)
+    .attr("ry", 2)
     .attr("width", d => d.bbox.width + 2 * xMargin)
     .attr("height", d => d.bbox.height + 2 * yMargin)
     .attr("fill", function(){
-        if(theme == "dark"){return "var(--dark)";}
-        return "var(--dark)";
+        if(theme == "dark"){return "black";}
+        return "black";
     })
     .attr("stroke", function(){
-        if(theme == "dark"){return "white";}
-        return "var(--dark)";
+        if(theme == "dark"){return "var(--info)";}
+        return "var(--info)";
     })
+    .attr("stroke-width", "2")
     .style("fill-opacity", function(d){
         if(d.nodeType == 2 || d.nodeType == 4){
             return 0.8;
@@ -274,9 +277,8 @@ function draw_force_main(transition){
         mainForce = false;
         chart_type = "line";
         display_metric = d.name;
-        console.log(display_metric);
         updateRadiosLineChart(display_metric);
-        metric_type == "lcms";
+        metric_type = "lcms";
         draw_line_chart(true);
 
         // enable scale buttons
@@ -958,7 +960,7 @@ function draw_force_main(transition){
             chart_type = "line";
             display_metric = d.name;
             updateRadiosLineChart(display_metric);
-            metric_type == "lcms";
+            metric_type = "lcms";
             draw_line_chart(true);
 
             // enable scale buttons
