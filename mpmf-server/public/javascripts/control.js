@@ -1193,6 +1193,18 @@ function createSVGMenu(menuDivID, menuData, name, thresholds){
         .attr("dy", currentRadius/2)
         .style("font-weight", 500)
         .text(d => d.component_name)
+        .on("mouseover", function(event){
+            var tooltip = d3.select("#tooltip");
+            tooltip.html("Hold Ctrl and Click to Select One");
+            tooltip.style('left', (event.pageX - 10*v_height_unit) + 'px');
+            tooltip.style('top', (event.pageY - 5*v_height_unit) + 'px');
+            tooltip.style("visibility", "visible");
+
+        })
+        .on("mouseout", function(event){
+            var tooltip = d3.select("#tooltip");
+            tooltip.style("visibility", "hidden");
+        })
         .on("click", function(event, d){
 
             // select one

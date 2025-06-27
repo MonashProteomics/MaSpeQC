@@ -203,7 +203,7 @@ tr.tooltipTable {
 
 .configTooltip{
   position: absolute;
-  border: 0.2em solid gray;
+  border: 0.2em solid var(--info);
   letter-spacing: 0.3vh;
   border-radius: 0.5vh;
   font-size: 0.8vw;
@@ -215,6 +215,12 @@ tr.tooltipTable {
   top:0em;
   left:0em;
   /*box-shadow: 1vh 1vh 0.5vh var(--gray);*/
+}
+
+/* defined on id for chart tooltips when selected by id in svg */
+/* UI tooltips use data-tooltip */
+#tooltip{
+  font-size: 1.2vh;
 }
 
 .dragTooltip{
