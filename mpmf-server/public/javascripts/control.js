@@ -549,6 +549,10 @@ function dragElement(elmnt) {
     // chart epand/contract
     d3.select("#chartIcon").transition(t)
     .style("fill", "white");
+
+    // box optimal marker
+    d3.select("#optimal_marker").transition(t)
+    .style("stroke", "aliceblue")
     
   }
 
@@ -677,6 +681,10 @@ function dragElement(elmnt) {
     // chart epand/contract
     d3.select("#chartIcon").transition(t)
     .style("fill", "var(--dark)")
+
+    // box optimal marker
+    d3.select("#optimal_marker").transition(t)
+    .style("stroke", "var(--dark)")
     
   }
 

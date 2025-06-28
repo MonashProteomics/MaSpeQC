@@ -455,7 +455,6 @@ function draw_force_main(transition){
         .text(newText);
 
         // add highlight tooltip
-        // HERE: set highlight_mode in function
         if(highlight_mode){
             var tool_text = "Click to Reset";
         }

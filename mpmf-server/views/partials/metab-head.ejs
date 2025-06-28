@@ -229,6 +229,7 @@
         let tooltipElem; // tooltip for interface
         let zoom = false;
         let lineChartWidth;
+        let boxChartWidth;
         let pressureHeight;
         let profileHeight;
         let currentRadius; // biggest circle
@@ -2515,7 +2516,10 @@
             }
             else if(chart_type == "box"){
                 if(metric_type == "lcms"){
-                    moveBoxes(false);
+                    moveBoxes(false); // move
+                    setTimeout(function(){
+                        moveBoxes(true);// then sort
+                    },500);
                 }
                 else if(metric_type == "pressure"){
                     updatePressureCircles();
@@ -2881,7 +2885,23 @@
                     .attr("x",0)
                     .attr("y",yScale_box(thresholds.threshold_low));
                     
-                }  
+                }
+                
+                // update optimal marker
+                if(display_metric == "Mass Error (ppm)" || display_metric == "Mass Error (mDa)"){
+                    var marker = 0;
+                }
+                else{
+                    var marker = 1;
+                }
+
+                d3.select("#optimal_marker")
+                .transition()
+                .duration(1000)
+                .attr("x1", 0)
+                .attr("y1", yScale_box(marker))
+                .attr("x2", boxChartWidth)
+                .attr("y2", yScale_box(marker))
         }
 
         function controlDouble(el){
@@ -3047,7 +3067,10 @@
             }
             else if(chart_type == "box"){
                 if(metric_type == "lcms"){
-                    moveBoxes();
+                    moveBoxes(); // move
+                    setTimeout(function(){
+                        moveBoxes(true);// then sort
+                    },500);
                 }
                 else if(metric_type == "pressure"){
                     updatePressureCircles();
@@ -5087,6 +5110,25 @@
                     .attr("d", area)
                     //.attr("filter", "url(#diffuse)")
                     .attr("cursor", "pointer")
+                    .on("mouseover", function(event){
+                        // set tooltip
+                        if(!(chromExpand)){
+                            var chrom_text = "Click to Scale to Peak";
+                        }
+                        else{
+                            var chrom_text = "Click to Normalise Peaks";
+                        }
+                        var tooltip = d3.select("#tooltip");
+                        tooltip.html(chrom_text);
+                        tooltip.style('left', (event.pageX + 10) + 'px');
+                        tooltip.style('top', (event.pageY + 10) + 'px');
+                        tooltip.style("visibility", "visible");
+
+                    })
+                    .on("mouseout", function(event){
+                        var tooltip = d3.select("#tooltip");
+                        tooltip.style("visibility", "hidden");
+                    })
                     .on("click", function(event, d){
                         // reset
                         if(chromExpand){
@@ -6003,6 +6045,7 @@
                           left: 4*v_width_unit};
             var width = plot_width - margin.left - margin.right;
             var height = plot_height - margin.top - margin.bottom;
+            boxChartWidth = plot_width - margin.left - margin.right; // global for transition
             
             // boxwidth
             var box_padding = v_width_unit;
@@ -6417,9 +6460,12 @@
                 .attr("y1", yScale_box(marker))
                 .attr("x2", width)
                 .attr("y2", yScale_box(marker))
-                .attr("stroke", "var(--dark)")
+                .attr("stroke", function(){
+                    if(theme == 'dark'){return "aliceblue";}
+                    return "var(--dark)";
+                })
                 .attr("stroke-width", 2*base_line_width)
-                .attr("opacity", 0); // bloceked atm
+                .attr("opacity", 1); 
             }
 
             // add the boxes
@@ -6446,11 +6492,20 @@
                 .on("mouseover", function(event, d){
                     // tooltip
                     var tooltip = d3.select("#tooltip");
+
+                    // focus/reset text
+                    if(d.index != boxExpand){
+                        var click_text = "Click to Focus";
+                    }
+                    else{
+                        var click_text = "Click to Reset";
+                    }
+
                     var tooltipHTML = "<strong>" + d.name + "</strong><br>" +
                                     "<strong>Q1 </strong>" + d["25_percent"].toFixed(3) + "<br>" +
                                     "<strong>Q3 </strong>" + d["75_percent"].toFixed(3) + "<br>" +
                                     "<strong>Median </strong>" + d["50_percent"].toFixed(3) + "<br>" +
-                                    "<strong>Mean </strong>" + d["mean"].toFixed(3);
+                                    "<strong>Mean </strong>" + d["mean"].toFixed(3) + "<br>" + click_text;
                                         
                     tooltip.html(tooltipHTML);
                     tooltip.style('left', (event.pageX+30) + 'px');
