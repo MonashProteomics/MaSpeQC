@@ -4555,7 +4555,7 @@
                     return "var(--dark)";
                 })
                 .style("text-anchor", anchor)
-                .style("text-shadow", "0.1vh 0.1vh gray")
+                //.style("text-shadow", "0.1vh 0.1vh gray")
                 .text(d.key);
 
 
@@ -8502,7 +8502,7 @@
                         d3.selectAll(".point").style("opacity", 1);
                         d3.select(".hover-text").remove();
 
-                         var tooltip = d3.select("#tooltip");
+                        var tooltip = d3.select("#tooltip");
                         tooltip.style("visibility", "hidden");
                     })
                     .on("click", function(event, d){

@@ -4069,6 +4069,9 @@
             .each(function(d) { d3.select(this).call(d3.axisLeft().tickSize(2*currentRadius).ticks(5).scale(yScales[d])); })
             .attr("class", "parAxes")
             .style("opacity", 0.7)
+            .on("mouseover", function(event,d){
+                console.log("Axes");
+            })
             .style('font-size', '1.8vh');
 
             // get and draw path data
@@ -4104,7 +4107,7 @@
                         .attr("x", xScale_par("Retention Time") - 4.2*currentRadius)
                         .attr("y", yScales["Retention Time"](yRT) + currentRadius)
                         .attr("text-anchor", "end")
-                        .style("font-size", "0.7vw")
+                        .style("font-size", "1vw")
                         .attr("fill", function(){
                             if(theme == "dark"){return "white";}
                             return "var(--dark)";
@@ -4113,7 +4116,7 @@
                             if(theme == "dark"){return "white";}
                             return "var(--dark)";
                         })
-                        .style("text-shadow", "0.1vh 0.1vh gray")
+                        //.style("text-shadow", "0.1vh 0.1vh gray")
                         .text(d.name);
 
                         // highlight
@@ -4176,6 +4179,23 @@
                     }else{
                         return d.colour; //'url(#circleGradLight'+d.comp+')'; 
                     } 
+                })
+                .on("mouseover", function(event, d){
+                    var tooltip = d3.select("#tooltip");
+                    if(!axesExpand[d.x]){
+                        var tool_text = "Click to Expand Axis";
+                    }else{
+                        var tool_text = "Click to Reset Axis";
+                    }
+                    tooltip.html(tool_text);
+                    tooltip.style('left', (event.pageX - 10*v_height_unit) + 'px');
+                    tooltip.style('top', (event.pageY - 5*v_height_unit) + 'px');
+                    tooltip.style("visibility", "visible");
+
+                })
+                .on("mouseout", function(event){
+                    var tooltip = d3.select("#tooltip");
+                    tooltip.style("visibility", "hidden");
                 })
                 .on("click", function(event, d){
         
@@ -6119,7 +6139,7 @@
                     return "var(--dark)";
                 })
                 .style("text-anchor", anchor)
-                .style("text-shadow", "0.1vh 0.1vh gray")
+                //.style("text-shadow", "0.1vh 0.1vh gray")
                 .text(d.key);
 
 
@@ -6181,9 +6201,24 @@
                 }
 
                 
+                // tooltip for switch modes
+                var tooltip = d3.select("#tooltip");
+                if(streamExpand){
+                    var tool_text = "Click for Stacked Mode";
+                }else{
+                    var tool_text = "Click for 100% Mode";
+                }
+                tooltip.html(tool_text);
+                tooltip.style('left', (event.pageX + 10) + 'px');
+                tooltip.style('top', (event.pageY + 10) + 'px');
+                tooltip.style("visibility", "visible");
+
+                
             })
             .on("mouseout", function(event){
                 d3.selectAll(".streamHighlight").remove();
+                var tooltip = d3.select("#tooltip");
+                tooltip.style("visibility", "hidden");
             })
             .on("click", function(event){
 
@@ -6771,7 +6806,7 @@
                     return "var(--dark)";
                 })
                 .style("text-anchor", anchor)
-                .style("text-shadow", "0.1vh 0.1vh gray")
+                //.style("text-shadow", "0.1vh 0.1vh gray")
                 .text(d.key);
 
                 // highlight
@@ -6779,11 +6814,21 @@
                     if(e.key == d.key){return 1;}
                     return 0.1;
                 });
+
+                 // tooltip for sort
+                var tooltip = d3.select("#tooltip");
+                tooltip.html("Click to Move to Top");
+                tooltip.style('left', (event.pageX + 10) + 'px');
+                tooltip.style('top', (event.pageY + 10) + 'px');
+                tooltip.style("visibility", "visible");
                 
             })
             .on("mouseout", function(event, d){
                 d3.selectAll(".streams").style("opacity", 1);
                 d3.selectAll(".hover-text").remove();
+
+                var tooltip = d3.select("#tooltip");
+                tooltip.style("visibility", "hidden");
                 
             })
             .attr("d", area);
@@ -6832,10 +6877,24 @@
                     .attr("fill-opacity", 0.9);
                 }
 
+                // tooltip for switch modes
+                var tooltip = d3.select("#tooltip");
+                if(streamExpand){
+                    var tool_text = "Click for Stacked Mode";
+                }else{
+                    var tool_text = "Click for 100% Mode";
+                }
+                tooltip.html(tool_text);
+                tooltip.style('left', (event.pageX + 10) + 'px');
+                tooltip.style('top', (event.pageY + 10) + 'px');
+                tooltip.style("visibility", "visible");
+
                 
             })
             .on("mouseout", function(event){
                 d3.selectAll(".streamHighlight").remove();
+                var tooltip = d3.select("#tooltip");
+                tooltip.style("visibility", "hidden");
             })
             .on("click", function(event){
 
@@ -9644,11 +9703,21 @@
                     return 0.05;
                 });
                 d3.selectAll(".chartline").style("opacity", 0.1);
+
+                 // add tooltip
+                var tooltip = d3.select("#tooltip");
+                tooltip.html("Click to Focus" +  "<br>" + "(Dbl Click Chart <br> to Reset)");
+                tooltip.style('left', (event.pageX + 10) + 'px');
+                tooltip.style('top', (event.pageY + 10) + 'px');
+                tooltip.style("visibility", "visible");
                 
             })
             .on("mouseout", function(event){ 
                 d3.selectAll(".point").style("opacity", 1);
                 d3.selectAll(".chartline").style("opacity", 1);
+
+                var tooltip = d3.select("#tooltip");
+                tooltip.style("visibility", "hidden");
             })
             .on("click", function(event){
                 // hide tooltip (else sticky)
@@ -9724,8 +9793,15 @@
                             return "var(--dark)";
                         })
                         .style("text-anchor", anchor)
-                        .style("text-shadow", "0.1vh 0.1vh gray")
+                        //.style("text-shadow", "0.1vh 0.1vh gray")
                         .text(machine_data.components[i].component_name.replace("_", " "));
+
+                         // add tooltip
+                        var tooltip = d3.select("#tooltip");
+                        tooltip.html("Click to Focus" +  "<br>" + "(Dbl Click Chart <br> to Reset)");
+                        tooltip.style('left', (event.pageX + 10) + 'px');
+                        tooltip.style('top', (event.pageY + 10) + 'px');
+                        tooltip.style("visibility", "visible");
                         
                     })
                     .on("mouseout", function(event, d){
@@ -9733,6 +9809,9 @@
                         d3.selectAll(".chartline").style("stroke-opacity", 0.3);
                         d3.selectAll(".point").style("opacity", 1);
                         d3.select(".hover-text").remove();
+
+                        var tooltip = d3.select("#tooltip");
+                        tooltip.style("visibility", "hidden");
                     })
                     .on("click", function(event, d){
                         // hide tooltip (else sticky)

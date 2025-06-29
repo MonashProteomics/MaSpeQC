@@ -3,6 +3,10 @@ let forceWidth;
 let forceHeight;
 
 function draw_force_main(transition){
+
+    // reset when redrawn
+    var highlight_mode = false;
+
     // get width and height of plot area
     var plot_area = document.getElementById("plot_chart");
     var chart_bottom = document.getElementById("chart_bottom");
@@ -85,12 +89,6 @@ function draw_force_main(transition){
         tooltip.style("visibility", "hidden");
         changeControls();
     });
-
-    // reset highlight
-    svg.on("dblclick", function(d){
-        d3.selectAll(".nodes").style("opacity", 1);
-        d3.selectAll(".links").style("opacity", 1);
-    })
 
     var gradFill = svg
     .append('defs')
@@ -232,7 +230,10 @@ function draw_force_main(transition){
     .selectAll("headers")
     .data(graph.base_nodes)
     .enter().append("text")
-    .attr("cursor", "pointer")
+    .attr("cursor", function(d,i){ // data and index, not an event listener
+        if(d.nodeType == 4){return "default";}
+        return "pointer";
+    })
     .on("click", function(event ,d){
         if(d.nodeType == 4){return;}// no click ms2 
         var chart_bottom = document.getElementById("chart_bottom");
@@ -264,7 +265,26 @@ function draw_force_main(transition){
             run_buttons[i].classList = "btn btn-custom";
         }
 
+        // close sticky tooltip (mouseout won't trigger on click)
+        var tooltip = d3.select("#tooltip");
+        tooltip.style("visibility", "hidden");
+
         create_components_menu(false);
+    })
+    .on("mouseover", function(event,d){
+        if(d.nodeType == 4){return;}// no click ms2 
+
+    
+        var tooltip = d3.select("#tooltip");
+        tooltip.html("Click for Line Charts");
+        tooltip.style('left', (event.pageX - 10*v_height_unit) + 'px');
+        tooltip.style('top', (event.pageY - 5*v_height_unit) + 'px');
+        tooltip.style("visibility", "visible");
+
+    })
+    .on("mouseout", function(event){
+        var tooltip = d3.select("#tooltip");
+        tooltip.style("visibility", "hidden");
     })
     .attr("class", "names label-force")
     .text(function(d){
@@ -374,7 +394,10 @@ function draw_force_main(transition){
         }
         return 1;
     })
-    .attr("cursor", "pointer")
+    .attr("cursor", function(d){
+        if(d.nodeType == 2 || d.nodeType == 4){return "move";}
+        return "pointer";
+    })
     .on("click", function(event, d){
         
         if(d.nodeType == 2 || d.nodeType == 4){return;}
@@ -411,13 +434,25 @@ function draw_force_main(transition){
                 run_buttons[i].classList = "btn btn-custom";
             }
 
+            // close sticky tooltip (mouseout won't trigger on click)
+            var tooltip = d3.select("#tooltip");
+            tooltip.style("visibility", "hidden");
+
+            return;
+        }
+
+        // un-highlight
+        if(highlight_mode){
+            d3.selectAll(".nodes").style("opacity", 1);
+            d3.selectAll(".links").style("opacity", 1);
+            highlight_mode = false;
             return;
         }
 
         // highlight nodes
         d3.selectAll(".nodes").style("opacity", function(e){
             if(e.name == d.name){return 1;}
-            if(e.nodeType == 2){return 1;}
+            if(e.nodeType == 2 || e.nodeType == 1 || e.nodeType == 4){return 1;}
             return 0.05;
         });
 
@@ -427,9 +462,14 @@ function draw_force_main(transition){
             //return 1;
         //});
 
+        // close sticky tooltip (mouseout won't trigger on click)
+        var tooltip = d3.select("#tooltip");
+        tooltip.style("visibility", "hidden");
+
         if(d.nodeType != 1){
             comp_index = d.cIndex;
             draw_chromatogram(true);
+            highlight_mode = true;
         }
     })
     .on("mouseover", function(event, d){
@@ -443,6 +483,7 @@ function draw_force_main(transition){
         .attr("y", (d.y+10))
         .attr("dy", "1em")
         .attr("font-size", "1.2em")
+        .attr("text-decoration","underline")
         .attr("fill", function(){
             if(theme == "dark"){return "white";}
             return "var(--dark)";
@@ -488,6 +529,7 @@ function draw_force_main(transition){
         .attr("y", (d.y+10 + 2*v_height_unit))
         .attr("dy", "1em")
         .attr("font-size", "1em")
+        //.attr("text-decoration","underline")
         .attr("fill", function(){
             if(theme == "dark"){return "white";}
             return "var(--dark)";
@@ -499,9 +541,38 @@ function draw_force_main(transition){
         //.style("text-shadow", "0.1vh 0.1vh gray")
         .text(newText);
 
+        // add highlight tooltip
+        if(highlight_mode){
+            var tool_text = "Click to Reset";
+        }
+        else{
+            var tool_text = "Click to Highlight";
+        }
+
+        // tip for lcms highlight nodes
+        if(d.nodeType == 3){
+            var tooltip = d3.select("#tooltip");
+            tooltip.html(tool_text);
+            tooltip.style('left', (event.pageX - 10*v_height_unit) + 'px');
+            tooltip.style('top', (event.pageY - 5*v_height_unit) + 'px');
+            tooltip.style("visibility", "visible");
+        }
+
+        // tip for ms2 line charts
+        if(d.nodeType == 1){
+            var tooltip = d3.select("#tooltip");
+            tooltip.html("Click for Line Chart");
+            tooltip.style('left', (event.pageX - 10*v_height_unit) + 'px');
+            tooltip.style('top', (event.pageY - 5*v_height_unit) + 'px');
+            tooltip.style("visibility", "visible");
+        }
+
     })
     .on("mouseout", function(event, d){
         d3.selectAll(".hover-text").remove();
+
+        var tooltip = d3.select("#tooltip");
+        tooltip.style("visibility", "hidden");
     })
     .call(d3.drag()
           .on("start", dragstarted)

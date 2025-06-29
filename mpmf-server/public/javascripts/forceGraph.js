@@ -91,12 +91,6 @@ function draw_force_main(transition){
         changeControls();
     });
 
-    // reset highlight (fro single click now)
-    //svg.on("dblclick", function(d){
-        //d3.selectAll(".nodes").style("opacity", 1);
-        //d3.selectAll(".links").style("opacity", 1);
-    //})
-
     var gradFill = svg
     .append('defs')
     .append('linearGradient')
@@ -417,6 +411,7 @@ function draw_force_main(transition){
         .attr("y", (d.y+10))
         .attr("dy", "1em")
         .attr("font-size", "1.2em")
+        .attr("text-decoration","underline")
         .attr("fill", function(){
             if(theme == "dark"){return "white";}
             return "var(--dark)";
@@ -443,6 +438,7 @@ function draw_force_main(transition){
         .attr("y", (d.y+10 + 2*v_height_unit))
         .attr("dy", "1em")
         .attr("font-size", "1em")
+        //.attr("text-decoration","underline")
         .attr("fill", function(){
             if(theme == "dark"){return "white";}
             return "var(--dark)";
