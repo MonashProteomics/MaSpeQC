@@ -2901,7 +2901,7 @@
                 .attr("x1", 0)
                 .attr("y1", yScale_box(marker))
                 .attr("x2", boxChartWidth)
-                .attr("y2", yScale_box(marker))
+                .attr("y2", yScale_box(marker));
         }
 
         function controlDouble(el){
@@ -7517,8 +7517,61 @@
             .attr("transform", function(d) { return "translate(" + xScale_par(d) + ")"; })
             .each(function(d) { d3.select(this).call(d3.axisLeft().tickSize(2*currentRadius).ticks(5).scale(yScales[d])); })
             .attr("class", "parAxes")
-            .style("opacity", 0.7)
-            .style('font-size', '1.8vh');
+            .style('font-size', '1.8vh')
+            .style('stroke-width', '0.4vh')
+            .attr("cursor", "pointer")
+            .on("mouseover", function(event, d){
+                var tooltip = d3.select("#tooltip");
+                if(!axesExpand[d]){
+                    var tool_text = "Click to Expand Axis";
+                }else{
+                    var tool_text = "Click to Reset Axis";
+                }
+                tooltip.html(tool_text);
+                tooltip.style('left', (event.pageX - 10*v_height_unit) + 'px');
+                tooltip.style('top', (event.pageY - 5*v_height_unit) + 'px');
+                tooltip.style("visibility", "visible");
+
+            })
+            .on("mouseout", function(event){
+                var tooltip = d3.select("#tooltip");
+                tooltip.style("visibility", "hidden");
+            })
+            .on("click", function(event, metric){
+                    
+                    // get values at metric
+                    var yValues = [];
+                    var metricCircles = d3.selectAll(".point").filter(function(e){
+                        if(e.x == metric){
+                            yValues.push(e.y);
+                            return e.y;
+                        }
+                    });
+
+                    if(!axesExpand[metric]){
+                        // change y scale domain (expand)
+                        var offsetY = (4*currentRadius/height)*(d3.max(yValues)-d3.min(yValues));
+                        yScales[metric].domain([d3.min(yValues) -offsetY, d3.max(yValues) + offsetY]);
+                        axesExpand[metric] =true;
+                    }
+                    else{ // contract
+                        yScales[metric].domain(getDomain(metric));
+                        axesExpand[metric] = false;
+                    }
+
+                    // redraw circles
+                    d3.selectAll(".point").transition().duration(1000)
+                    .attr("cy", d => yScales[d.x](d.y));
+
+                    // redraw lines
+                    d3.selectAll(".lines").transition().duration(1000)
+                    .attr("d", path);
+
+                    // axis
+                    d3.selectAll(".parAxes")
+                    .each(function(d) { d3.select(this).transition().duration(1000)
+                        .call(d3.axisLeft().tickSize(2*currentRadius).ticks(5).scale(yScales[d])); });
+                });
 
             // get and draw path data
             for(let i in machine_data.components){
@@ -7614,10 +7667,10 @@
                 .attr("r", currentRadius)
                 .attr("class", "point point"+j)
                 .attr("filter", "url(#specular)")
+                .style("cursor", "pointer")
                 .attr("stroke", d => d.colour)
                 .attr("stroke-width", lineWidth/2)
                 .attr("stroke-opacity", 0.5)
-                .attr("cursor", "pointer")
                 .attr("fill", function(d,i){
                     var miss = machine_data.components[d.comp].lcms_metrics[d.x].missing;
                     if(miss.includes(run_index)){
@@ -7628,55 +7681,33 @@
                 })
                 .on("mouseover", function(event, d){
                     var tooltip = d3.select("#tooltip");
-                    if(!axesExpand[d.x]){
-                        var tool_text = "Click to Expand Axis";
-                    }else{
-                        var tool_text = "Click to Reset Axis";
+                    var miss = machine_data.components[d.comp].lcms_metrics[display_metric].missing;
+                    if(miss.includes(d.index)){
+                        var tooltipHTML = "<strong>" + machine_data.components[d.comp].component_name.replace("_", " ") + 
+                                        "</strong><br>" + machine_data.run_data[run_index].date_time.toDateString() + "<br>" +
+                                            get_time(machine_data.run_data[run_index].date_time) +  "<br><strong>" +
+                                            "NO VALUE" + "</strong>";
+                    } else{
+                        var tooltipHTML = "<strong>" + machine_data.components[d.comp].component_name.replace("_", " ") + 
+                                        "</strong><br>" + machine_data.run_data[run_index].date_time.toDateString() + "<br>" +
+                                            get_time(machine_data.run_data[run_index].date_time) +  "<br><strong>" +
+                                            Number.parseFloat(d.y).toFixed(3) + "</strong>";
                     }
-                    tooltip.html(tool_text);
-                    tooltip.style('left', (event.pageX - 10*v_height_unit) + 'px');
-                    tooltip.style('top', (event.pageY - 5*v_height_unit) + 'px');
+                    tooltip.html(tooltipHTML);
+                    tooltip.style('left', (event.pageX+10) + 'px');
+                    tooltip.style('top', (event.pageY+10) + 'px');
                     tooltip.style("visibility", "visible");
 
                 })
-                .on("mouseout", function(event){
+                .on("mouseout", function(event, d){
                     var tooltip = d3.select("#tooltip");
+                    tooltip.style('left', '0px');
+                    tooltip.style('top', '0px');
                     tooltip.style("visibility", "hidden");
                 })
                 .on("click", function(event, d){
-        
-                    // get values at metric
-                    var yValues = [];
-                    var metricCircles = d3.selectAll(".point").filter(function(e){
-                        if(e.x == d.x){
-                            yValues.push(e.y);
-                            return e.y;
-                        }
-                    });
-
-                    if(!axesExpand[d.x]){
-                        // change y scale domain (expand)
-                        var offsetY = (4*currentRadius/height)*(d3.max(yValues)-d3.min(yValues));
-                        yScales[d.x].domain([d3.min(yValues) -offsetY, d3.max(yValues) + offsetY]);
-                        axesExpand[d.x] =true;
-                    }
-                    else{ // contract
-                        yScales[d.x].domain(getDomain(d.x));
-                        axesExpand[d.x] = false;
-                    }
-
-                    // redraw circles
-                    d3.selectAll(".point").transition().duration(1000)
-                    .attr("cy", d => yScales[d.x](d.y));
-
-                    // redraw lines
-                    d3.selectAll(".lines").transition().duration(1000)
-                    .attr("d", path);
-
-                    // axis
-                    d3.selectAll(".parAxes")
-                    .each(function(d) { d3.select(this).transition().duration(1000)
-                        .call(d3.axisLeft().tickSize(2*currentRadius).ticks(5).scale(yScales[d])); });
+                    comp_index = d.comp;
+                    draw_chromatogram(true);
                 });
             }
 
@@ -7807,7 +7838,7 @@
                 .transition().duration(500).style("opacity", 1);
 
                 d3.selectAll(".parAxes").style("opacity", 0)
-                .transition().duration(500).style("opacity", 0.7);
+                .transition().duration(500).style("opacity", 1);
 
                 d3.selectAll(".lineText").style("opacity", 0)
                 .transition().duration(500).style("opacity", 1);
