@@ -5703,13 +5703,13 @@
             metric_menu_inner.style.left = "2.5%";
             metric_menu_inner.style.top = "2.5%"; 
             metric_menu_inner.style.width = "95%";
-            //metric_menu_inner.style.height = "95%";
+            metric_menu_inner.style.borderRadius = "0.5em";
             metric_menu_inner.style.fontSize = "2vh";
-            metric_menu_inner.style.opacity = 0;
+            metric_menu_inner.style.opacity = 0.95;
             metric_menu_inner.style.cursor = "move";
             metric_menu_inner.id = "metric_menu_inner";
-            metric_menu_inner.style.backgroundColor = "white";
-            metric_menu_inner.style.border = "1.5vh solid white";
+            metric_menu_inner.style.backgroundColor = "lightskyblue";
+            metric_menu_inner.style.border = "1.5vh solid lightskyblue";
             metric_menu_inner.className = "text-center";
             metric_menu_inner.addEventListener("click", radioUpdate);
 
@@ -5723,15 +5723,37 @@
             //collapse_div1.style.backgroundColor = "var(--dark)";
             collapse_div1.style.width = "100%";
 
-            // top div
-            //var new_top_div = document.createElement("div");
-            //new_top_div.style.height = "8%";
-            //new_top_div.className = "text-center";
-            //new_top_div.style.left = 0;
-            //new_top_div.style.top = 0;
-            //new_top_div.style.backgroundColor = "var(--dark)";
-            //new_top_div.style.width = "100%";
-            //metric_menu_inner.append(new_top_div);
+            // div for title and icons
+            var title_div = document.createElement("div");
+            title_div.style.backgroundColor = "var(--dark)";
+            title_div.style.marginBottom = "0.5em";
+
+            
+            // Maspeqc Title
+            var main_title = document.createElement("p");
+            main_title.style.fontSize = "2vh";
+            main_title.style.letterSpacing = "0.4vh";
+            main_title.style.fontWeight = 700;
+            main_title.style.color = "aliceblue";
+            main_title.style.marginBottom = "1em";
+            main_title.style.padding = "0em";
+            main_title.style.display = "inline-block";
+            main_title.style.backgroundColor = "var(--dark)";
+            //main_title.className = "text-center";
+            main_title.innerHTML = "MaSpeQC";
+            //title_div.append(main_title);
+
+            // MENU icon
+            var new_menu = document.createElement("span");
+            new_menu.className = "fa fa-bars";
+            new_menu.style.color = "aliceblue";
+            new_menu.style.padding = "0.5em";
+            new_menu.style.fontSize = "2vh";
+            new_menu.style.cursor = "pointer";
+            new_menu.setAttribute("data-tooltip", "Click to Close Menu")
+            new_menu.addEventListener("click", showMenu);
+            title_div.append(new_menu);
+            metric_menu_inner.append(title_div);
 
             // LC-MS title
             var new_title = document.createElement("button");
@@ -5945,10 +5967,10 @@
             if(transition){
                 // transition any new icons
                 d3.selectAll(".new_icon").transition(t).style("opacity", 1);
-                d3.select("#metric_menu_inner").transition(t).style("opacity", 0.95);
+                //d3.select("#metric_menu_inner").transition(t).style("opacity", 0.95);
             }
             else{
-                document.getElementById("metric_menu_inner").style.opacity = 0.95;
+                //document.getElementById("metric_menu_inner").style.opacity = 0.95;
                 // transition any new icons
                 d3.selectAll(".new_icon").transition(t).style("opacity", 1);
             }
