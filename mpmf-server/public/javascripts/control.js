@@ -1126,6 +1126,18 @@ function createSVGMenu(menuDivID, menuData, name, thresholds){
             return (i*3*currentRadius) + 2*currentRadius;
         })
         .on("click", function(event,d){
+            
+            // check if last component (prevent zero components)
+            checked_components[d.component_name] = !checked_components[d.component_name];
+            let comp_count = 0;
+            for (const [key, value] of Object.entries(checked_components)) {
+                if(value){comp_count+=1;};
+            }
+            checked_components[d.component_name] = !checked_components[d.component_name]; // reset for backwards combat. with code below
+            if(comp_count == 0){
+                return;
+            }
+            
             // change fill and data structures and redraw
             if(checked_components[d.component_name]){
                 d3.selectAll(".menuCircle").transition().duration(300)
