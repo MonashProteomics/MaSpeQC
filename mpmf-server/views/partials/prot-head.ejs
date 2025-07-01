@@ -1532,12 +1532,17 @@
                     preID += 1;
                 }
 
+                // add open info
+                if(!(chromModal)){
+                    tooltipHTML += "CLICK TO OPEN";
+                }
+
                 // add close button
                 if(chromModal){
                     var spanHTML = "<span id='chromClose' class='fas fa-window-close closeButton'></span>";
                     tooltipHTML += spanHTML;
                 }
-                return "<strong>" + comp_name + "</strong></br>" + tooltipHTML;
+                return "<strong style='background-color:var(--dark); color:white; padding:5px; padding-left:20px;padding-right:20px;'>" + comp_name + "</strong></br>" + tooltipHTML;
             }
 
             
@@ -2267,12 +2272,17 @@
                 }
             }
 
+            // add info text for hold
+            if(!(pressureModal)){
+                tooltipHTML += "CLICK TO OPEN";
+            }
+
             // add close button
             if(pressureModal){
                 var spanHTML = "<span id='pressureClose' class='fas fa-window-close closeButton'></span>";
                 tooltipHTML += spanHTML;
             }
-            return "<strong>" + pressure_type.toUpperCase() + " PUMP</strong></br>" + tooltipHTML;
+            return "<strong style='background-color:var(--dark); color:white; padding:5px; padding-left:20px;padding-right:20px;'>" + pressure_type.toUpperCase() + " PUMP</strong></br></br>" + tooltipHTML;
         }
 
             // Function that updates the chart for given boundaries

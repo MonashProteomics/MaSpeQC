@@ -227,10 +227,12 @@ tr.tooltipTable {
   position: absolute;
   border: 0.2em solid var(--dark);
   letter-spacing: 0.3vh;
-  border-radius: 0.5vh;
+  border-radius: 20px;
   font-size: 2vh;
   padding: 0.5vh;
-  background-color: white;
+  padding-top:2vh;
+  background-color:white;
+  border-color:var(--info);
   color: var(--dark);
   text-align: center;
   z-index: 200;
@@ -612,7 +614,6 @@ rect.lightTheme{
   justify-content: center;
   align-items: center; 
 }
-
 
 
 
