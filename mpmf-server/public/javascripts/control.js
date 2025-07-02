@@ -11,86 +11,87 @@ function convert_JSON(text){
 // nav dropdown function
 function create_navbar_dropdown(){
 
-    // get dropdown
-    let nav_dropdown = document.getElementById('navbar-machines');
+        // HANDLE sessionStorage errors (see Project Docs and Tasks)
+        if(metabolomics === null){return;}
+        if(proteomics === null){return;}
+        
+        // get dropdown
+        let nav_dropdown = document.getElementById('navbar-machines');
 
-    // get all machine names from storage for nav bar (needed by create_navbar_Dropdown or will error)
-    var proteomics = JSON.parse(sessionStorage.getItem("proteomics-machines"));
-    var metabolomics = JSON.parse(sessionStorage.getItem("metabolomics-machines"));
+        // add metabolomics
+        if(metabolomics.length > 0){
+            let new_header = document.createElement("div");
+            let new_divider = document.createElement("div");
+            new_header.className = "dropdown-header";
+            new_header.style.fontWeight = 700;
+            new_header.style.color = "var(--dark)";
+            new_header.innerHTML = "METABOLOMICS";
+            new_divider.className = "dropdown-divider";
+            new_header.append(new_divider);
+            nav_dropdown.append(new_header);
 
-    // add metabolomics
-    if(metabolomics.length > 0){
-        let new_header = document.createElement("div");
-        let new_divider = document.createElement("div");
-        new_header.className = "dropdown-header";
-        new_header.style.fontWeight = 700;
-        new_header.style.color = "var(--dark)";
-        new_header.innerHTML = "METABOLOMICS";
-        new_divider.className = "dropdown-divider";
-        new_header.append(new_divider);
-        nav_dropdown.append(new_header);
-
-        for(let i=0; i<metabolomics.length; i++){
-            let new_link = document.createElement("a");
-            new_link.setAttribute("data-chart-menu", "METABOLOMICS"); // for chart change
-            let new_icon = document.createElement("span");
-            // link
-            new_link.href = "#";
-            new_link.className = "dropdown-item";
-            for(let machine in metabolomics[i]){
-                new_link.innerHTML = machine;
-                // icon
-                if(metabolomics[i][machine] > 0){
-                    new_icon.className = "fas fa-exclamation-triangle text-danger";
+            for(let i=0; i<metabolomics.length; i++){
+                let new_link = document.createElement("a");
+                new_link.setAttribute("data-chart-menu", "METABOLOMICS"); // for chart change
+                let new_icon = document.createElement("span");
+                // link
+                new_link.href = "#";
+                new_link.className = "dropdown-item";
+                for(let machine in metabolomics[i]){
+                    new_link.innerHTML = machine;
+                    // icon
+                    if(metabolomics[i][machine] > 0){
+                        new_icon.className = "fas fa-exclamation-triangle text-danger";
+                    }
+                    else{
+                        new_icon.className = "fas fa-check text-success";
+                    }
                 }
-                else{
-                    new_icon.className = "fas fa-check text-success";
-                }
+                // append to dropdowm
+                new_link.append(new_icon);
+                nav_dropdown.append(new_link);
             }
-            // append to dropdowm
-            new_link.append(new_icon);
-            nav_dropdown.append(new_link);
         }
-    }
 
-    // add space
-    let new_break = document.createElement("br");
-    nav_dropdown.append(new_break);
+        // add space
+        let new_break = document.createElement("br");
+        nav_dropdown.append(new_break);
 
-    // add proteomics
-    if(proteomics.length > 0){
-        let new_header = document.createElement("div");
-        let new_divider = document.createElement("div");
-        new_header.className = "dropdown-header";
-        new_header.style.fontWeight = 700;
-        new_header.style.color = "var(--dark)";
-        new_header.innerHTML = "PROTEOMICS";
-        new_divider.className = "dropdown-divider";
-        new_header.append(new_divider);
-        nav_dropdown.append(new_header);
+        // add proteomics
+        if(proteomics.length > 0){
+            let new_header = document.createElement("div");
+            let new_divider = document.createElement("div");
+            new_header.className = "dropdown-header";
+            new_header.style.fontWeight = 700;
+            new_header.style.color = "var(--dark)";
+            new_header.innerHTML = "PROTEOMICS";
+            new_divider.className = "dropdown-divider";
+            new_header.append(new_divider);
+            nav_dropdown.append(new_header);
 
-        for(let i=0; i<proteomics.length; i++){
-            let new_link = document.createElement("a");
-            new_link.setAttribute("data-chart-menu", "PROTEOMICS"); // for chart change
-            let new_icon = document.createElement("span");
-            // link
-            new_link.href = "#";
-            new_link.className = "dropdown-item";
-            for(let machine in proteomics[i]){
-                new_link.innerHTML = machine;
-                // icon
-                if(proteomics[i][machine] > 0){
-                    new_icon.className = "fas fa-exclamation-triangle text-danger";
+            for(let i=0; i<proteomics.length; i++){
+                let new_link = document.createElement("a");
+                new_link.setAttribute("data-chart-menu", "PROTEOMICS"); // for chart change
+                let new_icon = document.createElement("span");
+                // link
+                new_link.href = "#";
+                new_link.className = "dropdown-item";
+                for(let machine in proteomics[i]){
+                    new_link.innerHTML = machine;
+                    // icon
+                    if(proteomics[i][machine] > 0){
+                        new_icon.className = "fas fa-exclamation-triangle text-danger";
+                    }
+                    else{
+                        new_icon.className = "fas fa-check text-success";
+                    }
                 }
-                else{
-                    new_icon.className = "fas fa-check text-success";
-                }
+                // append to dropdowm
+                new_link.append(new_icon);
+                nav_dropdown.append(new_link);
             }
-            // append to dropdowm
-            new_link.append(new_icon);
-            nav_dropdown.append(new_link);
         }
-    }
+    
 }
 
 // Tooltips (javascript.info)
@@ -553,6 +554,12 @@ function dragElement(elmnt) {
     // box optimal marker
     d3.select("#optimal_marker").transition(t)
     .style("stroke", "aliceblue")
+
+
+    // header borders top/bottom
+    d3.select(".chartBorder").transition(t)
+    .style("border-top", "1.5vh solid whitesmoke")
+    .style("border-bottom", "1.5vh solid whitesmoke");
     
   }
 
@@ -680,11 +687,16 @@ function dragElement(elmnt) {
 
     // chart epand/contract
     d3.select("#chartIcon").transition(t)
-    .style("fill", "var(--dark)")
+    .style("fill", "var(--dark)");
 
     // box optimal marker
     d3.select("#optimal_marker").transition(t)
-    .style("stroke", "var(--dark)")
+    .style("stroke", "var(--dark)");
+
+    // header borders top/bottom
+    d3.select(".chartBorder").transition(t)
+    .style("border-top", "1.5vh solid white")
+    .style("border-bottom", "1.5vh solid white");
     
   }
 
