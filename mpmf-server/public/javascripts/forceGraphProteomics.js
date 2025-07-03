@@ -585,10 +585,10 @@ function draw_force_main(transition){
     .data(graph.nodes).enter()
     .append("use")
     .attr("class", "icons")
-    //.attr("filter", "url(#specular)")
+    .attr("filter", "url(#specular)")
     .attr("xlink:href", "#warningIcon")
-    .attr("width", currentRadius*2)
-    .attr("height", currentRadius*2)
+    .attr("width", currentRadius*3)
+    .attr("height", currentRadius*3)
     .style("opacity", function(d,i){
 
         // only comp nodes
