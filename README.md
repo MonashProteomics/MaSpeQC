@@ -2,7 +2,7 @@
 An easy-to-use interactive pipeline to assess the performance of LC-MS/MS instrumentation.  
 Suitable for proteomics, metabolomics and lipidomics workflows.  
 
-Check out the demo version <a href="#" onclick='window.open("[http://www.foracure.org.au](https://analyst-suites.org/apps/qc-demo/)");return false;'>here</a>
+Check out the demo version <a href="https://analyst-suites.org/apps/qc-demo/" target="_blank" rel="noopener noreferrer">here</a>
   
   
 <img src="img/fullPage.PNG" alt="qc" height="80%" width="80%"/>  
