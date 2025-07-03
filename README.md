@@ -222,7 +222,7 @@ All pressure metrics are derived from the pressure profile displayed in the top 
 All charts can be navigated and updated via the controls and menus. The __date controls__ at the top of the page can be used to switch between quality control runs.  
   
 <div style='display:flex;justify-content:center;'>    
-<img src="img/dateControls.png" alt="summary" height="50%" width="50%" align/>
+<img src="img/dateControls.png" alt="summary" height="100%" width="100%"/>
 </div>
 </br>
 
@@ -231,8 +231,8 @@ The __input components__ to the left of the chart area can be used to add/remove
 </br>
 </br>
 <div style='display:flex;justify-content:center;'>    
-<img src="img/compModalImg.PNG" alt="summary" width="20%" style="diplay:inline;"/>
-<img src="img/menuModalImg.PNG" alt="summary" width="35%" style="diplay:inline;"/>
+<img src="img/compModalImg.PNG" alt="summary" width="40%" style="diplay:inline;"/>
+<img src="img/menuModalImg.PNG" alt="summary" width="50%" style="diplay:inline;"/>
 </div>
 
 The chart controls at the top of each chart can be used to change between time scales, and to select the number of runs displayed on a chart (where applicable).  
