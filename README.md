@@ -261,7 +261,7 @@ The length of each edge is determined by how far that input component is from it
 - Hover over an input component node for its reading.
 - Click on a metric name (node for MS2 metrics) to jump to the line chart for that metric.
 - All nodes can be dragged and moved.
-- Click on an input node to highlight it in all metrics. Double click any node to remove highlight.
+- Click on an input node to highlight it in all metrics. Click again to remove highlight.
 - The date controls will animate the summary chart by moving the nodes allowing comparison between runs.  
 
 ### Line Charts  
@@ -305,7 +305,7 @@ __Parallel graphs__ show all of the metrics (identification-free or identificati
 
 #### User Interaction
 - Use the date controls to move the components to their new readings.
-- Click on the nodes of an axis to focus the input components for that metric. Click again to reset.
+- Click on the axes to focus the input components for that metric. Click again to reset.
 - Hover over a line to highlight that component across all metrics.
 
 ### Box Plots
@@ -347,6 +347,7 @@ __Ridge lines__ show the chromatograms of the selected components on one chart o
 
 ### Chromatograms
 <img src="img/chromatogram.PNG" alt="line" height="30%" width="30%"/>  
+<img src="img/chromModalImg.PNG" alt="line" height="30%" width="30%"/>
 </br>
 </br>
 
@@ -357,10 +358,11 @@ Click on a component name to view the __chromatogram__ for that component on the
 - Hover over a chromatogram to view a pop-up modal of all the metric readings for that component.
 - When a chromatogram is clicked, the modal will remain open and will be updated.  
   
-<img src="img/chromModalImg.PNG" alt="line" height="30%" width="30%"/>
+
 
 ### Pressure Profiles (Thermo Scientific Only)
 <img src="img/pressure.PNG" alt="line" height="30%" width="30%"/>  
+<img src="img/pressureModalImg.PNG" alt="line" height="30%" width="30%"/>
   
 For Thermo Scientific instrumentation, a __pressure profile__ will be displayed at the top right of the page.
 
@@ -369,7 +371,7 @@ For Thermo Scientific instrumentation, a __pressure profile__ will be displayed 
 - Hover over a profile to view a pop-up modal of all the pressure metric readings.
 - When a profile is clicked, the modal will remain open and will be updated.
 
-<img src="img/pressureModalImg.PNG" alt="line" height="30%" width="30%"/>
+
 
 ## Help and Support
 - Consult the __User Guides__ from the navigation menu for UI and common use cases.
