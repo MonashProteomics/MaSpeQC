@@ -1,6 +1,8 @@
 # MaSpeQC
 An easy-to-use interactive pipeline to assess the performance of LC-MS/MS instrumentation.  
 Suitable for proteomics, metabolomics and lipidomics workflows.  
+
+Check out the demo version <a href="https://analyst-suites.org/apps/qc-demo/">here</a>
   
   
 <img src="img/fullPage.PNG" alt="qc" height="80%" width="80%"/>  
