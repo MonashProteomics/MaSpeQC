@@ -231,8 +231,8 @@ The __input components__ to the left of the chart area can be used to add/remove
 </br>
 </br>
 <div style='display:flex;justify-content:center;'>    
-<img src="img/compControls.PNG" alt="summary" width="20%" style="diplay:inline;"/>
-<img src="img/menuControls.PNG" alt="summary" width="35%" style="diplay:inline;"/>
+<img src="img/compModalImg.PNG" alt="summary" width="20%" style="diplay:inline;"/>
+<img src="img/menuModalImg.PNG" alt="summary" width="35%" style="diplay:inline;"/>
 </div>
 
 The chart controls at the top of each chart can be used to change between time scales, and to select the number of runs displayed on a chart (where applicable).  
@@ -357,7 +357,7 @@ Click on a component name to view the __chromatogram__ for that component on the
 - Hover over a chromatogram to view a pop-up modal of all the metric readings for that component.
 - When a chromatogram is clicked, the modal will remain open and will be updated.  
   
-<img src="img/chromModal.PNG" alt="line" height="30%" width="30%"/>
+<img src="img/chromModalImg.PNG" alt="line" height="30%" width="30%"/>
 
 ### Pressure Profiles (Thermo Scientific Only)
 <img src="img/pressure.PNG" alt="line" height="30%" width="30%"/>  
@@ -369,7 +369,7 @@ For Thermo Scientific instrumentation, a __pressure profile__ will be displayed 
 - Hover over a profile to view a pop-up modal of all the pressure metric readings.
 - When a profile is clicked, the modal will remain open and will be updated.
 
-<img src="img/pressureModal.PNG" alt="line" height="30%" width="30%"/>
+<img src="img/pressureModalImg.PNG" alt="line" height="30%" width="30%"/>
 
 ## Help and Support
 - Consult the __User Guides__ from the navigation menu for UI and common use cases.
