@@ -254,7 +254,7 @@ The chart controls at the bottom of each chart can be used to change between the
 ### Summary
 <img src="img/summaryDark.png" alt="summary" height="100%" width="100%"/>  
   
-The __network chart__ summarises all identification-free and identification-based metrics and reports the average metric value of the selected input components. 
+A __network chart__ summarises all identification-free and identification-based metrics and reports the average metric value of the selected input components. 
 The length of each edge is determined by how far that input component is from its optimal value. Nodes with optimal readings will rest against their metric node.  
 
 #### User Interaction  
