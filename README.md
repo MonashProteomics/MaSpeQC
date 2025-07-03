@@ -222,7 +222,7 @@ All pressure metrics are derived from the pressure profile displayed in the top 
 All charts can be navigated and updated via the controls and menus. The __date controls__ at the top of the page can be used to switch between quality control runs.  
   
 <div style='display:flex;justify-content:center;'>    
-<img src="img/dateControls.png" alt="summary" height="50%" width="50%"/>
+<img src="img/dateControls.png" alt="summary" height="50%" width="50%" style="display: block; margin: 0 auto"/>
 </div>
 </br>
 
