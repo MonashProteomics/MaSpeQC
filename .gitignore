@@ -21,13 +21,13 @@ mpmf-pipeline/__pycache__/
 
 # All config files
 mpmf-pipeline/Config/thresholds/*.json
-mpmf-pipeline/Config/
+mpmf-pipeline/Config/contacts/
 
 # Config files (refuses to ignore any Config files??)
 #mpmf-pipeline/Config/database-login.json
 #mpmf-pipeline/Config/.maspeqc_gen
-#mpmf-pipeline/Config/dir-metabolomics.csv
-#mpmf-pipeline/Config/dir-proteomics.csv
+mpmf-pipeline/Config/dir-metabolomics.csv
+mpmf-pipeline/Config/dir-proteomics.csv
 #mpmf-pipeline/Config/metab-machines.txt
 #mpmf-pipeline/Config/prot-machines.txt
 
