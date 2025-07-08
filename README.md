@@ -5,8 +5,8 @@ Suitable for proteomics, metabolomics and lipidomics workflows.
 Check out the demo version <a href="https://analyst-suites.org/apps/qc-demo/" target="_blank" rel="noopener noreferrer">here</a>
   
   
-<img src="img/fullPage.PNG" alt="qc" height="80%" width="80%"/>  
-<img src="img/homePage.PNG" alt="qc" height="80%" width="80%"/>  
+<img src="img/fullPage.PNG" alt="qc" />  
+<img src="img/homePage.PNG" alt="qc" />  
 
 Use the menu ![menu](img/menu-hint.PNG) at the top of this README for quick navigation.
 
