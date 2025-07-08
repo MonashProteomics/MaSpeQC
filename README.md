@@ -110,6 +110,7 @@ Before using MaSpeQC, it is necessary to fill in a configuration form. The confi
 To start the database for MaSpeQC, open a console window, navigate to _/Software/mysql-5.7.41-winx64/bin_ and type:
 - `mysqld`
 
+Alternatively, run _startMYSQL.bat_ located in the _Software_ directory.
 Leave this window open when using MaSpeQC. It is also possible to run the MySQL database server as a service making it available without manual activation. 
 For more information see https://dev.mysql.com/doc/refman/8.4/en/windows-start-service.html
 
@@ -149,13 +150,19 @@ This will activate the Python environment needed to process raw files. QC runs c
 eg. `python MPMF_Process_Raw_Files.py "metabolomics" "10" "Y"`  
 eg. `python MPMF_Process_Raw_Files.py "proteomics" "-1" "N"`
 
+Windows users can also make use of the form on the Process page after starting MaSpeQC.
+![process](img/processImg.PNG)
+
 ## Starting MaSpeQC
-After 5 QC runs have been processed for a machine, it is available for viewing in MaSpeQC. To start using MaSpeQC:
+After 5 QC runs have been processed for a machine, it is available for viewing in MaSpeQC. 
+  
+To start the MaSpeQC server:
 - Open a console window, navigate to the __mpmf-server__ directory.
 - Type `npm start`
-- Open a browser window at your _localhost_ to start using MaSpeQC
+- Windows users can also run _startMaSpeQCUI.bat_ located in the  __mpmf-server__ directory to start the server.
 - __NOTE__: An attempt will be made to establish a _https_ connection, however if this fails a _http_ connection is established. Modify the location of certificate/key in the _www_ file to establish a _https_ connection.
-
+  
+Open a browser window at your _localhost_ to start using MaSpeQC
 
 ## FASTA database (Proteomics only)
 The Morpheus search algorithm for MS/MS data which is used during the processing of proteomics QC files requires a FASTA proteome database.
