@@ -1,4 +1,5 @@
 var fs = require('fs');
+var os = require('os');
 
 // Get configuration grids
 exports.config_home = function(req, res) {
@@ -6,7 +7,7 @@ exports.config_home = function(req, res) {
     // request normal display
     var size = Object.keys(req.query).length;
     if(size == 0){
-        res.render('config');
+        res.render('config', {op_system: os.platform()});
         return;
     }
 
@@ -299,7 +300,7 @@ exports.config_home = function(req, res) {
     }
 
     // render page
-    res.render('config');
+    res.render('config', {op_system: os.platform()});
 
     // handle errors 
     function error_handle(e){

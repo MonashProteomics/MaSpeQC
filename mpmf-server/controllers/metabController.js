@@ -1,6 +1,7 @@
 var async = require('async');
 var db = require('../models/modelDB');
 const fs = require('fs');
+var os = require('os');
 
 // Get data for Metabolomics Charts
 exports.metab_home = function(req, res) {
@@ -294,7 +295,7 @@ exports.metab_home = function(req, res) {
                                 "experiment": experiment,
                                 "display_metric": display_metric}
         machine_data["machine_details"] = machine_details;
-        res.render('metabolomics', { ejs_machine_data: machine_data});
+        res.render('metabolomics', { ejs_machine_data: machine_data, op_system: os.platform()});
     }
 
     // handle errors from promises

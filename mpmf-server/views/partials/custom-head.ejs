@@ -28,6 +28,7 @@
         // get caller from controller (main or config)
         let caller = <%-JSON.stringify(type)%>;
         let machine = <%-JSON.stringify(machine)%>;
+        let os_type = <%-JSON.stringify(op_system)%>;
 
         // called when DOM is loaded
         function load_metabolomics() {
@@ -138,7 +139,10 @@
             load_metabolomics();
             load_proteomics();
 
-            
+           // remove processing for linux
+            if(os_type !== "win32"){
+                document.getElementById("processItem").style.display = "none";
+            }
             
         });
 

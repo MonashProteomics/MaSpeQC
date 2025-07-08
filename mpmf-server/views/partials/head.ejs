@@ -51,6 +51,7 @@
 
         // get machines from controller set layout variables and globals
         let machines = <%-JSON.stringify(ejs_machines)%>;
+        let os_type = <%-JSON.stringify(op_system)%>;
         const MACHINES_NUMBER = machines.length;
         const COLS = 5; // 1,2,3, or 4
         const ROWS = Math.ceil(MACHINES_NUMBER/COLS);
@@ -88,6 +89,11 @@
         
         // DOM loaded callback
 		document.addEventListener('DOMContentLoaded', function() {
+
+            // remove processing for linux
+            if(os_type !== "win32"){
+                document.getElementById("processItem").style.display = "none";
+            }
 
             // update home tooltip
             var home = document.getElementById("home");

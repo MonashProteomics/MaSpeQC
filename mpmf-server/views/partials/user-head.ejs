@@ -15,9 +15,11 @@
         // get all machine names from storage for nav bar
         var proteomics = JSON.parse(sessionStorage.getItem("proteomics-machines"));
         var metabolomics = JSON.parse(sessionStorage.getItem("metabolomics-machines"));
+        
 
         // get caller from controller (main or config)
         let caller = <%-JSON.stringify(type)%>;
+        let os_type = <%-JSON.stringify(op_system)%>;
 
         // DOM loaded callback
 		document.addEventListener('DOMContentLoaded', function() {
@@ -35,6 +37,12 @@
                 var user_link = document.getElementById("userLink");
                 user_link.setAttribute("data-user", "process");
             }
+
+            // remove processing for linux
+            if(os_type !== "win32"){
+                document.getElementById("processItem").style.display = "none";
+            }
+
         });
 
     </script>

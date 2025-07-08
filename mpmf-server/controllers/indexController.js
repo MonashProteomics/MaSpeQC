@@ -1,4 +1,5 @@
 var async = require('async');
+var os = require('os');
 var db = require('../models/modelDB');
 
 // Display HomePage.
@@ -111,12 +112,10 @@ exports.home = function(req, res) {
 
         // render or exit
         if(keep_machines.length > 0){
-            res.render('index', { ejs_machines: keep_machines}); 
+            res.render('index', {ejs_machines: keep_machines, op_system: os.platform()}); 
         }
         else{
-            res.render('no-data');
-            //console.log("Process more data and try again");
-            //process.exit(1);
+            res.render('no-data', {op_system: os.platform()});
         }
 
     }

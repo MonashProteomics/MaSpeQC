@@ -19,5 +19,16 @@
         sessionStorage.setItem("proteomics-machines", JSON.stringify(proteomics));
         sessionStorage.setItem("metabolomics-machines", JSON.stringify(metabolomics));
 
+        // DOM loaded callback
+		document.addEventListener('DOMContentLoaded', function() {
+
+            // remove processing for linux
+            if(os_type !== "win32"){
+                document.getElementById("processItem").style.display = "none";
+            }
+
+           
+        }, false);
+
     </script>
 </head>

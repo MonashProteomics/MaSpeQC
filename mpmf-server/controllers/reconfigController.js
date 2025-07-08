@@ -1,5 +1,6 @@
 var db = require('../models/modelDB');
 var fs = require('fs');
+var os = require('os');
 
 // Get reconfiguration grids
 exports.reconfig_home = function(req, res) {
@@ -49,7 +50,7 @@ exports.reconfig_home = function(req, res) {
     ).then((machine_length) => {
         var size = Object.keys(req.query).length;
         if(size == 0){ // no query strings, load normal page
-            res.render('reconfig');
+            res.render('reconfig',  {op_system: os.platform()});
             return;
         } 
         else{
@@ -60,7 +61,7 @@ exports.reconfig_home = function(req, res) {
 
                 // wait for the functions to run then render
                 Promise.all([p1 ,p2]).then(function(){
-                    res.render('reconfig');
+                    res.render('reconfig',  {op_system: os.platform()});
                 }).catch(
                     error => error_handle(error)
                 ); 
@@ -74,7 +75,7 @@ exports.reconfig_home = function(req, res) {
                 // wait for the functions to run then render
                 Promise.all([p1, p2]).then(function(){
                     setTimeout(function(){
-                        res.render('reconfig');
+                        res.render('reconfig',  {op_system: os.platform()});
                     },100);
                 }).catch(
                     error => error_handle(error)

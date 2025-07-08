@@ -21,6 +21,7 @@
 
         let myconfiguration = {};
         let exp;
+        let os_type = <%-JSON.stringify(op_system)%>;
         
 
         // called when DOM is loaded
@@ -143,6 +144,11 @@
             else{
                 load_metabolomics();
                 link.innerHTML = "<span class='fas fa-wrench'></span> Proteomics";
+            }
+
+            // remove processing for linux
+            if(os_type !== "win32"){
+                document.getElementById("processItem").style.display = "none";
             }
             
 

@@ -1,4 +1,5 @@
 var fs = require('fs');
+var os = require('os');
 
 // Get configuration grids
 exports.custom_home = function(req, res) {
@@ -23,7 +24,7 @@ exports.custom_home = function(req, res) {
     var machine = req.query.machine;
     
     if(caller == "main"){
-        res.render('custom', {'type': caller, 'machine': machine});
+        res.render('custom', {'type': caller, 'machine': machine, op_system: os.platform()});
         return;
     }
 
@@ -152,7 +153,7 @@ exports.custom_home = function(req, res) {
             });
         }
 
-        res.render('custom', {'type': caller, 'machine': machine});
+        res.render('custom', {'type': caller, 'machine': machine, op_system: os.platform()});
         return;
         }
     

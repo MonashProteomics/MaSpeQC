@@ -156,6 +156,7 @@
 
         // get machine data from controller
         let machine_data = <%-JSON.stringify(ejs_machine_data)%>;
+        let os_type = <%-JSON.stringify(op_system)%>;
 
         // get all machine names from storage for nav bar
         var proteomics = JSON.parse(sessionStorage.getItem("proteomics-machines"));
@@ -597,6 +598,11 @@
 		document.addEventListener('DOMContentLoaded', function() {
 
             console.log(machine_data);
+
+            // remove processing for linux
+            if(os_type !== "win32"){
+                document.getElementById("processItem").style.display = "none";
+            }
 
             // set layout variables
             var navHeight = document.getElementById("navcontainer").clientHeight;

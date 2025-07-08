@@ -23,6 +23,8 @@
         // get all machine names from storage for nav bar
         var proteomics = JSON.parse(sessionStorage.getItem("proteomics-machines"));
         var metabolomics = JSON.parse(sessionStorage.getItem("metabolomics-machines"));
+        let os_type = <%-JSON.stringify(op_system)%>;
+
         let myconfiguration = {};
 
         // called when DOM is loaded
@@ -138,12 +140,17 @@
             .style("visibility", "hidden");
 
             // navbar
-	    try{
-                create_navbar_dropdown();
-	    }
-	    catch{ // allow for reconfig when no data
-		pass;
-	    }
+            try{
+                    create_navbar_dropdown();
+            }
+            catch{ // allow for reconfig when no data
+            pass;
+            }
+
+            // remove processing for linux
+            if(os_type !== "win32"){
+                document.getElementById("processItem").style.display = "none";
+            }
 
             // load jsons
             load_instruments();
