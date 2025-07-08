@@ -52,7 +52,7 @@ Then add the following software into a directory named _Software_ in the main di
 Next, navigate to the _mpmf-pipeline_ directory and create the Python environemnt from the _requirements.txt_ file.
 Finally, set-up the node.js server by runnining `npm install` from the _mpmf-server_ directory. 
 
-You can now configure MaSpeQC by running `npm start --setup` and opening a browser window at _http://localhost/configuration_.
+You can now configure MaSpeQC by running `npm start --setup` and opening a browser window at _'http://localhost/configuration'_.
 
 ## Additional Installation Instructions for Thermo Fisher Scientific Instruments Only
 In order to process the pressure metrics and profiles which are a feature for Thermo Fisher Scientific instruments, the standard libraries for raw file access provided by Thermo Fisher Scientific <a href="https://github.com/thermofisherlsms/RawFileReader/">here</a> need to be included in MaSpeQC.  
