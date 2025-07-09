@@ -280,6 +280,7 @@ ConfigurationEditor.start = function (experiment, configuration, btnSaveCallback
 		btnSave.style.fontSize = "2vh";
 	}
 	
+	btnSave.style.padding = "5px";
 	btnSave.style.letterSpacing = "0.2vh";
 	btnSave.onclick = btnSaveCallback;
 	divConfigEditorFooter.appendChild(btnSave);
