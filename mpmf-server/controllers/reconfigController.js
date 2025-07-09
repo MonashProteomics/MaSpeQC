@@ -1,6 +1,6 @@
 var db = require('../models/modelDB');
-var fs = require('fs');
-var os = require('os');
+const fs = require('fs');
+const os = require('os');
 
 // Get reconfiguration grids
 exports.reconfig_home = function(req, res) {
@@ -9,8 +9,8 @@ exports.reconfig_home = function(req, res) {
     // look-up objects
     var types = {"other": 0, "agilent": 1, "bruker": 2, "thermo": 3};
     var vendors = {"0": "other", "1": "agilent", "2": "bruker", "3": "thermo"};
-    var use = {"Y": 0, "N": 1}
-    var convert = {"0": "Y", "1": "N"}
+    var use = {"Y": 0, "N": 1};
+    var convert = {"0": "Y", "1": "N"};
 
     // machines for instruments grid
     var machines;

@@ -1,5 +1,5 @@
-var fs = require('fs');
-var os = require('os');
+const fs = require('fs');
+const os = require('os');
 
 // Get configuration grids
 exports.config_home = function(req, res) {

@@ -1,5 +1,5 @@
-var async = require('async');
-var os = require('os');
+const async = require('async');
+const os = require('os');
 var db = require('../models/modelDB');
 
 // Display HomePage.

@@ -1,4 +1,4 @@
-var os = require('os');
+const os = require('os');
 
 // Get user guide page
 exports.user_home = function(req, res) {

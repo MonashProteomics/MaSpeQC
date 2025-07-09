@@ -13,5 +13,7 @@ python "MPMF_Process_Raw_Files.py" %1 %2 %3
 :: deactivate python environment
 CALL .venv\Scripts\deactivate.bat
 
+cd ..\mpmf-server
+
 @ECHO ON
 @EXIT /B 0

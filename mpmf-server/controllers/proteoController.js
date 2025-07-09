@@ -1,7 +1,7 @@
-var async = require('async');
+const async = require('async');
 var db = require('../models/modelDB');
 const fs = require('fs');
-var os = require('os');
+const os = require('os');
 
 // Get data for Proteomics Charts
 exports.proteo_home = function(req, res) {

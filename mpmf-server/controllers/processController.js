@@ -1,11 +1,14 @@
 const fs = require('fs');
 const shell = require('shelljs');
 const { spawn, exec ,execSync, spawnSync } = require('child_process');
+const os = require('os');
+
 
 // Get processing page
 exports.process_home = function(req, res) {
 
     var size = Object.keys(req.query).length;
+    const os_type = os.platform();
 
     // no query strings, load normal page
     if(size == 0){ 
@@ -36,9 +39,17 @@ exports.process_home = function(req, res) {
     experiment = exp_lookup[experiment[0].experiment];
     runs = runs_lookup[runs[0].runs];
     email = email_lookup[email[0].email];
-   
-    // spawn process
-    const bat = spawn('cmd.exe', ['/c', 'process.bat', experiment, runs, email]);
+
+    // spawn process.bat Windows
+    if(os_type == 'win32'){
+        var bat = spawn('cmd.exe', ['/c', 'process.bat', experiment, runs, email]);
+    }
+
+    // spawn bash for process.sh Linux 
+    if(os_type == 'linux'){
+        var bat = spawn('bash', ['source process.sh', experiment, runs, email]);
+    }
+
     bat.stdout.on('data', (data) => {
         console.log(data.toString());
     });

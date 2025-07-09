@@ -599,8 +599,8 @@
 
             console.log(machine_data);
 
-            // remove processing for linux
-            if(os_type !== "win32"){
+            // remove processing for mac or other
+            if(os_type !== "win32" && os_type !== "linux"){
                 document.getElementById("processItem").style.display = "none";
             }
 
