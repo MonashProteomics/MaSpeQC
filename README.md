@@ -160,7 +160,7 @@ To start the MaSpeQC server:
 - Open a console window, navigate to the _mpmf-server_ directory.
 - Type `npm start`
 - Windows users can run __startMaSpeQCUI.bat__ located in the  _mpmf-server_ directory to start the server.
-- Linuxs users can run __startMaSpeQCUI.sh__ located in the  _mpmf-server_ directory to start the server.
+- Linux users can run __startMaSpeQCUI.sh__ located in the  _mpmf-server_ directory to start the server.
 - __NOTE__: An attempt will be made to establish a _https_ connection, however if this fails a _http_ connection is established. Modify the location of certificate/key in the _www_ file to establish a _https_ connection.
   
 Open a browser window at your _localhost_ to start using MaSpeQC
