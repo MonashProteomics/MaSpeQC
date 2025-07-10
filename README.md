@@ -385,9 +385,9 @@ For Thermo Scientific instrumentation, a __pressure profile__ will be displayed 
 - On Windows it might happen that the Microsoft Visual C++ Redistributable (VCRUNTIME140.dll) is missing. Users will get the error message
 "The code execution cannot proceed because VCRUNTIME140.dll was not found. Reinstalling the program may fix this problem." during MySQL configuration.
 Users can download the package from https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170 and install it.
+- The system creates its own check files (METABOLOMICS.txt, PROTEOMICS.txt) when processing. These can linger in the __mpmf-pipeline__ directory if processing is terminated early. Remove these from the directory before processing again.
 
 ## Help and Support
 - Consult the __User Guides__ from the navigation menu for UI and common use cases.
 	- https://youtu.be/_4T2WQHC5SY (Configuration)
 	- https://youtu.be/wXOK1BTWMlE (Charts)
-- __NOTE:__ The system creates its own check files (METABOLOMICS.txt, PROTEOMICS.txt) when processing. These can linger in the __mpmf-pipeline__ directory if processing is terminated early. Remove these from the directory before processing again.
