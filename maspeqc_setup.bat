@@ -56,17 +56,17 @@ if exist check_tar.log del check_tar.log
 
 rem MaSpeQC
 echo ===== Checking MaSpeQC =====
-if not exist mpmf-pipeline goto error-maspeqc
-if not exist mpmf-server goto error-maspeqc
-goto found-maspeqc
-:error-maspeqc
+if not exist mpmf-pipeline goto error_maspeqc
+if not exist mpmf-server goto error_maspeqc
+goto found_maspeqc
+:error_maspeqc
 echo Could not find MaSpeQC 1.0
-echo Please download MaSpeQC 1.0 from https://github.com/CodeCaven/lc-ms-quality-control-visual-analytics/releases as zip file and unzip the downloaded zip file
+echo Please download MaSpeQC 1.0 from https://github.com/MonashProteomics/MaSpeQC/releases as zip file and unzip the downloaded zip file
 echo Run maspeqc_setup.bat again afterwards
 pause
 echo.
 exit /b
-:found-maspeqc
+:found_maspeqc
 echo == Found MaSpeQC 1.0 directories mpmf-pipeline and mpmf-server
 echo.
 set success_maspeqc=1
@@ -86,7 +86,7 @@ rem MySQL
 set mysql_install=0
 set mysqld_running=0
 echo ===== Configuring MySQL Community Server =====
-:check-mysql
+:check_mysql
 echo == Checking MySQL Community Server configuration
 if exist mysql-5.7.41-winx64 (
     echo Changing directory to mysql-5.7.41-winx64\bin
@@ -95,20 +95,20 @@ if exist mysql-5.7.41-winx64 (
     mysql.exe -V
     if !mysql_install! equ 1 if errorlevel 1 (
         cd ..\..
-        goto error-mysql
+        goto error_mysql
     )
     if errorlevel 1 (
         cd ..\..
-        goto get-mysql
+        goto get_mysql
     )
     for /f "tokens=*" %%g in ('mysql.exe -V') do (
         set mysql_version=%%g
         cd ..\..
-        goto found-mysql
+        goto found_mysql
     )
     cd ..\..
 )
-:get-mysql
+:get_mysql
 if not exist mysql-5.7.41-winx64 (
     if not exist mysql-5.7.41-winx64.zip (
         echo Downloading MySQL Community Server 5.7.41 from https://dev.mysql.com/downloads/mysql/
@@ -119,17 +119,17 @@ if not exist mysql-5.7.41-winx64 (
         tar -xf mysql-5.7.41-winx64.zip
         if !delete_downloads! equ 1 del mysql-5.7.41-winx64.zip
         set mysql_install=1
-        goto check-mysql
+        goto check_mysql
     )
 )
-:error-mysql
+:error_mysql
 echo Could not download and unpack MySQL Community Server 5.7.41
 echo Please download MySQL Community Server 5.7.41 as zip from https://dev.mysql.com/downloads/mysql/ and put the downloaded zip file in !cd!
 echo Run maspeqc_setup.bat again afterwards
 pause
 echo.
 goto nodejs
-:found-mysql
+:found_mysql
 echo == Found !mysql_version!
 rem Create data directory, configuration file my.cnf, initialise server, create user, change root password
 if not exist ..\data (
@@ -190,7 +190,7 @@ if not exist ..\data (
     echo == Starting MySQL server ^(in a new console window^)
     echo Do not stop the server and do not close the new window
     echo ^(You might be asked by the Windows Firewall to allow network access for mysqld.exe, please "Allow access"^)
-    rem TODO: We need to check if network access is necessary for mysqld.exe (TESTED see docs, access not necessary?)
+    rem TODO: We need to check if network access is necessary for mysqld.exe ^(TESTED see docs, access not necessary\?^)
     pause
     echo.
     echo == Checking if MySQL server is running already
@@ -250,7 +250,7 @@ if not exist ..\data (
     mysql -u root -e "create database maspeqc;"
     for /f "delims=" %%g in ('mysql -u root -e "show databases like 'maspeqc';"') do (
         set output=%%g
-        if not "!output:maspeqc=!"=="!output!" goto database-exists-now
+        if not "!output:maspeqc=!"=="!output!" goto database_exists_now
     )
     echo MaSpeQC database "maspeqc" still does not exist
     echo It seems the MaSpeQC database could not be created by the script
@@ -260,7 +260,7 @@ if not exist ..\data (
     cd ..\..
     echo.
     goto nodejs
-    :database-exists-now
+    :database_exists_now
     echo MaSpeQC database "maspeqc" exists now
     echo == Creating MaSpeQC database user "maspeqc"
     rem generate password, write it to .maspeqc_gen, and use it to create user maspeqc 
@@ -296,7 +296,7 @@ rem Node.js
 :nodejs
 set nodejs_install=0
 echo ===== Configuring Node.js =====
-:check-nodejs
+:check_nodejs
 echo == Checking Node.js configuration
 if exist node-v18.20.4-win-x64 (
     echo Changing directory to node-v18.20.4-win-x64
@@ -305,20 +305,20 @@ if exist node-v18.20.4-win-x64 (
     node.exe -v
     if !nodejs_install! equ 1 if errorlevel 1 (
         cd ..
-        goto error-nodejs
+        goto error_nodejs
     )
     if errorlevel 1 (
         cd ..
-        goto get-nodejs
+        goto get_nodejs
     )
     for /f "tokens=*" %%g in ('node.exe -v') do (
         set nodejs_version=%%g
         cd ..
-        goto found-nodejs
+        goto found_nodejs
     )
     cd ..
 )
-:get-nodejs
+:get_nodejs
 if not exist node-v18.20.4-win-x64 (
     if not exist node-v18.20.4-win-x64.zip (
         echo Downloading Node.js 18.20.4 from https://nodejs.org/en/download
@@ -329,20 +329,20 @@ if not exist node-v18.20.4-win-x64 (
         tar -xf node-v18.20.4-win-x64.zip
         if !delete_downloads! equ 1 del node-v18.20.4-win-x64.zip
         set nodejs_install=1
-        goto check-nodejs
+        goto check_nodejs
     )
 )
-:error-nodejs
+:error_nodejs
 echo Could not download and unpack Node.js 18.20.4
 echo Please download Node.js 18.20.4 64-bit as zip from https://nodejs.org/en/download and put the downloaded zip file in !cd!
 echo Run maspeqc_setup.bat again afterwards
 pause
 echo.
 goto python
-:found-nodejs
+:found_nodejs
 echo == Found Node.js !nodejs_version!
 rem Install node modules and run configuration
-rem TODO: We need to check which network access is necessary for Node.js JavaScript Runtime ^("Private", "Public"^) 
+rem TODO: We need to check which network access is necessary for Node.js JavaScript Runtime ^(\"Private\", \"Public\"^)
 if exist ..\mpmf-server if not exist ..\mpmf-server\node_modules (
     echo.
     echo Changing directory to node-v18.20.4-win-x64
@@ -380,42 +380,42 @@ rem Python
 :python
 set python_install=0
 echo ===== Configuring Python =====
-:check-python
+:check_python
 echo == Checking Python installation
 if exist Python (
     echo Running "Python\python.exe -V"
     Python\python.exe -V > check_python.log 2>&1
-    if errorlevel 1 goto check-system-python
+    if errorlevel 1 goto check_system_python
     for /f "tokens=*" %%g in ('Python\python.exe -V') do (
         set python_version=%%g
         for /F "tokens=1,2 delims=." %%a in ("!python_version:~7!") do (
-            if %%a lss !python_major! goto check-system-python
-            if %%b lss !python_minor_min! goto check-system-python
-            if %%b gtr !python_minor_max! goto check-system-python
+            if %%a lss !python_major! goto check_system_python
+            if %%b lss !python_minor_min! goto check_system_python
+            if %%b gtr !python_minor_max! goto check_system_python
         )
         if exist check_python.log del check_python.log
-        goto found-python
+        goto found_python
     )
 )
-:check-system-python
+:check_system_python
 echo Running "python.exe -V"
 python.exe -V > check_python.log 2>&1
 if !python_install! equ 1 if errorlevel 1 (
     if exist check_python.log del check_python.log
-    goto error-python
+    goto error_python
 )
-if errorlevel 1 goto get-python
+if errorlevel 1 goto get_python
 for /f "tokens=*" %%g in ('python.exe -V') do (
     set python_version=%%g
     for /F "tokens=1,2 delims=." %%a in ("!python_version:~7!") do (
-        if %%a lss !python_major! goto get-python
-        if %%b lss !python_minor_min! goto get-python
-        if %%b gtr !python_minor_max! goto get-python
+        if %%a lss !python_major! goto get_python
+        if %%b lss !python_minor_min! goto get_python
+        if %%b gtr !python_minor_max! goto get_python
     )
     if exist check_python.log del check_python.log
-    goto found-python
+    goto found_python
 )
-:get-python
+:get_python
 echo Could not find Python installation version !python_major!.!python_minor_min! to !python_major!.!python_minor_max!
 if not exist python-3.10.11-amd64.exe (
     echo Downloading Python 3.10.11 from https://www.python.org/downloads/windows/
@@ -423,10 +423,10 @@ if not exist python-3.10.11-amd64.exe (
 )
 if exist python-3.10.11-amd64.exe (
     echo Starting a minimal Python installation
-    echo Step 1^) If it is ticked, untick "Use admin privileges when installing py.exe", then click on "Customize installation"
-    echo Step 2^) Keep the selections as they are and click on "Next"
-    echo Step 3^) Keep the selections and the install location as they are and click on "Install"
-    echo Step 4^) Click on "Close"
+    echo Step 1 - If it is ticked, untick "Use admin privileges when installing py.exe", then click on "Customize installation"
+    echo Step 2 - Keep the selections as they are and click on "Next"
+    echo Step 3 - Keep the selections and the install location as they are and click on "Install"
+    echo Step 4 - Click on "Close"
     pause
     rem Command line parameters for Python installation
     rem https://docs.python.org/3/using/windows.html#installing-without-ui
@@ -434,16 +434,16 @@ if exist python-3.10.11-amd64.exe (
     python-3.10.11-amd64.exe InstallAllUsers=0 Shortcuts=0 Include_doc=0 Include_launcher=0 Include_tcltk=0 Include_test=0 TargetDir="!cd!\Python"
     if !delete_downloads! equ 1 del python-3.10.11-amd64.exe
     set python_install=1
-    goto check-python
+    goto check_python
 )
-:error-python
+:error_python
 echo Could not download and install Python 3.10.11
 echo Please download Python 3.10.11 from https://www.python.org/downloads/windows/ and put the downloaded file in !cd!
 echo Run maspeqc_setup.bat again afterwards
 pause
 echo.
 goto mzmine
-:found-python
+:found_python
 echo == Found !python_version!
 rem Create Python environment, install modules
 if exist ..\mpmf-pipeline if not exist ..\mpmf-pipeline\.venv (
@@ -499,7 +499,7 @@ rem MZmine
 :mzmine
 set mzmine_install=0
 echo ===== Configuring MZmine =====
-:check-mzmine
+:check_mzmine
 echo == Checking MZmine configuration
 if exist MZmine-2.53-Windows (
     echo Changing directory to MZmine-2.53-Windows
@@ -509,17 +509,17 @@ if exist MZmine-2.53-Windows (
     bin\java.exe -classpath lib\* io.github.mzmine.main.MZmineCore > check_mzmine.log 2>&1
     if !mzmine_install! equ 1 if errorlevel 1 (
         cd ..
-        goto error-mzmine
+        goto error_mzmine
     )
     if errorlevel 1 (
         cd ..
-        goto get-mzmine
+        goto get_mzmine
     )
     del check_mzmine.log
     cd ..
-    goto found-mzmine
+    goto found_mzmine
 )
-:get-mzmine
+:get_mzmine
 if not exist MZmine-2.53-Windows (
     if not exist MZmine-2.53-Windows.zip (
         echo Downloading MZmine 2.53 from https://github.com/mzmine/mzmine2/releases
@@ -530,17 +530,17 @@ if not exist MZmine-2.53-Windows (
         tar -xf MZmine-2.53-Windows.zip
         if !delete_downloads! equ 1 del MZmine-2.53-Windows.zip
         set mzmine_install=1
-        goto check-mzmine
+        goto check_mzmine
     )
 )
-:error-mzmine
+:error_mzmine
 echo Could not download and unpack MZmine 2.53
 echo Please download MZmine 2.53 from https://github.com/mzmine/mzmine2/releases and put the downloaded zip file in !cd!
 echo Run maspeqc_setup.bat again afterwards
 pause
 echo.
 goto morpheus
-:found-mzmine
+:found_mzmine
 echo == MZmine 2.53 launched successfully
 echo.
 set success_mzmine=1
@@ -550,7 +550,7 @@ rem Morpheus
 :morpheus
 set morpheus_install=0
 echo ===== Configuring Morpheus =====
-:check-morpheus
+:check_morpheus
 echo == Checking Morpheus configuration
 if exist "Morpheus (mzML)" (
     echo Changing directory to "Morpheus (mzML)"
@@ -559,20 +559,20 @@ if exist "Morpheus (mzML)" (
     morpheus_mzml_cl.exe
     if !morpheus_install! equ 1 if errorlevel 1 (
         cd ..
-        goto error-morpheus
+        goto error_morpheus
     )
     if errorlevel 1 (
         cd ..
-        goto get-morpheus
+        goto get_morpheus
     )
     for /f "tokens=*" %%g in ('morpheus_mzml_cl.exe') do (
         set morpheus_version=%%g
         cd ..
-        goto found-morpheus
+        goto found_morpheus
     )
     cd ..
 )
-:get-morpheus
+:get_morpheus
 if not exist "Morpheus (mzML)" (
     if not exist Morpheus_mzML.zip (
         echo Downloading Morpheus r287, command line r272 from https://cwenger.github.io/Morpheus/
@@ -583,17 +583,17 @@ if not exist "Morpheus (mzML)" (
         tar -xf Morpheus_mzML.zip
         if !delete_downloads! equ 1 del Morpheus_mzML.zip
         set morpheus_install=1
-        goto check-morpheus
+        goto check_morpheus
     )
 )
-:error-morpheus
+:error_morpheus
 echo Could not download and unpack Morpheus r287, command line r272
 echo Please download Morpheus r287 as zip from https://cwenger.github.io/Morpheus/ and put the downloaded zip file in !cd!
 echo Run maspeqc_setup.bat again afterwards
 pause
 echo.
 goto bzip2
-:found-morpheus
+:found_morpheus
 echo == Found !morpheus_version!
 echo.
 set success_morpheus=1
@@ -603,7 +603,7 @@ rem bzip2
 :bzip2
 set bzip2_install=0
 echo ===== Configuring bzip2 for Windows ^(required to configure ProteoWizard^) =====
-:check-bzip2
+:check_bzip2
 echo == Checking bzip2 configuration
 if exist bzip2 (
     echo Changing directory to bzip2
@@ -612,21 +612,21 @@ if exist bzip2 (
     bzip2.exe -h > check_bzip2.log 2>&1
     if !bzip2_install! equ 1 if errorlevel 1 (
         cd ..
-        goto error-bzip2
+        goto error_bzip2
     )
     if errorlevel 1 (
         cd ..
-        goto get-bzip2
+        goto get_bzip2
     )
     for /f "delims=" %%g in (check_bzip2.log) do (
         set bzip2_version=%%g
         del check_bzip2.log
         cd ..
-        goto found-bzip2
+        goto found_bzip2
     )
     cd ..
 )
-:get-bzip2
+:get_bzip2
 if not exist bzip2 (
     if not exist bzip2-1.0.8.0-win-x64.zip (
         echo Downloading bzip2 1.0.8 for Windows from https://github.com/philr/bzip2-windows
@@ -639,17 +639,17 @@ if not exist bzip2 (
         tar -xf bzip2-1.0.8.0-win-x64.zip -C bzip2
         if !delete_downloads! equ 1 del bzip2-1.0.8.0-win-x64.zip
         set bzip2_install=1
-        goto check-bzip2
+        goto check_bzip2
     )
 )
-:error-bzip2
+:error_bzip2
 echo Could not download and unpack bzip2 1.0.8 for Windows
 echo Please download bzip2 1.0.8 for Windows x64 as zip from https://github.com/philr/bzip2-windows/releases and put the downloaded zip file in !cd!
 echo Run maspeqc_setup.bat again afterwards
 pause
 echo.
 goto msconvert
-:found-bzip2
+:found_bzip2
 echo == Found !bzip2_version!
 echo.
 
@@ -658,7 +658,7 @@ rem msconvert
 :msconvert
 set msconvert_install=0
 echo ===== Configuring ProteoWizard ^(msconvert^) =====
-:check-msconvert
+:check_msconvert
 echo == Checking ProteoWizard configuration
 if exist ProteoWizard (
     echo Changing directory to ProteoWizard
@@ -668,14 +668,14 @@ if exist ProteoWizard (
     if !msconvert_install! equ 1 if errorlevel 1 (
         del check_msconvert.log
         cd ..
-        goto error-msconvert
+        goto error_msconvert
     )
     if errorlevel 1 (
         del check_msconvert.log
         cd ..
         echo Could not run msconvert.exe
         pause
-        goto get-msconvert
+        goto get_msconvert
     )
     set current=""
     for /f "delims=" %%g in (check_msconvert.log) do (
@@ -684,18 +684,18 @@ if exist ProteoWizard (
     )
     del check_msconvert.log
     cd ..
-    goto found-msconvert
+    goto found_msconvert
 )
 if not exist ProteoWizard (
-    :get-msconvert
+    :get_msconvert
     if not exist pwiz-bin-*.tar.bz2 (
         echo Please download ProteoWizard 3.0.23097 or later from https://proteowizard.sourceforge.io/download.html and put the downloaded tar.bz2 file in !cd!
         echo A browser window will be opened now and you can download ProteoWizard 3.0.23097
-        echo Select "Windows 64-bit tar.bz2 (able to convert vendor files except T2D)" from the "Platform" dropdown and confirm the license agreement
+        echo Select "Windows 64-bit tar.bz2 ^(able to convert vendor files except T2D^)" from the "Platform" dropdown and confirm the license agreement
         start https://proteowizard.sourceforge.io/download.html
         pause
     )
-    if not exist pwiz-bin-*.tar.bz2 goto error-msconvert
+    if not exist pwiz-bin-*.tar.bz2 goto error_msconvert
     for /f %%g in ('dir /b /a pwiz-bin-*.tar.bz2') do (
         echo Unpacking %%g
         bzip2\bzip2.exe -d -k %%g
@@ -709,13 +709,13 @@ if not exist ProteoWizard (
         del pwiz-bin-*.tar
     )
     set msconvert_install=1
-    goto check-msconvert
+    goto check_msconvert
 )
-:error-msconvert
+:error_msconvert
 echo Could not unpack ProteoWizard 3.0.23097 or later
 pause
 goto summary
-:found-msconvert
+:found_msconvert
 echo == Found !msconvert_version!
 echo.
 set success_msconvert=1
