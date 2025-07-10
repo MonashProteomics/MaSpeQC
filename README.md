@@ -381,7 +381,10 @@ For Thermo Scientific instrumentation, a __pressure profile__ will be displayed 
 - Hover over a profile to view a pop-up modal of all the pressure metric readings.
 - When a profile is clicked, the modal will remain open and will be updated.
 
-
+## Troubleshooting
+On Windows it might happen that the Microsoft Visual C++ Redistributable (VCRUNTIME140.dll) is missing. Users will get the error message
+"The code execution cannot proceed because VCRUNTIME140.dll was not found. Reinstalling the program may fix this problem." during MySQL configuration.
+Users can download the package from https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170 and install it.
 
 ## Help and Support
 - Consult the __User Guides__ from the navigation menu for UI and common use cases.
