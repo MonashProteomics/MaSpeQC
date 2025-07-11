@@ -47,7 +47,7 @@ exports.process_home = function(req, res) {
 
     // spawn bash for process.sh Linux 
     if(os_type == 'linux'){
-        var bat = spawn('bash', ['source process.sh', experiment, runs, email]);
+        var bat = spawn('bash', ['source processLinux.sh', experiment, runs, email]);
     }
 
     bat.stdout.on('data', (data) => {
