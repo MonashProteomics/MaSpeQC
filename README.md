@@ -118,6 +118,8 @@ For more information see https://dev.mysql.com/doc/refman/8.4/en/windows-start-s
 Consult the MySQL documentation for instructions on starting a database server for your system.  
 https://dev.mysql.com/doc/mysql-getting-started/en/#mysql-getting-started-installing
 
+Linux users can also use the files __startLinuXMySQL.sh__ and __stopLinuXMySQL.sh__ to managage the database server.
+
 ## File Formats and Directory Structure
 The raw QC input files are required to be stored in __instrument_name__ (defined in configuration) folders in the input folder specified during configuration.
  ```
@@ -160,7 +162,7 @@ To start the MaSpeQC server:
 - Open a console window, navigate to the _mpmf-server_ directory.
 - Type `npm start`
 - Windows users can run __startMaSpeQCUI.bat__ located in the  _mpmf-server_ directory to start the server.
-- Linux users can run __startMaSpeQCUI.sh__ located in the  _mpmf-server_ directory to start the server.
+- Linux users can run __startLinuxMaSpeQCUI.sh__ located in the  _mpmf-server_ directory to start the server.
 - __NOTE__: An attempt will be made to establish a _https_ connection, however if this fails a _http_ connection is established. Modify the location of certificate/key in the _www_ file to establish a _https_ connection.
   
 Open a browser window at your _localhost_ to start using MaSpeQC
