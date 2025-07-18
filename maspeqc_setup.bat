@@ -485,7 +485,7 @@ if exist ..\mpmf-pipeline if not exist ..\mpmf-pipeline\.venv (
             python.exe MPMF_Database_SetUp.py
         )
         echo Deactivating Python environment
-        echo Running "call .venv\Scripts\deactivate.bat
+        echo Running "call .venv\Scripts\deactivate.bat"
         call .venv\Scripts\deactivate.bat
     )
     echo Changing directory to ..\Software
@@ -691,7 +691,7 @@ if not exist ProteoWizard (
     if not exist pwiz-bin-*.tar.bz2 (
         echo Please download ProteoWizard 3.0.23097 or later from https://proteowizard.sourceforge.io/download.html and put the downloaded tar.bz2 file in !cd!
         echo A browser window will be opened now and you can download ProteoWizard 3.0.23097
-        echo Select "Windows 64-bit tar.bz2 ^(able to convert vendor files except T2D^)" from the "Platform" dropdown and confirm the license agreement
+        echo Select "Windows 64-bit tar.bz2 (able to convert vendor files except T2D)" from the "Platform" dropdown and confirm the license agreement
         start https://proteowizard.sourceforge.io/download.html
         pause
     )
