@@ -389,6 +389,19 @@ For Thermo Scientific instrumentation, a __pressure profile__ will be displayed 
 Users can download the package from https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170 and install it.
 - The system creates its own check files (METABOLOMICS.txt, PROTEOMICS.txt) when processing. These can linger in the __mpmf-pipeline__ directory if processing is terminated early. Remove these from the directory before processing again.
 
+## Uninstalling MaSpeQC on Windows
+
+__Warning:__ When following these steps you will loose all QC data you have generated with MaSpeQC.
+
+-  Uninstall Python 3.10.11 first to avoid any remains of the Python installation required by MaSpeQC.
+
+1)  Click on "Start"
+2)  Start typing "Apps and Features" and click on "Apps and Features"
+3)  Search for "Python 3.10.11" or scroll down to "Python 3.10.11"
+4)  Click on "Python 3.10.11" and click on "Uninstall" (in case there is more than one "Python 3.10.11" make sure to select the one related to MaSpeQC)
+
+- Delete the folder MaSpeQC.
+
 ## Help and Support
 - Consult the __User Guides__ from the navigation menu for UI and common use cases.
 	- https://youtu.be/_4T2WQHC5SY (Configuration)
