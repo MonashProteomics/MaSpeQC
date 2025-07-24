@@ -344,7 +344,8 @@ __Ridge lines__ show the chromatograms of the selected components on one chart o
 
 
 ### Chromatograms
-![chromatogram](img/chromatogram.PNG)
+![chromatogram](img/chromatogram.PNG)  
+  
 ![chromModalImg](img/chromModalImg.PNG)
 
 
@@ -358,7 +359,8 @@ Click on a component name to view the __chromatogram__ for that component on the
 
 
 ### Pressure Profiles (Thermo Scientific Only)
-![pressure](img/pressure.PNG)
+![pressure](img/pressure.PNG)  
+  
 ![pressureModalImg](img/pressureModalImg.PNG)
   
 For Thermo Scientific instrumentation, a __pressure profile__ will be displayed at the top right of the page.
