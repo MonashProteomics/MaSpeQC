@@ -4,10 +4,9 @@ Suitable for proteomics, metabolomics and lipidomics workflows.
 
 Check out the demo version <a href="https://analyst-suites.org/apps/qc-demo/" target="_blank" rel="noopener noreferrer">here</a>
   
-  
-<img src="img/fullPage.PNG" alt="qc" />  
-<img src="img/homePage.PNG" alt="qc" />  
-
+![fullPage](img/fullPage.PNG)
+![homePage](img/homePage.PNG)
+ 
 Use the menu ![menu](img/menu-hint.PNG) at the top of this README for quick navigation.
 
 ## Installation on Windows
@@ -233,38 +232,25 @@ All pressure metrics are derived from the pressure profile displayed in the top 
 ## Controls
 All charts can be navigated and updated via the controls and menus. The __date controls__ at the top of the page can be used to switch between quality control runs.  
   
-<div style='display:flex;justify-content:center;'>    
-<img src="img/dateControls.png" alt="summary"/>
-</div>
-</br>
+![dateControls](img/dateControls.PNG)
 
 The __input components__ to the left of the chart area can be used to add/remove inputs from all of the charts. _Hold Ctrl_ when clicking on a component name to view that component individually. An __accordion menu__ is available from the chart controls to change between metrics. This will remain open and can be positioned anywhere on the page.
 
-</br>
-</br>
-<div style='display:flex;justify-content:center;'>    
-<img src="img/compModalImg.PNG" alt="summary" width="30%" style="diplay:inline;"/>
-<img src="img/menuModalImg.PNG" alt="summary" width="40%" style="diplay:inline;"/>
-</div>
+![compModalImg](img/compModalImg.PNG)
+![menuModalImg](img/menuModalImg.PNG)
 
 The chart controls at the top of each chart can be used to change between time scales, and to select the number of runs displayed on a chart (where applicable).  
   
-<div style='display:flex;justify-content:center;'>    
-<img src="img/top-controls.PNG" alt="summary" width="100%" style="diplay:inline;"/>
-</div>  
-</br>
-</br>
+![top-controls](img/top-controls.PNG)
+
 The chart controls at the bottom of each chart can be used to change between the different chart types.  
- </br> 
- </br>
-<div style='display:flex;justify-content:center;'>    
-<img src="img/bottom-controls.PNG" alt="summary" width="100%" style="diplay:inline;"/>
-</div> 
+
+![bottom-controls](img/bottom-controls.PNG)
 
 ## Charts
 
 ### Summary
-<img src="img/summaryDark.png" alt="summary" />  
+![summaryDark](img/summaryDark.PNG)
   
 A __network chart__ summarises all identification-free and identification-based metrics and reports the average metric value of the selected input components. 
 The length of each edge is determined by how far that input component is from its optimal value. Nodes with optimal readings will rest against their metric node.  
@@ -276,8 +262,8 @@ The length of each edge is determined by how far that input component is from it
 - Click on an input node to highlight it in all metrics. Click again to remove highlight.
 - The date controls will animate the summary chart by moving the nodes allowing comparison between runs.  
 
-### Line Charts  
-<img src="img/linechartDark.png" alt="line"/>  
+### Line Charts    
+![linechartDark](img/linechartDark.PNG)
   
 __Line charts__ show metric values over time for each of the selected input components. Shaded areas represent threshold breaches where applicable.
 
@@ -295,8 +281,8 @@ __Line charts__ show metric values over time for each of the selected input comp
 - Double click anywhere to reset the chart.
 
 ### Stream Graph  
-<img src="img/streamDark.png" alt="line"/>
-<img src="img/streamExpandDark.png" alt="line"/>  
+![streamDark](img/streamDark.png)
+![streamExpandDark](img/streamExpandDark.png)
       
 __Stream graphs__ show metric values over time for each of the selected input components. They can be viewed as stacked area charts where the y-axis shows accumulated absolute totals, or as 100% stacked area charts where the y-axis shows the percentage of the total readings.
 
@@ -311,7 +297,7 @@ __Stream graphs__ show metric values over time for each of the selected input co
 - Click on a stream to reposition it as the top stream (identification-based metrics only).
 
 ### Parallel Graph  
-<img src="img/parallelDark.png" alt="line"/>  
+![parallelDark](img/parallelDark.png)
      
 __Parallel graphs__ show all of the metrics (identification-free or identification-based) on the one chart for the selected components. The axes are centered around their optimal values where applicable. 
 
@@ -320,8 +306,8 @@ __Parallel graphs__ show all of the metrics (identification-free or identificati
 - Click on the axes to focus the input components for that metric. Click again to reset.
 - Hover over a line to highlight that component across all metrics.
 
-### Box Plots
-<img src="img/boxplot2.png" alt="line"/>  
+### Box Plots 
+![boxplot2](img/boxplot2.png)
   
 __Box plots__ show a metric value on the display date (circle) in relation to its median and interquartile range. Shaded areas represent threshold breaches where applicable.
 
@@ -333,8 +319,8 @@ __Box plots__ show a metric value on the display date (circle) in relation to it
 - Hover over a circle for the current run details.
 - Hover over a box for the box stats.
 
-### Heat Maps
-<img src="img/heatmapDark.png" alt="line"/>  
+### Heat Maps 
+![boxplot2](img/heatmapDark.png)
   
 Each column of a __heat map__ shows an individual component over time for that metric, and each row shows an individual QC run.
 
@@ -347,7 +333,7 @@ Each column of a __heat map__ shows an individual component over time for that m
 - NOTE: The maximum number of runs viewable on a heat map is 40.
 	
 ### Ridge Lines
-<img src="img/ridgeDark.png" alt="line"/>  
+![ridgeDark](img/ridgeDark.png)
   
 __Ridge lines__ show the chromatograms of the selected components on one chart ordered by their expected retention time. The heights of the peaks are normalised by default.
 
@@ -358,10 +344,9 @@ __Ridge lines__ show the chromatograms of the selected components on one chart o
 
 
 ### Chromatograms
-<img src="img/chromatogram.PNG" alt="line" width="30%"/>  
-<img src="img/chromModalImg.PNG" alt="line" width="30%"/>
-</br>
-</br>
+![chromatogram](img/chromatogram.PNG)
+![chromModalImg](img/chromModalImg.PNG)
+
 
 Click on a component name to view the __chromatogram__ for that component on the date shown. Chromatograms can also be updated from the charts when component nodes are clicked.
 
@@ -373,8 +358,8 @@ Click on a component name to view the __chromatogram__ for that component on the
 
 
 ### Pressure Profiles (Thermo Scientific Only)
-<img src="img/pressure.PNG" alt="line" width="30%"/>  
-<img src="img/pressureModalImg.PNG" alt="line" width="30%"/>
+![pressure](img/pressure.PNG)
+![pressureModalImg](img/pressureModalImg.PNG)
   
 For Thermo Scientific instrumentation, a __pressure profile__ will be displayed at the top right of the page.
 
