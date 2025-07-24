@@ -232,7 +232,7 @@ All pressure metrics are derived from the pressure profile displayed in the top 
 ## Controls
 All charts can be navigated and updated via the controls and menus. The __date controls__ at the top of the page can be used to switch between quality control runs.  
   
-![dateControls](img/dateControls.PNG)
+![dateControls](img/dateControls.png)
 
 The __input components__ to the left of the chart area can be used to add/remove inputs from all of the charts. _Hold Ctrl_ when clicking on a component name to view that component individually. An __accordion menu__ is available from the chart controls to change between metrics. This will remain open and can be positioned anywhere on the page.
 
@@ -250,7 +250,7 @@ The chart controls at the bottom of each chart can be used to change between the
 ## Charts
 
 ### Summary
-![summaryDark](img/summaryDark.PNG)
+![summaryDark](img/summaryDark.png)
   
 A __network chart__ summarises all identification-free and identification-based metrics and reports the average metric value of the selected input components. 
 The length of each edge is determined by how far that input component is from its optimal value. Nodes with optimal readings will rest against their metric node.  
@@ -263,7 +263,7 @@ The length of each edge is determined by how far that input component is from it
 - The date controls will animate the summary chart by moving the nodes allowing comparison between runs.  
 
 ### Line Charts    
-![linechartDark](img/linechartDark.PNG)
+![linechartDark](img/linechartDark.png)
   
 __Line charts__ show metric values over time for each of the selected input components. Shaded areas represent threshold breaches where applicable.
 
