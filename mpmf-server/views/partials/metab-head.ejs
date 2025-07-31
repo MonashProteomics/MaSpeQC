@@ -1511,6 +1511,11 @@
                     preID += 1;
                 }
 
+                // add open info
+                if(!(chromModal)){
+                    tooltipHTML += "CLICK TO OPEN";
+                }
+
                 // add close button
                 if(chromModal){
                     var spanHTML = "<span id='chromClose' class='fas fa-window-close closeButton'></span>";
