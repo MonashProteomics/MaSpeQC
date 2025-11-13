@@ -56,7 +56,7 @@ You can now configure MaSpeQC by running `npm start --setup` and opening a brows
 ## Additional Installation Instructions for Thermo Fisher Scientific Instruments Only
 In order to process the pressure metrics and profiles which are a feature for Thermo Fisher Scientific instruments, the standard libraries for raw file access provided by Thermo Fisher Scientific <a href="https://github.com/thermofisherlsms/RawFileReader/">here</a> need to be included in MaSpeQC.  
 
-__NOTE__: The RawFileReader libraries are made available by Thermo Fisher Scientific under license and must not be redistributed. Please read the licence carefully before using.
+__NOTE__: The RawFileReader libraries are made available by Thermo Fisher Scientific under license and must not be redistributed. Please read the license carefully before using.
   
 Firstly, download the available libraries as a zip file from <a href="https://github.com/thermofisherlsms/RawFileReader/archive/refs/heads/main.zip">here</a> and extract the zip file.  
 
