@@ -10,9 +10,13 @@ Check out the demo version <a href="https://analyst-suites.org/apps/qc-demo/" ta
 Use the menu ![menu](img/menu-hint.PNG) at the top of this README for quick navigation.
 
 ## Installation on Windows
-To install MaSpeQC on any _Windows_ system, download and unzip the latest release from the link below, then simply run the script ___start_maspeqc_setup.bat___ as administrator from the command line. This will install all of the necessary software and dependencies to use MaSpeQC. 
+To install MaSpeQC on any _Windows_ system, download and unzip the latest release from the link below, then simply run the script ___start_maspeqc_setup.bat___ as administrator from the command line. This will set up and enable MaSpeQC for use. 
 
 <a href="https://github.com/MonashProteomics/MaSpeQC/archive/refs/tags/1.0.3.zip">MaSpeQC Zip Download</a>
+
+## Software Libraries
+The installation script for MaSpeQC will download and install all of the necessary software and dependencies required. As the script executes, prompts will appear for the user to accept the terms and conditions of the softwares licenses. 
+Please read carefully these licenses, which are provided in the software folders, before using MaSpeQC.
 
 ## Installation on Linux or MacOS
 To install MaSpeQC on any _Linux_ or _MacOS_ system, download and unzip the latest release from the link below. 
