@@ -18,8 +18,10 @@ To install MaSpeQC on any _Windows_ system, download and unzip the latest releas
 The installation script for MaSpeQC will download and install all of the necessary software and dependencies required. Linked below are the licenses for all of the software MaSpeQC will install. 
 Please read carefully these licenses before installing and using MaSpeQC.  
 
-- <a href="https://dev.mysql.com/doc/refman/5.7/en/preface.html">MySQL Reference Manual</a>, <a href="https://downloads.mysql.com/docs/licenses/mysqld-5.7-gpl-en.pdf">MySQL Licensing Information User Manual</a>
-- <a href="https://github.com/nodejs/node?tab=readme-ov-file#license">Node JS License Information</a>, <a href="https://github.com/nodejs/node/blob/main/LICENSE">Node JS License</a>
+- <a href="https://dev.mysql.com/doc/refman/5.7/en/preface.html">MySQL Reference Manual</a>
+  	- <a href="https://downloads.mysql.com/docs/licenses/mysqld-5.7-gpl-en.pdf">MySQL Licensing Information User Manual</a>
+- <a href="https://github.com/nodejs/node?tab=readme-ov-file#license">Node JS License Information</a>
+	- <a href="https://github.com/nodejs/node/blob/main/LICENSE">Node JS License</a>
 - <a href="https://docs.python.org/3/license.html">Python License</a>
 - <a href="https://github.com/mzmine/mzmine2#license">mzMine2 License Information</a>, <a href="https://github.com/mzmine/mzmine2/blob/master/LICENSE.txt">mzMine2 License</a>
 - <a href="https://github.com/cwenger/Morpheus/blob/master/LICENSE.txt">Morpheus License</a>
