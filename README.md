@@ -15,8 +15,16 @@ To install MaSpeQC on any _Windows_ system, download and unzip the latest releas
 <a href="https://github.com/MonashProteomics/MaSpeQC/archive/refs/tags/1.0.3.zip">MaSpeQC Zip Download</a>
 
 ## Software Licenses
-The installation script for MaSpeQC will download and install all of the necessary software and dependencies required. As the script executes, prompts will appear for the user to accept the terms and conditions of the softwares licenses. 
-Please read carefully these licenses, which are provided in the software folders, before using MaSpeQC.
+The installation script for MaSpeQC will download and install all of the necessary software and dependencies required. Linked below are the licenses for all of the software MaSpeQC will install. 
+Please read carefully these licenses before installing and using MaSpeQC.  
+
+- <a href="https://dev.mysql.com/doc/refman/5.7/en/preface.html">MySQL Reference Manual</a>, <a href="https://downloads.mysql.com/docs/licenses/mysqld-5.7-gpl-en.pdf">MySQL Licensing Information User Manual</a>
+- <a href="https://github.com/nodejs/node?tab=readme-ov-file#license">Node JS License Information</a>, <a href="https://github.com/nodejs/node/blob/main/LICENSE">Node JS License</a>
+- <a href="https://docs.python.org/3/license.html">Python License</a>
+- <a href="https://github.com/mzmine/mzmine2#license">mzMine2 License Information</a>, <a href="https://github.com/mzmine/mzmine2/blob/master/LICENSE.txt">mzMine License</a>
+- <a href="https://github.com/cwenger/Morpheus/blob/master/LICENSE.txt">Morpheus License</a>
+- <a href="https://github.com/philr/bzip2-windows/blob/master/LICENSE">bzip2 License</a>
+- <a href="https://proteowizard.sourceforge.io/licenses.html">ProteoWizard License</a>
 
 ## Installation on Linux or MacOS
 To install MaSpeQC on any _Linux_ or _MacOS_ system, download and unzip the latest release from the link below. 
