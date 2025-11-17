@@ -23,7 +23,8 @@ Please read carefully these licenses before installing and using MaSpeQC.
 - <a href="https://github.com/nodejs/node?tab=readme-ov-file#license">Node JS License Information</a>
 	- <a href="https://github.com/nodejs/node/blob/main/LICENSE">Node JS License</a>
 - <a href="https://docs.python.org/3/license.html">Python License</a>
-- <a href="https://github.com/mzmine/mzmine2#license">mzMine2 License Information</a>, <a href="https://github.com/mzmine/mzmine2/blob/master/LICENSE.txt">mzMine2 License</a>
+- <a href="https://github.com/mzmine/mzmine2#license">mzMine2 License Information</a>
+	- <a href="https://github.com/mzmine/mzmine2/blob/master/LICENSE.txt">mzMine2 License</a>
 - <a href="https://github.com/cwenger/Morpheus/blob/master/LICENSE.txt">Morpheus License</a>
 - <a href="https://github.com/philr/bzip2-windows/blob/master/LICENSE">bzip2 License</a>
 - <a href="https://proteowizard.sourceforge.io/licenses.html">ProteoWizard License</a>
