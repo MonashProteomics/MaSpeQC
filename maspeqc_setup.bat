@@ -32,7 +32,25 @@ echo.
 echo This batch script will guide you through the initial setup of MaSpeQC 1.0
 echo It will download all required software directly where possible or open a browser window for download where necessary
 echo The script will also create folders and unpack software or, in case of Python, start the installation for you
-pause
+echo.
+echo THe following software will be downloaded and installed:
+echo MySQL Community Edition 5.7.41
+echo Node.js 18.20.4
+echo Python 3.10.11
+echo mzmine 2.53
+echo Morpheus r287
+echo bzip2 for Windows 1.0.8
+echo ProteoWizard 3.0.23097
+echo.
+echo License information can be viewed at https://github.com/MonashProteomics/MaSpeQC#software-licenses
+echo Please familiarise yourself with the licenses before continuing
+echo.
+
+:: User prompt to continue
+set /P Choice="Do you want to continue (y/n) ?"
+if /I NOT "%Choice%"=="y" (
+    exit /b
+) 
 echo.
 
 rem Check whether curl.exe and tar.exe are available
@@ -778,8 +796,9 @@ echo.
 echo You can close the browser windows now
 echo You can stop the MySQL server by switching to the console window and pressing Ctrl+C
 echo You can stop the Node.js server by switching to the console window, pressing Ctrl+C, confirming and closing the window
-pause
 
+
+pause
 cd ..
 
 endlocal
