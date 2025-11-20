@@ -406,6 +406,27 @@ __Warning:__ When following these steps you will loose all QC data you have gene
 
 - Delete the folder MaSpeQC.
 
+## Copyright Information
+
+MaSpeQC - Quality control software for LC-MS/MS instrumentation
+
+Copyright (C) 2018-2025  Simon Caven
+Copyright (C) 2020-2025  Monash University
+Copyright (C) 2022-2025  University of Applied Sciences Mittweida
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+A copy of the GNU Affero General Public License can be found from the link at the top of this page.
+
+
 ## Help and Support
 - Consult the __User Guides__ from the navigation menu for UI and common use cases.
 	- https://youtu.be/_4T2WQHC5SY (Configuration)

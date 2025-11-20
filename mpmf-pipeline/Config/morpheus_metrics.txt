@@ -1,3 +1,22 @@
+# MaSpeQC - Quality control software for LC-MS/MS instrumentation
+#
+# Copyright (C) 2018-2025  Simon Caven
+# Copyright (C) 2020-2025  Monash University
+# Copyright (C) 2022-2025  University of Applied Sciences Mittweida
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 MS/MS Spectra|spectrum from ms2 scans|1|MS/MS Spectra (Morpheus)|N|Y|The total number of spectra.
 Target PSMs|peptide spectrum matches|2|PSM (Morpheus)|N|Y|The total number of peptide spectrum matches (PSM) records the number of MS2 spectrum that match to a peptide sequence based on a database search.
 Unique Target Peptides|number of unique peptides identified|3|Unique Peptides (Morpheus)|N|Y|This metric records how many unique peptides have been identified by all PSMs.

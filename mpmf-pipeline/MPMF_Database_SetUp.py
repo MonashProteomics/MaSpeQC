@@ -1,3 +1,22 @@
+# MaSpeQC - Quality control software for LC-MS/MS instrumentation
+#
+# Copyright (C) 2018-2025  Simon Caven
+# Copyright (C) 2020-2025  Monash University
+# Copyright (C) 2022-2025  University of Applied Sciences Mittweida
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import json
 import logging
 import os
@@ -469,16 +488,17 @@ class MPMFDBSetUp:
         with open(os.path.join(self.fs.config_dir, 'mzmine_metrics.txt'), 'r') as infile:
             for line in infile:
                 in_data = line.strip().split('|')
-                sql = "INSERT INTO metric (metric_id, metric_name, metric_description, display_order, display_name," + \
-                      " use_metab, use_prot, metric_type, metric_info)" + \
-                      " VALUES (NULL," + "'" + in_data[0].strip() + "'," + "'" \
-                + in_data[1].strip() + "','" + in_data[2].strip() + "','" + in_data[3].strip() + \
-                      "','" + in_data[4].strip() + "','" + in_data[5].strip() + "','" + "mzmine','" + in_data[6].strip() + "')"
+                if len(in_data[0]) != 0 and in_data[0][0] != "#":
+                    sql = "INSERT INTO metric (metric_id, metric_name, metric_description, display_order, display_name," + \
+                        " use_metab, use_prot, metric_type, metric_info)" + \
+                        " VALUES (NULL," + "'" + in_data[0].strip() + "'," + "'" \
+                    + in_data[1].strip() + "','" + in_data[2].strip() + "','" + in_data[3].strip() + \
+                        "','" + in_data[4].strip() + "','" + in_data[5].strip() + "','" + "mzmine','" + in_data[6].strip() + "')"
 
-                try:
-                    self.cursor.execute(sql)
-                except Exception as e:
-                    logger.exception(e)
+                    try:
+                        self.cursor.execute(sql)
+                    except Exception as e:
+                        logger.exception(e)
             self.db.commit()
 
     def insert_morpheus_metrics(self):
@@ -486,16 +506,17 @@ class MPMFDBSetUp:
         with open(os.path.join(self.fs.config_dir, 'morpheus_metrics.txt'), 'r') as infile:
             for line in infile:
                 in_data = line.strip().split('|')
-                sql = "INSERT INTO metric (metric_id, metric_name, metric_description, display_order, "  +\
-                      "display_name, use_metab, use_prot, metric_type, metric_info)" + \
-                      " VALUES (NULL," + "'" + in_data[0].strip() + "'," + "'" \
-                      + in_data[1].strip() + "','" + in_data[2].strip() + "','" + in_data[3].strip() + \
-                      "','" + in_data[4].strip() + "','" + in_data[5].strip() + "','" + "morpheus','" + in_data[6].strip() + "')"
+                if len(in_data[0]) != 0 and in_data[0][0] != "#":
+                    sql = "INSERT INTO metric (metric_id, metric_name, metric_description, display_order, "  +\
+                        "display_name, use_metab, use_prot, metric_type, metric_info)" + \
+                        " VALUES (NULL," + "'" + in_data[0].strip() + "'," + "'" \
+                        + in_data[1].strip() + "','" + in_data[2].strip() + "','" + in_data[3].strip() + \
+                        "','" + in_data[4].strip() + "','" + in_data[5].strip() + "','" + "morpheus','" + in_data[6].strip() + "')"
 
-                try:
-                    self.cursor.execute(sql)
-                except Exception as e:
-                    logger.exception(e)
+                    try:
+                        self.cursor.execute(sql)
+                    except Exception as e:
+                        logger.exception(e)
             self.db.commit()
 
     def insert_thermo_metrics(self):
@@ -503,16 +524,17 @@ class MPMFDBSetUp:
         with open(os.path.join(self.fs.config_dir, 'thermo_metrics.txt'), 'r') as infile:
             for line in infile:
                 in_data = line.strip().split('|')
-                sql = "INSERT INTO metric (metric_id, metric_name, metric_description, display_order, " +\
-                      "display_name, use_metab, use_prot, metric_type, metric_info)" + \
-                      " VALUES (NULL," + "'" + in_data[0].strip() + "'," + "'" \
-                      + in_data[1].strip() + "','" + in_data[2].strip() + "','" + in_data[3].strip() + \
-                      "','" + in_data[4].strip() + "','" + in_data[5].strip() + "','" + "thermo','" + in_data[6].strip() + "')"
+                if len(in_data[0]) != 0 and in_data[0][0] != "#":
+                    sql = "INSERT INTO metric (metric_id, metric_name, metric_description, display_order, " +\
+                        "display_name, use_metab, use_prot, metric_type, metric_info)" + \
+                        " VALUES (NULL," + "'" + in_data[0].strip() + "'," + "'" \
+                        + in_data[1].strip() + "','" + in_data[2].strip() + "','" + in_data[3].strip() + \
+                        "','" + in_data[4].strip() + "','" + in_data[5].strip() + "','" + "thermo','" + in_data[6].strip() + "')"
 
-                try:
-                    self.cursor.execute(sql)
-                except Exception as e:
-                    logger.exception(e)
+                    try:
+                        self.cursor.execute(sql)
+                    except Exception as e:
+                        logger.exception(e)
             self.db.commit()
 
     # SELECTS
