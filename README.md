@@ -410,9 +410,9 @@ __Warning:__ When following these steps you will loose all QC data you have gene
 
 MaSpeQC - Quality control software for LC-MS/MS instrumentation
 
-Copyright (C) 2018-2025  Simon Caven
-Copyright (C) 2020-2025  Monash University
-Copyright (C) 2022-2025  University of Applied Sciences Mittweida
+Copyright (C) 2018-2025  Simon Caven  
+Copyright (C) 2020-2025  Monash University  
+Copyright (C) 2022-2025  University of Applied Sciences Mittweida  
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as published
