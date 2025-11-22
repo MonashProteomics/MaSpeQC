@@ -109,6 +109,10 @@ body{
 }
 
 /* NAVBAR */
+.navbar{
+  padding:0px;
+}
+
 .bg-black {
   background-color: var(--dark);
 }
@@ -637,6 +641,25 @@ rect.lightTheme{
   align-items: center; 
 }
 
+.footer-home{
+  text-align: center;
+  padding: 1vh;
+  font-size: 1.4vh;
+  color: var(--white);
+  background-color: var(--dark);
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+}
+
+.footer-charts{
+  text-align: center;
+  padding: 1vh;
+  font-size: 1.4vh;
+  color: var(--white);
+  background-color: var(--dark);
+}
 
 
 

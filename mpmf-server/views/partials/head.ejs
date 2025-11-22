@@ -81,6 +81,12 @@
         let proteomics = [];
         let metabolomics = [];
         let run_index = 0;
+
+        // change footer to not sticky if 2 rows or more
+        if(ROWS >= 3){
+            let footer = document.getElementsByTagName("footer")[0];
+            footer.className = "footer-charts";
+        }
         
         // convert dates and JSON
         for(let machine in machines){

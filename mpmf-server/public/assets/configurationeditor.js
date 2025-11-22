@@ -57,7 +57,7 @@ ConfigurationEditor.start = function (experiment, configuration, btnSaveCallback
 
 	let configurationEditor = new ConfigurationEditor(configuration);
 	
-	let body = document.getElementsByTagName("body")[0];
+	let grid = document.getElementById("grid");
 	
 	// add configuration editor div
 	let divConfigEditor = document.createElement("div");
@@ -70,7 +70,7 @@ ConfigurationEditor.start = function (experiment, configuration, btnSaveCallback
 		divConfigEditor.style.width = "60%";
 	}
 	divConfigEditor.className = "config-editor container-fluid";
-	body.appendChild(divConfigEditor);
+	grid.appendChild(divConfigEditor);
 
 	// add header div "QC Configuration"
 	let divConfigEditorHeader = document.createElement("h2");
@@ -273,7 +273,7 @@ ConfigurationEditor.start = function (experiment, configuration, btnSaveCallback
 		// add div for output
 		let output = document.createElement("p");
 		output.style.id = "output";
-		body.appendChild(output);
+		grid.appendChild(output);
 	}
 	else{
 		btnSave.className = "btn btn-info";
