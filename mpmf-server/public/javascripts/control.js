@@ -244,6 +244,16 @@ document.onclick = function(event){
         window.open(new_path, '_blank');
         return;
     }
+    else if(target.hasAttribute("data-info")){ // info page
+
+        var query = new URLSearchParams();
+        query.append("caller", target.getAttribute("data-info"));
+
+        var new_path = "info"  + "?" + query.toString();
+        //window.location.assign(new_path);
+        window.open(new_path, '_blank');
+        return;
+    }
     else{
         return;
     }

@@ -25,6 +25,11 @@ body{
   font-size: 1.8vh;
 }
 
+pre{
+  font-family:inherit;
+  padding-right:10em; /* for alignment, specific to the copyright text */
+}
+
 /*TILE*/
 .tile{
     /*box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);*/
@@ -661,8 +666,9 @@ rect.lightTheme{
   background-color: var(--dark);
 }
 
-
-
+.side-bar-info{
+  background-color: var(--info);
+}
 
 
 

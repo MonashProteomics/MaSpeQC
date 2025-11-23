@@ -33,6 +33,7 @@ var reconfigRouter = require('./routes/reconfig');
 var userGuideRouter = require('./routes/user');
 var processRouter = require('./routes/process');
 var customRouter = require('./routes/custom');
+var infoRouter = require('./routes/info');
 
 
 var app = express();
@@ -58,6 +59,7 @@ app.use('/reconfig', reconfigRouter);
 app.use('/userguide', userGuideRouter);
 app.use('/process', processRouter);
 app.use('/custom', customRouter);
+app.use('/info', infoRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

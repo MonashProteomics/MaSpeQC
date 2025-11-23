@@ -1,0 +1,59 @@
+<!--
+ MaSpeQC - Quality control software for LC-MS/MS instrumentation
+
+ Copyright (C) 2018-2025  Simon Caven
+ Copyright (C) 2020-2025  Monash University
+ Copyright (C) 2022-2025  University of Applied Sciences Mittweida
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as published
+ by the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+-->
+<head>
+    <title>MaSpeQC</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://kit.fontawesome.com/f77ac44772.js" crossorigin="anonymous"></script> <!--Font Awesome icons-->
+    <script src="./javascripts/control.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://d3js.org/d3.v6.js"></script> <!--D3-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./stylesheets/style.css"  />
+    <script type="text/javascript">
+
+        // get all machine names from storage for nav bar
+        var proteomics = JSON.parse(sessionStorage.getItem("proteomics-machines"));
+        var metabolomics = JSON.parse(sessionStorage.getItem("metabolomics-machines"));
+        
+
+        // get caller from controller (main or config)
+        let caller = <%-JSON.stringify(type)%>;
+        let os_type = <%-JSON.stringify(op_system)%>;
+
+        // DOM loaded callback
+		document.addEventListener('DOMContentLoaded', function() {
+            if(caller == "main"){
+                create_navbar_dropdown();
+            } 
+
+            // remove processing for mac or other
+            if(os_type !== "win32"){
+                document.getElementById("processItem").style.display = "none";
+            }
+
+        });
+
+    </script>
+
+</head>
