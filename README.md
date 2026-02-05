@@ -426,6 +426,12 @@ GNU Affero General Public License for more details.
 
 A copy of the GNU Affero General Public License can be found from the link at the top of this page.
 
+## Publication Information
+
+__MaSpeQC: An easy-to-use Interactive Pipeline to Assess the Performance of LC-MS/MS Instrumentation__  
+Simon J. Caven, Christopher K. Barlow, Robert J. A. Goode, Scott A. Blundell, Hossein Valipour Kahrood, Haijian Zhang, Anup D. Shah, Bosco K. Ho, Michael Wybrow, Tobias Czauderna, and Ralf B. Schittenhelm  
+_Journal of Proteome Research Article ASAP_  
+DOI: <a href="https://pubs.acs.org/doi/10.1021/acs.jproteome.5c00869">10.1021/acs.jproteome.5c00869</a>  
 
 ## Help and Support
 - Consult the __User Guides__ from the navigation menu for UI and common use cases.
