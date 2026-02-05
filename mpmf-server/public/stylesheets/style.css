@@ -25,6 +25,10 @@ body{
   font-size: 1.8vh;
 }
 
+p.info{
+  font-size: 1.4vh
+}
+
 pre.info{
   font-family:inherit;
   padding-right:10em; /* for alignment, specific to the copyright text */
