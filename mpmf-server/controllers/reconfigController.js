@@ -66,7 +66,10 @@ exports.reconfig_home = function(req, res) {
     // wait for promise and chain next functions
     Promise.all([p1]).then(
        function(){
-           return create_instruments_grid();
+            setTimeout(function(){
+                return create_instruments_grid();
+            }, 200);
+           
        }
     ).then((machine_length) => {
         var size = Object.keys(req.query).length;
@@ -146,6 +149,7 @@ exports.reconfig_home = function(req, res) {
         // read instruments file and add settings
         fs.readFile('./public/data/instruments.json', function (err, data) {
             if (err) error_handle(err);
+            
             var instruments_file = JSON.parse(data);
 
             // only if no settings (first load)
@@ -163,6 +167,7 @@ exports.reconfig_home = function(req, res) {
                 }
 
                 instruments_file["instruments"]["settings"] = settings;
+                
 
                 // save instruments with settings 
                 fs.writeFile('./public/data/instruments.json', JSON.stringify(instruments_file), function (err) {
@@ -179,6 +184,7 @@ exports.reconfig_home = function(req, res) {
         var instruments = config.instruments.settings;
         var instruments_no = instruments.length;
         var all_promises = [];
+        
     
         for(var i = 0; i<machine_length; i++){
             let sql = "UPDATE machine SET use_prot = '" + convert[instruments[i]["Use Proteomics"]] + 
