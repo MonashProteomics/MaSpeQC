@@ -22,6 +22,9 @@ mpmf-pipeline/__pycache__/
 # All config files
 mpmf-pipeline/Config/thresholds/*.json
 mpmf-pipeline/Config/contacts/
+mpmf-pipeline/Config/databases/
+mpmf-pipeline/Config/pump/
+mpmf-pipeline/Config/thresholds/
 
 # Config files (refuses to ignore any Config files??)
 #mpmf-pipeline/Config/database-login.json

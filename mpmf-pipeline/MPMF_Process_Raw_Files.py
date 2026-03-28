@@ -446,6 +446,11 @@ class ProcessRawFile:
             ppm = float(line.split('\t')[indexes['Precursor Mass Error (ppm)']])
             target = line.split('\t')[indexes['Target?']].strip() # in file as capitals but converts to python 'string' bools
             score = float(line.split('\t')[indexes['Morpheus Score']])
+
+            # TEST
+            if target == "True":
+                print(ppm, score)
+
             if ppm > -50 and ppm < 50 and target == 'True' and score > 13: # constraints
                 total += ppm
                 count +=1

@@ -4974,7 +4974,7 @@
             //** CHROM dAta **/
             var ridgeData = [];
             var ridgeNames = [];
-            var xMax = 22; 
+            var xMargin = 3; // space at start and end of x axis (minutes)  
             for(let i in machine_data.components){
                 if(component_indexes.includes(i)){
                     var new_chrom = {"key": machine_data.components[i]["component_name"],
@@ -5002,6 +5002,19 @@
             });
             ridgeNames = ridgeData.map(d => d.key);
 
+            // get mins and max for x range
+            const rts = ridgeData.map(ridge => ridge.rt);
+            var minRT = d3.min(rts);
+            var maxRT = d3.max(rts);
+
+            // cap at zero
+            if(minRT - xMargin < 0){
+                minRT = 0;
+            }
+            else{
+                minRT = minRT - xMargin;
+            }
+
             //  Y scale for names
             var yScale_names = d3.scaleBand()
                 .domain(ridgeNames)
@@ -5010,7 +5023,7 @@
 
             // X scale
             var xScale = d3.scaleLinear()
-                .domain([0, xMax])
+                .domain([minRT, maxRT + xMargin])
                 .range([ 0, width]);
 
             // x-axis 
