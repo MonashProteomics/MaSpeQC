@@ -22,19 +22,25 @@ import os
 import math
 import glob
 import json
+import platform
 import logging
 logger = logging.getLogger('processing.thermo')
 
-try:
-    import clr
-    clr.AddReference("ThermoFisher.CommonCore.RawFileReader")
-    from ThermoFisher.CommonCore.RawFileReader import RawFileReaderAdapter
-    clr.AddReference("ThermoFisher.CommonCore.Data")
-    from ThermoFisher.CommonCore.Data.Business import * # can probably more specific than '*'
-    dlls = True
-except:
-    logger.exception("No ThermoFisher libraries found")
-    dlls = False
+# check platform 
+platform_sys = platform.system()
+
+# check windows for ThermoFisher DLLs
+if platform_sys == "Windows":
+    try:
+        import clr
+        clr.AddReference("ThermoFisher.CommonCore.RawFileReader")
+        from ThermoFisher.CommonCore.RawFileReader import RawFileReaderAdapter
+        clr.AddReference("ThermoFisher.CommonCore.Data")
+        from ThermoFisher.CommonCore.Data.Business import * # can probably more specific than '*'
+        dlls = True
+    except:
+        logger.exception("No ThermoFisher libraries found")
+        dlls = False
 
 
 class ThermoMetrics:

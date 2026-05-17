@@ -29,7 +29,9 @@ class FileSystem:
     def __init__(self, file_directory, out_directory, machine, experiment):
 
         self.main_dir = os.getcwd()
-        self.sw_dir = os.path.join(self.main_dir, "..", "Software")
+        os.chdir('..')
+        self.base_dir = os.getcwd()
+        self.sw_dir = os.path.join(self.base_dir, "Software")
         self.config_dir = os.path.join(self.main_dir, "Config")
         self.databases = os.path.join(self.config_dir, "databases")
         self.thresholds = os.path.join(self.config_dir, "thresholds")

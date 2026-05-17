@@ -136,7 +136,7 @@ class ProcessRawFile:
                     else:
                         logger.error("mzMine: processing error " + self.file_name)
                 else:
-                    logger.error("msconvert: file too small or still writing  " + self.file_name)
+                    logger.error("msconvert: conversion to mzML error  " + self.file_name)
             else:
                 logger.info("Already Inserted " + self.file_name)
         else:
@@ -162,7 +162,7 @@ class ProcessRawFile:
             mzmine_command = 'startMZmine-Windows.bat '
         elif platform_sys == 'Linux':
             mzmine_loc = 'MZmine-2.53-Linux'
-            mzmine_command = 'startMZmine-Linux.bat '
+            mzmine_command = 'bash startMZmine-Linux '
         elif platform_sys == 'Darwin':
             mzmine_loc = 'MZmine-2.53-macOS'
             mzmine_command = 'startMZmine-macOS.bat '
@@ -193,22 +193,35 @@ class ProcessRawFile:
 
     def run_morpheus(self):
 
-        # runs morpheus for windows only
-        # needs .NET 4.5 or higher and MSFileReader x86
+       
+        # needs .NET 4.5 or higher (or MONO for Linux) and MSFileReader x86
         # NOTE: morpheus uses relative paths, current method for out folder
         #        removes C: (by splicing below) which means the path starts with /
         #           This is a path relative to the current drive root (WATCH for production env)
 
         # http://cwenger.github.io/Morpheus/faq.html
 
+        # check platform for loc and command
+        platform_sys = platform.system()
+
+        morph_loc = ''
+        morph_command = ''
+        if platform_sys == 'Windows':
+            morph_loc = 'Morpheus (mzML)'
+            morph_command = 'morpheus_mzml_cl'
+        else: # Linux (add MAC if ever needed)
+            morph_loc = "Morpheus (mzML Mono)" # wrapped in '' due to ()
+            morph_command = 'mono morpheus_mzml_mono_cl.exe'
+
         # search database 
-        morph_db = os.path.join(self.fs.sw_dir, "Morpheus (mzML)", "CUSTOM.fasta")
+        morph_db = os.path.join(self.fs.sw_dir, morph_loc, "CUSTOM.fasta")
+        print(morph_db)
         if not os.path.exists(morph_db):
             logger.error("Please add a CUSTOM.fasta file to the Morpheus(mzML) folder and process again")
             return False
 
         # software location
-        morph_dir = os.path.join(self.fs.sw_dir, "Morpheus (mzML)")
+        morph_dir = os.path.join(self.fs.sw_dir, morph_loc)
         os.chdir(morph_dir)
 
         if not os.path.isdir(self.morph_out_dir):
@@ -219,41 +232,59 @@ class ProcessRawFile:
                 '-d': self.pos_file,
                 '-o': self.morph_out_dir,
                 '-db': morph_db,
-                '-ad': 'true',
-                '-mmu': 'true',
-                '-precmtv': '20',
-                '-precmtu': 'ppm',
-                '-prodmtv': '20',
-                '-prodmtu': 'ppm',
-                '-pmc': 'true',
+                '-p':'trypsin', # test (remove, but required?)
+                #'-mp':'800', # test (remove)
+                #'-ad': 'true', # test(remove)
+                #'-mmu': 'true',# test(remove)
+                '-precmtv': '20.1', # removed for test
+                '-precmtu': 'ppm', # removed for test
+                '-prodmtv': '20', # test (set back to 20)
+                '-prodmtu': 'ppm', # removed for test
+                '-pmc': 'true', # removed for test
                 '-minpmo': '-3',
                 '-maxpmo': '+1',
-                # '-vm': 'Ox',
-                # '-fm': 'AlkC',
-                '-acs': 'false'
+                #'-vm': 'oxidation of M', # test (remove, have to guess abbr. here)
+                #'-fm': 'carbamidomethylation of C', # test (remove, have to guess abbr. here)
+                '-acs': 'false' # test(change back to false)
             }
 
-        # executable
-        command = 'morpheus_mzml_cl'
-
+        
         # convert options to string for command line
         option_str = ''
         for key in options:
             option_str += ' %s="%s"' % (key, options[key])
-        command = command + option_str
+        morph_command = morph_command + option_str
 
 
         # run morpheus
+        returnvalue = os.system(morph_command)
+        if returnvalue:
+            return False
+        else:
+            return True
+
+    def run_msconvert_linux(self):
+
+        ''' Runs mscconvert in a Docker container for Linux '''
+        # Docker must be installed and running and the proteowizard/pwiz-skyline-i-agree-to-the-vendor-licenses image pulled for this to work
+
+        command = 'docker run -it --rm -v ' + self.fs.in_dir  + "/" + self.machine + ':/data -v ' + self.outfiles_dir + ':/output' \
+        + ' proteowizard/pwiz-skyline-i-agree-to-the-vendor-licenses wine msconvert /data/' + self.file_name + self.file_format + ' -o /output' \
+        + ' --filter "peakPicking true 1-" --filter "polarity positive" --outfile ' + self.file_name + '_pos.mzML'
+
+        # run the docker container
         returnvalue = os.system(command)
         if returnvalue:
             return False
         else:
             return True
 
+
+
     def run_msconvert(self):
         '''Creates .mzML files in OutFiles'''
 
-        # copy mzML files for proteomics (don't convert)
+        # copy mzML files for proteomics (don't convert), metablomics still needs to be split into pos and neg
         if self.file_format == ".mzML":
             if self.experiment == "PROTEOMICS":
                 shutil.copy(self.raw_file, self.outfiles_dir)
@@ -261,6 +292,10 @@ class ProcessRawFile:
                 os.rename(self.file_name + ".mzML", self.file_name + "_pos" + ".mzML")
                 return True
 
+        # check platform 
+        platform_sys = platform.system()
+        if platform_sys == 'Linux': # call linux function
+            return self.run_msconvert_linux()
 
         # go to s/w location
         os.chdir(os.path.join(self.fs.sw_dir, "ProteoWizard"))
@@ -451,12 +486,13 @@ class ProcessRawFile:
             if target == "True":
                 print(ppm, score)
 
-            if ppm > -50 and ppm < 50 and target == 'True' and score > 13: # constraints
+            if ppm > -50 and ppm < 50 and target == 'True' and score > 13: # constraints -50 to 50, score = 13, for ion trap???
                 total += ppm
                 count +=1
-
+            
         if count > 0:
             average = total/count
+            print(count, "TOTAL")
         else:
             average = -1
 
@@ -1122,15 +1158,15 @@ if __name__ == "__main__":
         with open(os.path.join(os.getcwd(), "Config", "dir-metabolomics.csv"), "r") as incsv:
             for line in incsv:
                 in_data = line.strip().split("|")
-                in_dir = in_data[0]
-                out_dir = in_data[1]
+                in_dir = os.path.expanduser(in_data[0]) # wrap in expander for tilde expansion on Linux home dirs
+                out_dir = os.path.expanduser(in_data[1])
                 break
     else:
         with open(os.path.join(os.getcwd(), "Config", "dir-proteomics.csv"), "r") as incsv:
             for line in incsv:
                 in_data = line.strip().split("|")
-                in_dir = in_data[0]
-                out_dir = in_data[1]
+                in_dir = os.path.expanduser(in_data[0])
+                out_dir = os.path.expanduser(in_data[1])
                 break
 
     # get machine names for experiment type
@@ -1156,11 +1192,12 @@ if __name__ == "__main__":
             run_check = False
 
     # get raw files for each machine
-    file_formats = ['.mzXML', '.mzML', '.raw', '.wiff', 'wiff2', '.d', '.yep', '.baf', '.fid', '.tdf', '.lcd',
+    file_formats = ['.mzXML', '.mzML', '.raw', '.wiff', '.wiff2', '.d', '.yep', '.baf', '.fid', '.tdf', '.lcd',
                     '.RAW', '.WIFF', '.WIFF2', '.D', '.YEP', '.BAF', '.FID', '.TDF', '.LCD']
     raw_files = []
     machines = {}
 
+    
     if run_check:
         if experiment_type == "METABOLOMICS":
             for machine in machine_names:
@@ -1176,6 +1213,7 @@ if __name__ == "__main__":
             for machine in machine_names:
                 for _format in file_formats:
                     raw_files = glob.glob(os.path.join(in_dir, machine[0], 'QC_Proteomics_*' + _format))
+                    #print(os.path.join(in_dir, machine[0], 'QC_Proteomics_*' + _format))
                     if len(raw_files) > 0:
                         raw_files.sort(key=lambda x: os.path.getmtime(x), reverse=True)
                         machines[machine[0]] = [raw_files, machine[1]]
@@ -1183,7 +1221,7 @@ if __name__ == "__main__":
                         file_format = _format
                         break
 
-
+    print(machines)
     # loop through machines and process raw files
     if run_check:
         for machine in machines:
