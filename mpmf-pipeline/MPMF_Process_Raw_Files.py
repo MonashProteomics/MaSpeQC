@@ -482,9 +482,6 @@ class ProcessRawFile:
             target = line.split('\t')[indexes['Target?']].strip() # in file as capitals but converts to python 'string' bools
             score = float(line.split('\t')[indexes['Morpheus Score']])
 
-            # TEST
-            if target == "True":
-                print(ppm, score)
 
             if ppm > -50 and ppm < 50 and target == 'True' and score > 13: # constraints -50 to 50, score = 13, for ion trap???
                 total += ppm
@@ -492,7 +489,7 @@ class ProcessRawFile:
             
         if count > 0:
             average = total/count
-            print(count, "TOTAL")
+            #print(count, "TOTAL")
         else:
             average = -1
 
