@@ -64,8 +64,8 @@ The folowing dependencies and software are also required:
     	- Add the database, user and password to the following locations (the files can be downloaded <a href='https://github.com/MonashProteomics/MaSpeQC/releases/download/1.07/database-login.json'>here</a> and <a href='https://github.com/MonashProteomics/MaSpeQC/releases/download/1.07/default.maspeqc_gen'>here</a>).
     		- mpmf-pipeline/Config/database-login.json
     		- mpmf-pipeline/Config/.maspeqc_gen
-    		- mpmf-server/Config/database-login.json
-    		- mpmf-server/Config/.maspeqc_gen  
+    		- mpmf-server/database-login.json
+    		- mpmf-server/.maspeqc_gen  
 - __Mono__ To install, follow the instructions <a href='https://www.mono-project.com/download/stable/#download-lin' target="_blank">here</a> for your distribution.
 - __Docker__ Install the Docker Engine by following the instructions for your Linux distribution https://docs.docker.com/engine/install/
   - Then pull the ProteoWizard Docker image with `docker pull proteowizard/pwiz-skyline-i-agree-to-the-vendor-licenses:latest`
