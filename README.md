@@ -176,7 +176,8 @@ Where,
 - __vendor__ is the vendor file format of the machine (.raw, .wiff, .d, .mzML)
 
 ## Processing Raw Files
-Make sure the database has been activated, then open a console window, navigate to  _/mpmf-pipeline/.venv/Scripts_ and type `activate.bat`.  
+Make sure the database has been activated, navigate to  _/mpmf-pipeline/.venv/Scripts_ and type `activate.bat` for Windows.  
+For Linux, navigate to  _/mpmf-pipeline/.venv/bin_ and type `source activate`.  
   
 This will activate the Python environment needed to process raw files. Processing can now be triggered from the _/mpmf-pipeline_ directory with the command `python MPMF_Process_Raw_Files.py` and the following __3 arguments__:  
 - EXPERIMENT TYPE: metabolomics/proteomics
