@@ -42,7 +42,7 @@ Then add the following software into a directory named _Software_ in the main di
  The desired folder structure is:
 
  ```
-├── MaSpeQC-main
+├── MaSpeQC-1.07
 │	├── mpmf-pipeline
 │	├── mpmf-server
 │	├── Software
