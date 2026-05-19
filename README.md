@@ -12,7 +12,7 @@ Use the menu ![menu](img/menu-hint.PNG) at the top of this README for quick navi
 ## Installation on Windows
 To install MaSpeQC on any _Windows_ system, download and unzip the latest release from the link below, then simply run the script ___start_maspeqc_setup.bat___ as administrator from the command line. This will set up and enable MaSpeQC for use. 
 
-<a href="https://github.com/MonashProteomics/MaSpeQC/archive/refs/tags/1.06.zip">MaSpeQC Zip Download</a>
+<a href="https://github.com/MonashProteomics/MaSpeQC/archive/refs/tags/1.07.zip">MaSpeQC Zip Download</a>
 
 ### Software Licenses
 The installation script for MaSpeQC will download and install all of the necessary software and dependencies required. Linked below are the licenses for all of the software MaSpeQC will install. 
@@ -32,7 +32,7 @@ Please read carefully these licenses before installing and using MaSpeQC.
 ## Installation on Linux
 To install MaSpeQC on a _Linux_ distribution, download and unzip the latest release from the link below. 
 
-<a href="https://github.com/MonashProteomics/MaSpeQC/archive/refs/tags/1.06.tar.gz">MaSpeQC Tar Download</a>
+<a href="https://github.com/MonashProteomics/MaSpeQC/archive/refs/tags/1.07.tar.gz">MaSpeQC Tar Download</a>
 
 Then add the following software into a directory named _Software_ in the main directory. 
 
@@ -61,7 +61,7 @@ The folowing dependencies and software are also required:
 		- `CREATE USER 'yourusername'@'localhost' IDENTIFIED BY 'yourpassword';`
 		- `GRANT ALL PRIVILEGES ON maspeqc.* TO 'yourusername'@'localhost';`
 		- `FLUSH PRIVILEGES;`
-    	- Add the database, user and password to the following files (the files are downloaded into the main MaSpeQC directory and will need to be moved).
+    	- Add the database, user and password to the following locations (the files can be downloaded <a href='https://github.com/MonashProteomics/MaSpeQC/releases/download/1.07/database-login.json'>here</a> and <a href='https://github.com/MonashProteomics/MaSpeQC/releases/download/1.07/default.maspeqc_gen'>here</a>).
     		- mpmf-pipeline/Config/database-login.json
     		- mpmf-pipeline/Config/.maspeqc_gen
     		- mpmf-server/Config/database-login.json
