@@ -30,7 +30,7 @@ Please read carefully these licenses before installing and using MaSpeQC.
 - <a href="https://proteowizard.sourceforge.io/licenses.html">ProteoWizard License</a>
 
 ## Installation on Linux
-To install MaSpeQC on any _Linux_ distribution, download and unzip the latest release from the link below. 
+To install MaSpeQC on a _Linux_ distribution, download and unzip the latest release from the link below. 
 
 <a href="https://github.com/MonashProteomics/MaSpeQC/archive/refs/tags/1.06.tar.gz">MaSpeQC Tar Download</a>
 
