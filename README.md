@@ -107,7 +107,7 @@ Finally, you need to unblock the files for use on Windows machines. Right mouse 
 
 
 ## Configuration
-Before using MaSpeQC, it is necessary to fill in a configuration form. The configuration process is triggered automatically during Windows installation and can be initiated manually as shown above for Linux and MacOS. The following inputs are required to configure the system:
+Before using MaSpeQC, it is necessary to fill in a configuration form. The configuration process is triggered automatically during Windows installation and can be initiated manually as shown above for Linux. The following inputs are required to configure the system:
 
 - #### INSTRUMENTS : The LC-MS/MS instruments the system will monitor.
 	- _Instrument Name_ (Unique, No Spaces)
@@ -148,7 +148,7 @@ Alternatively, run __startMYSQL.bat__ located in the _mpmf-pipeline_ directory.
 Leave this window open when using MaSpeQC. It is also possible to run the MySQL database server as a service making it available without manual activation. 
 For more information see https://dev.mysql.com/doc/refman/8.4/en/windows-start-service.html
 
-#### On Linux and MacOS
+#### On Linux
 Consult the MySQL documentation for instructions on starting a database server for your system.  
 https://dev.mysql.com/doc/mysql-getting-started/en/#mysql-getting-started-installing
 
