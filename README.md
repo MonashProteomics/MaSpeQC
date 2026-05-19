@@ -183,8 +183,8 @@ This will activate the Python environment needed to process raw files. Processin
 - NUMBER OF RUNS: The number of most recent runs to process (-1 equals process all).
 - EMAIL ALERT: Y/N for whether to send notification emails or not.
   
-eg. `python MPMF_Process_Raw_Files.py "metabolomics" "10" "Y"`  
-eg. `python MPMF_Process_Raw_Files.py "proteomics" "-1" "N"`
+eg. `python MPMF_Process_Raw_Files.py "metabolomics" "10" "Y"` or `python3 MPMF_Process_Raw_Files.py "metabolomics" "10" "Y"`
+eg. `python MPMF_Process_Raw_Files.py "proteomics" "-1" "N"` or `python MPMF_Process_Raw_Files.py "proteomics" "-1" "N"`
 
 Windows and Linux users can also make use of the form on the Process page after starting MaSpeQC.
 ![process](img/processImg.PNG)
