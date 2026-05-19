@@ -61,21 +61,30 @@ The folowing dependencies and software are also required:
 		- `CREATE USER 'yourusername'@'localhost' IDENTIFIED BY 'yourpassword';`
 		- `GRANT ALL PRIVILEGES ON maspeqc.* TO 'yourusername'@'localhost';`
 		- `FLUSH PRIVILEGES;`
-    	- Add the database, user and password to the following files.
+    	- Add the database, user and password to the following files (the files are downloaded into the main MaSpeQC directory and will need to be moved).
     		- mpmf-pipeline/Config/database-login.json
     		- mpmf-pipeline/Config/.maspeqc_gen
     		- mpmf-server/Config/database-login.json
-    		- mpmf-server/Config/.maspeqc_gen
+    		- mpmf-server/Config/.maspeqc_gen  
     - __Mono__ To install, foliow the instructions <a href='https://www.mono-project.com/download/stable/#download-lin' target="_blank">here</a> for your distribution.
+    - __Docker__ Install the Docker Engine by following the instructions for your Linux distribution https://docs.docker.com/engine/install/
+    	- Then pull the ProteoWizard Docker image with `docker pull proteowizard/pwiz-skyline-i-agree-to-the-vendor-licenses:latest`
+     	- Docker will try and run as root and require 'sudo'. Users need to be added to the Docker group for use with MaSpeQC
+    		- `sudo usermod -aG docker $USER`  
+    - __.NET__ Install with direct installation methods or by using the official Microsoft install script https://learn.microsoft.com/en-us/dotnet/core/install/linux-scripted-manual
+    	- `wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh`
+     	- `chmod +x ./dotnet-install.sh`
+    	- `./dotnet-install.sh --version latest --runtime aspnetcore`
     
-Next, navigate to the _mpmf-pipeline_ directory and create the Python environemnt from the _requirements.txt_ file  `python3 -m venv .venv`  
+Next, navigate to the _mpmf-pipeline_ directory and create the Python environemnt from the provided _requirements.txt_ file  `python3 -m venv .venv`  
 	- For some distributions like Ubunutu, _venv_ may need to be installed first with `sudo apt install python3-venv`
 
-Next, activate the Python environment with `source .venv/bin/activate`. When activated, _(.venv)_ will appear before the command prompt.
+Next, activate the Python environment with `source .venv/bin/activate`. When activated, _(.venv)_ will appear before the command prompt.  
+The MaSpeQC database can now be configured from the _mpmf-pipeline_ directory by typing `python3 MPMF_Database_SetUp.py`.
+The environment can now be deactivated with `source .venv/bin/deactivate`
 
 Finally, set-up the node.js server by runnining `npm install` from the _mpmf-server_ directory. 
-
-You can now configure MaSpeQC by running `npm start --setup` and opening a browser window at _'http://localhost/configuration'_.
+You can now configure MaSpeQC by running `npm start --setup` and opening a browser window at _'http://localhost/configuration'_. Fill in and save the configuration form to start using MaSpeQC.
 
 ## Additional Installation Instructions for Thermo Fisher Scientific Instruments Only
 In order to process the pressure metrics and profiles which are a feature for Thermo Fisher Scientific instruments, the standard libraries for raw file access provided by Thermo Fisher Scientific <a href="https://github.com/thermofisherlsms/RawFileReader/">here</a> need to be included in MaSpeQC.  
