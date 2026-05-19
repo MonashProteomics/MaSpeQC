@@ -66,18 +66,18 @@ The folowing dependencies and software are also required:
     		- mpmf-pipeline/Config/.maspeqc_gen
     		- mpmf-server/Config/database-login.json
     		- mpmf-server/Config/.maspeqc_gen  
-    - __Mono__ To install, foliow the instructions <a href='https://www.mono-project.com/download/stable/#download-lin' target="_blank">here</a> for your distribution.
-    - __Docker__ Install the Docker Engine by following the instructions for your Linux distribution https://docs.docker.com/engine/install/
-    	- Then pull the ProteoWizard Docker image with `docker pull proteowizard/pwiz-skyline-i-agree-to-the-vendor-licenses:latest`
-     	- Docker will try and run as root and require 'sudo'. Users need to be added to the Docker group for use with MaSpeQC
+- __Mono__ To install, follow the instructions <a href='https://www.mono-project.com/download/stable/#download-lin' target="_blank">here</a> for your distribution.
+- __Docker__ Install the Docker Engine by following the instructions for your Linux distribution https://docs.docker.com/engine/install/
+  - Then pull the ProteoWizard Docker image with `docker pull proteowizard/pwiz-skyline-i-agree-to-the-vendor-licenses:latest`
+  - Docker will try and run as root and require 'sudo'. Users need to be added to the Docker group for use with MaSpeQC
     		- `sudo usermod -aG docker $USER`  
-    - __.NET__ Install with direct installation methods or by using the official Microsoft install script https://learn.microsoft.com/en-us/dotnet/core/install/linux-scripted-manual
-    	- `wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh`
-     	- `chmod +x ./dotnet-install.sh`
-    	- `./dotnet-install.sh --version latest --runtime aspnetcore`
+- __.NET__ Install with direct installation methods or by using the official Microsoft install script https://learn.microsoft.com/en-us/dotnet/core/install/linux-scripted-manual
+  - `wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh`
+  - `chmod +x ./dotnet-install.sh`
+  - `./dotnet-install.sh --version latest --runtime aspnetcore`
     
 Next, navigate to the _mpmf-pipeline_ directory and create the Python environemnt from the provided _requirements.txt_ file  `python3 -m venv .venv`  
-	- For some distributions like Ubunutu, _venv_ may need to be installed first with `sudo apt install python3-venv`
+- For some distributions like Ubunutu, _venv_ may need to be installed first with `sudo apt install python3-venv`
 
 Next, activate the Python environment with `source .venv/bin/activate`. When activated, _(.venv)_ will appear before the command prompt.  
 The MaSpeQC database can now be configured from the _mpmf-pipeline_ directory by typing `python3 MPMF_Database_SetUp.py`.
