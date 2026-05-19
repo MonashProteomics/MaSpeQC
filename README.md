@@ -84,7 +84,7 @@ The MaSpeQC database can now be configured from the _mpmf-pipeline_ directory by
 The environment can now be deactivated with `source .venv/bin/deactivate`
 
 Finally, set-up the node.js server by runnining `npm install` from the _mpmf-server_ directory. 
-You can now configure MaSpeQC by running `npm start --setup` and opening a browser window at _'http://localhost/configuration'_. Fill in and save the configuration form to start using MaSpeQC.
+You can now configure MaSpeQC by running `npm start --setup` and opening a browser window at _http://localhost/configuration_. Fill in and save the configuration form to start using MaSpeQC.
 
 ## Additional Installation Instructions for Thermo Fisher Scientific Instruments Only
 In order to process the pressure metrics and profiles which are a feature for Thermo Fisher Scientific instruments, the standard libraries for raw file access provided by Thermo Fisher Scientific <a href="https://github.com/thermofisherlsms/RawFileReader/">here</a> need to be included in MaSpeQC.  
