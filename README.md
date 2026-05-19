@@ -30,7 +30,7 @@ Please read carefully these licenses before installing and using MaSpeQC.
 - <a href="https://proteowizard.sourceforge.io/licenses.html">ProteoWizard License</a>
 
 ## Installation on Linux
-To install MaSpeQC on any _Linux_ or _MacOS_ system, download and unzip the latest release from the link below. 
+To install MaSpeQC on any _Linux_ distribution, download and unzip the latest release from the link below. 
 
 <a href="https://github.com/MonashProteomics/MaSpeQC/archive/refs/tags/1.06.tar.gz">MaSpeQC Tar Download</a>
 
@@ -56,11 +56,17 @@ The folowing dependencies and software are also required:
   	- Select 18.20 or newer for _Node.js_ and 10.1 or newer for _npm_
   - __MySQL 5.7.41__  https://downloads.mysql.com/archives/community/
 	- Select the 5.7.41 version for your distribution and install.
-    - Login to MySQL as root (`myqsl -u root -p`) and create a databse, user and password for use with MaSpeQC.
+    - Login to MySQL as root (`myqsl -u root -p`) and create a database, user and password for use with MaSpeQC.
     	- `CREATE DATABASE maspeqc;`
 		- `CREATE USER 'yourusername'@'localhost' IDENTIFIED BY 'yourpassword';`
 		- `GRANT ALL PRIVILEGES ON maspeqc.* TO 'yourusername'@'localhost';`
 		- `FLUSH PRIVILEGES;`
+    	- Add the database, user and password to the following files.
+    		- mpmf-pipeline/Config/database-login.json
+    		- mpmf-pipeline/Config/.maspeqc_gen
+    		- mpmf-server/Config/database-login.json
+    		- mpmf-server/Config/.maspeqc_gen
+    - __Mono__ To install, foliow the instructions <a href='https://www.mono-project.com/download/stable/#download-lin' target="_blank">here</a> for your distribution.
     
 Next, navigate to the _mpmf-pipeline_ directory and create the Python environemnt from the _requirements.txt_ file  `python3 -m venv .venv`  
 	- For some distributions like Ubunutu, _venv_ may need to be installed first with `sudo apt install python3-venv`
