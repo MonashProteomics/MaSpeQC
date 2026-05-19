@@ -29,25 +29,16 @@ Please read carefully these licenses before installing and using MaSpeQC.
 - <a href="https://github.com/philr/bzip2-windows/blob/master/LICENSE">bzip2 License</a>
 - <a href="https://proteowizard.sourceforge.io/licenses.html">ProteoWizard License</a>
 
-## Installation on Linux or MacOS
+## Installation on Linux
 To install MaSpeQC on any _Linux_ or _MacOS_ system, download and unzip the latest release from the link below. 
 
 <a href="https://github.com/MonashProteomics/MaSpeQC/archive/refs/tags/1.06.tar.gz">MaSpeQC Tar Download</a>
 
 Then add the following software into a directory named _Software_ in the main directory. 
 
-- __Proteowizard:__ https://proteowizard.sourceforge.io/doc_users.html
-	- Follow the download instructions for Linux or MacOS
 - __MZmine 2.53:__ https://github.com/mzmine/mzmine2/releases/tag/v2.53
-- __Morpheus (mzML):__ https://cwenger.github.io/Morpheus/
-- __MySQL 5.7.41:__ https://downloads.mysql.com/archives/community/
-	- Select Product Version 5.7.41
-- __Node.js 18.20.4 (LTS):__ https://nodejs.org/en/download/package-manager
-	- Select 'Prebuilt Installer' for MacOS
- 	- Select 'Package Manager' or 'Prebuilt Binaries' for Linux
-- __Python:__ https://www.python.org/downloads/
-	- Select a 3.11 release
-   
+- __Morpheus (mzML):__ https://cwenger.github.io/Morpheus/  
+  
  The desired folder structure is:
 
  ```
@@ -55,15 +46,27 @@ Then add the following software into a directory named _Software_ in the main di
 │	├── mpmf-pipeline
 │	├── mpmf-server
 │	├── Software
-│	│   ├── Morpheus (mzML)
-│	│   ├── mysql-5.7.41
-│	│   ├── MZmine-2.53
-│	│   ├── node-v18.20.4
-│	│   ├── ProteoWizard
-│	│   ├── Python
-```
+│	│   ├── 'Morpheus (mzML Mono)'
+│	│   ├── MZmine-2.53-Linux
 
-Next, navigate to the _mpmf-pipeline_ directory and create the Python environemnt from the _requirements.txt_ file.
+```
+The folowing dependencies and software are also required:  
+
+  - __Node.js__ and __npm__ eg. `sudo apt install nodejs npm` or follow instructions <a href='https://nodejs.org/en/download/package-manager'>here</a>
+  	- Select 18.20 or newer for _Node.js_ and 10.1 or newer for _npm_
+  - __MySQL 5.7.41__  https://downloads.mysql.com/archives/community/
+	- Select the 5.7.41 version for your distribution and install.
+    - Login to MySQL as root (`myqsl -u root -p`) and create a databse, user and password for use with MaSpeQC.
+    	- `CREATE DATABASE maspeqc;`
+		- `CREATE USER 'yourusername'@'localhost' IDENTIFIED BY 'yourpassword';`
+		- `GRANT ALL PRIVILEGES ON maspeqc.* TO 'yourusername'@'localhost';`
+		- `FLUSH PRIVILEGES;`
+    
+Next, navigate to the _mpmf-pipeline_ directory and create the Python environemnt from the _requirements.txt_ file  `python3 -m venv .venv`  
+	- For some distributions like Ubunutu, _venv_ may need to be installed first with `sudo apt install python3-venv`
+
+Next, activate the Python environment with `source .venv/bin/activate`. When activated, _(.venv)_ will appear before the command prompt.
+
 Finally, set-up the node.js server by runnining `npm install` from the _mpmf-server_ directory. 
 
 You can now configure MaSpeQC by running `npm start --setup` and opening a browser window at _'http://localhost/configuration'_.
