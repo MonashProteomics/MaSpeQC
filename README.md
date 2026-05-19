@@ -77,7 +77,7 @@ The folowing dependencies and software are also required:
   - `./dotnet-install.sh --version latest --runtime aspnetcore`
     
 Next, navigate to the _mpmf-pipeline_ directory and create the Python environemnt from the provided _requirements.txt_ file  `python3 -m venv .venv`  
-- For some distributions like Ubunutu, _venv_ may need to be installed first with `sudo apt install python3-venv`
+- For some distributions like Ubuntu, _venv_ may need to be installed first with `sudo apt install python3-venv`
 
 Next, activate the Python environment with `source .venv/bin/activate`. When activated, _(.venv)_ will appear before the command prompt.
 The MaSpeQC database can now be configured from the _mpmf-pipeline_ directory by typing `python3 MPMF_Database_SetUp.py`.
