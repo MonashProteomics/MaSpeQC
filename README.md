@@ -65,7 +65,8 @@ The folowing dependencies and software are also required:
     		- mpmf-pipeline/Config/database-login.json
     		- mpmf-pipeline/Config/.maspeqc_gen
     		- mpmf-server/database-login.json
-    		- mpmf-server/.maspeqc_gen  
+    		- mpmf-server/.maspeqc_gen
+      		- __NOTE:__ You may need to rename the file from _default.maspeqc_gen_ to _.maspeqc_gen_
 - __Mono__ To install, follow the instructions <a href='https://www.mono-project.com/download/stable/#download-lin' target="_blank">here</a> for your distribution.
 - __Docker__ Install the Docker Engine by following the instructions for your Linux distribution https://docs.docker.com/engine/install/
   - Then pull the ProteoWizard Docker image with `docker pull proteowizard/pwiz-skyline-i-agree-to-the-vendor-licenses:latest`
