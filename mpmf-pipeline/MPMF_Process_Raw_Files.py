@@ -1218,7 +1218,7 @@ if __name__ == "__main__":
                         file_format = _format
                         break
 
-    print(machines)
+    
     # loop through machines and process raw files
     if run_check:
         for machine in machines:
