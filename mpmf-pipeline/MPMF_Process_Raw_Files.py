@@ -140,7 +140,7 @@ class ProcessRawFile:
             else:
                 logger.info("Already Inserted " + self.file_name)
         else:
-            logger,error("Incorrect file format " + self.file_name)
+            logger.error("Incorrect file format " + self.file_name)
 
         os.chdir(self.fs.main_dir)
         

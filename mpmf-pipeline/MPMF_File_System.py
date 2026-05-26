@@ -37,6 +37,20 @@ class FileSystem:
         self.thresholds = os.path.join(self.config_dir, "thresholds")
         self.in_dir = file_directory
 
+        # set the database location for Fragpipe workflow
+        if experiment.upper() == "PROTEOMICS":
+            with open(os.path.join(self.config_dir, "fragpipe.workflow"), "r") as f:
+                lines = f.readlines()
+
+            with open(os.path.join(self.config_dir, "fragpipe.workflow"), "w") as f:
+
+                for line in lines:
+                    if "database.db" in line:
+                        f.write("database.db-path=" + os.path.join(self.config_dir, "CUSTOM.fas") + "\n")
+                    else:
+                        f.write(line)
+
+
         # config for processing
         if out_directory != "":
             self.xml_template_metab = os.path.join(self.config_dir, "metab_template.xml")

@@ -141,7 +141,7 @@ class ProcessRawFile:
             else:
                 logger.info("Already Inserted " + self.file_name)
         else:
-            logger,error("Incorrect file format " + self.file_name)
+            logger.error("Incorrect file format " + self.file_name)
 
         os.chdir(self.fs.main_dir)
         
@@ -194,13 +194,34 @@ class ProcessRawFile:
 
     def run_fragpipe(self):
 
+        # TEST command formats and manifest format
+
+        # create the manifest
+        self.create_fragpipe_manifest()
+
         # check platform 
         platform_sys = platform.system()
 
-        if platform_sys == 'Windows':
-            command = ""
-        else: # Linux 
-            command = ""
+        if platform_sys == 'Windows': # using MaSpeQC installed Python
+            command = ".fragpipe.bat --headless --config-tools-folder " \
+                        + os.path.join(self.fs.sw_dir, "FragPipe-24.0", "tools")  + " --config-diann " \
+                        + os.path.join(self.fs.sw_dir, "FragPipe-24.0","tools","diann","1.8.2_beta_8","windows","DiaNN.exe")  \
+                        + " --config-python "  +  os.path.join(self.fs.sw_dir, "Python") + " --workflow " \
+                        + os.path.join(self.fs.config_dir, "fragpipe.workflow") + " --manifest " \
+                        + os.path.join(self.outfiles_dir, "fragpipe.manifest") + " --workdir " + os.path.join(self.outfiles_dir, "Fragpipe")
+        else: # Linux, using usual Linux system installed Python
+            command = "./fragpipe --headless --config-tools-folder " \
+                        + os.path.join(self.fs.sw_dir, "fragpipe-24.0")  + " --config-diann " \
+                        + os.path.join(self.fs.sw_dir, "fragpipe-24.0","tools","diann","1.8.2_beta_8","linux","diann-1.8.1.8")  \
+                        + " --config-python /usr/bin/python3 --workflow " + os.path.join(self.fs.config_dir, "fragpipe.workflow") + " --manifest " \
+                        + os.path.join(self.outfiles_dir, "fragpipe.manifest") + " --workdir " + os.path.join(self.outfiles_dir, "Fragpipe")
+
+        # run fragpipe
+        returnvalue = os.system(command)
+        if returnvalue:
+            return False
+        else:
+            return True
 
     def run_morpheus(self):
 
@@ -1268,7 +1289,7 @@ if __name__ == "__main__":
 
     qc_run = ProcessRawFile(file_id, file_path, machine, experiment_type, fs, db_info, 'N', 'thermo', 'raw')
     #qc_run.insert_fragpipe()
-    qc_run.create_fragpipe_manifest()
+    #qc_run.create_fragpipe_manifest()
     #print(qc_run.is_low_res())
         
     # close database connection and cursor
