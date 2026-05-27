@@ -220,6 +220,7 @@ class MPMFDBSetUp:
               "use_metab VARCHAR(1) NOT NULL," \
               "use_prot VARCHAR(1) NOT NULL," \
               "machine_type TEXT NOT NULL," \
+              "resolving_power TEXT NOT NULL," \
               "PRIMARY KEY(machine_id))"
 
         try:
@@ -420,9 +421,9 @@ class MPMFDBSetUp:
                 for line in infile:
                     machine = line.strip().split("|")
 
-                    sql = "INSERT INTO machine(machine_id, machine_name, use_metab, use_prot, machine_type) " \
+                    sql = "INSERT INTO machine(machine_id, machine_name, use_metab, use_prot, machine_type, resolving_power) " \
                           "VALUES (NULL, " + "'" + machine[0].strip() + \
-                          "','" + "Y" + "','" + "N" + "','" + machine[1].strip() + "')"
+                          "','" + "Y" + "','" + "N" + "','" + machine[1].strip() + "','" + machine[2].strip() + "')"
 
                     try:
                         self.cursor.execute(sql)
@@ -454,9 +455,9 @@ class MPMFDBSetUp:
                         except Exception as e:
                             logger.exception(e)
                     else: # insert
-                        sql = "INSERT INTO machine(machine_id, machine_name, use_metab, use_prot, machine_type) " \
+                        sql = "INSERT INTO machine(machine_id, machine_name, use_metab, use_prot, machine_type, resolving_power) " \
                               "VALUES (NULL, " + "'" + machine[0].strip() + \
-                              "','" + "N" + "','" + "Y" + "','" + machine[1].strip() + "')"
+                              "','" + "N" + "','" + "Y" + "','" + machine[1].strip() + "','" + machine[2].strip() + "')"
 
                         try:
                             self.cursor.execute(sql)

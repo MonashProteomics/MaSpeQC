@@ -157,12 +157,14 @@ exports.config_home = function(req, res) {
     var machines_file = "";
     var types = {"0": "none", "1": "agilent", "2": "bruker", "3": "thermo", 
                     "4": "sciex", "5": "shimadzu", "6": "waters", "7": "other"};
+    var analyzers = {"0": "High_Resolution", "1": "Low_Resolution"};
     var machines_json = {};
     for(var i=0; i<instruments.length; i++){
 
         // machines file
         var new_type = instruments[i].Type;
-        var new_line = instruments[i].Name + "|" + types[new_type] + "\n";
+        var analayzer = instruments[i]["Resolving Power"];
+        var new_line = instruments[i].Name + "|" + types[new_type] + "|" + analyzers[analayzer] + "\n";
         machines_file += new_line;
 
         // thresholds json for ms2 (for current percentile readings)

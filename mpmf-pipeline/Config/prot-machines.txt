@@ -1,1 +1,1 @@
-eclipse_demo|thermo
+eclipse_demo|thermo|High_Resolution

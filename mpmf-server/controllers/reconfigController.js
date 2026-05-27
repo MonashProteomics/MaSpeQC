@@ -152,28 +152,26 @@ exports.reconfig_home = function(req, res) {
             
             var instruments_file = JSON.parse(data);
 
-            // only if no settings (first load)
-            if(!("settings" in instruments_file["instruments"])){
-
-                var settings = [];
-                for(let machine in machines){
-                    var new_machine = {};
-                    new_machine["Name"] = machines[machine]["machine_name"];
-                    new_machine["Type"] = types[machines[machine]["machine_type"]];
-                    new_machine["Use Proteomics"] = use[machines[machine]["use_prot"]];
-                    new_machine["Use Metabolomics"] = use[machines[machine]["use_metab"]];
-                    new_machine["Custom"] = "<button data-name=" +  machines[machine]["machine_name"] + " onclick='loadCustom()' class='btn btn-dark custom'>Customize</button>";
-                    settings.push(new_machine);
-                }
-
-                instruments_file["instruments"]["settings"] = settings;
-                
-
-                // save instruments with settings 
-                fs.writeFile('./public/data/instruments.json', JSON.stringify(instruments_file), function (err) {
-                    if (err) error_handle(err);
-                });
+            // add settings to instrument file (from database)
+            var settings = [];
+            for(let machine in machines){
+                var new_machine = {};
+                new_machine["Name"] = machines[machine]["machine_name"];
+                new_machine["Type"] = types[machines[machine]["machine_type"]];
+                new_machine["Use Proteomics"] = use[machines[machine]["use_prot"]];
+                new_machine["Use Metabolomics"] = use[machines[machine]["use_metab"]];
+                new_machine["Custom"] = "<button data-name=" +  machines[machine]["machine_name"] + " onclick='loadCustom()' class='btn btn-dark custom'>Customize</button>";
+                settings.push(new_machine);
             }
+
+            instruments_file["instruments"]["settings"] = settings;
+            
+
+            // save instruments with settings 
+            fs.writeFile('./public/data/instruments.json', JSON.stringify(instruments_file), function (err) {
+                if (err) error_handle(err);
+            });
+            
         });
 
         return machine_no;
