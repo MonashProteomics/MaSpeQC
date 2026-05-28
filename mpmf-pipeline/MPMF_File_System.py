@@ -24,9 +24,9 @@ class FileSystem:
     """
         A structure for the configuration files
         Sets the location of the configuration files
-        Used by ProcessRawFile and MPMFDBSetup
+        Used by ProcessRawFile (with all arguments) and MPMFDBSetup (with empty arguments)
     """
-    def __init__(self, file_directory, out_directory, machine, experiment):
+    def __init__(self, file_directory, out_directory, machine, experiment, resolution):
 
         self.main_dir = os.getcwd()
         os.chdir('..')
@@ -36,26 +36,33 @@ class FileSystem:
         self.databases = os.path.join(self.config_dir, "databases")
         self.thresholds = os.path.join(self.config_dir, "thresholds")
         self.in_dir = file_directory
-
-        # set the database location for Fragpipe workflow
-        if experiment.upper() == "PROTEOMICS":
-            with open(os.path.join(self.config_dir, "fragpipe.workflow"), "r") as f:
-                lines = f.readlines()
-
-            with open(os.path.join(self.config_dir, "fragpipe.workflow"), "w") as f:
-
-                for line in lines:
-                    if "database.db" in line:
-                        f.write("database.db-path=" + os.path.join(self.config_dir, "CUSTOM.fas") + "\n")
-                    else:
-                        f.write(line)
-
+        self.res = resolution
 
         # config for processing
-        if out_directory != "":
-            self.xml_template_metab = os.path.join(self.config_dir, "metab_template.xml")
-            self.xml_template_proteo = os.path.join(self.config_dir, "proteo_template.xml")
+        if out_directory != "": 
+
             self.out_dir = out_directory
+
+            # set the database location for Fragpipe workflow
+            if experiment.upper() == "PROTEOMICS":
+                with open(os.path.join(self.config_dir, "fragpipe.workflow"), "r") as f:
+                    lines = f.readlines()
+
+                with open(os.path.join(self.config_dir, "fragpipe.workflow"), "w") as f:
+
+                    for line in lines:
+                        if "database.db" in line:
+                            f.write("database.db-path=" + os.path.join(self.config_dir, "CUSTOM.fas") + "\n")
+                        else:
+                            f.write(line)
+
+            # set the Mzine template files
+            if self.res == "Low_Resolution":                
+                self.xml_template_metab = os.path.join(self.config_dir, "metab_template_low_res.xml")
+                self.xml_template_proteo = os.path.join(self.config_dir, "proteo_template_low_res.xml")
+            else:
+                self.xml_template_metab = os.path.join(self.config_dir, "metab_template_hi_res.xml")
+                self.xml_template_proteo = os.path.join(self.config_dir, "proteo_template_hi_res.xml")
 
             # set Proteomics mzmine input file
             if experiment.upper() == "PROTEOMICS":

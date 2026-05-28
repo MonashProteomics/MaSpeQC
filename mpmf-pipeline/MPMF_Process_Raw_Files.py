@@ -64,7 +64,7 @@ class ProcessRawFile:
         Inserts metric data into database
         Uses SendEmail and Stat
     """
-    def __init__(self, file_name, file_path, machine, e_type, filesystem, db_info, email, machine_type, file_format):
+    def __init__(self, file_name, file_path, machine, e_type, filesystem, db_info, email, machine_type, file_format, resolution):
 
         self.experiment = e_type.upper()
         self.machine = machine
@@ -72,12 +72,14 @@ class ProcessRawFile:
         self.fs = filesystem
         self.send_email = email
         self.machine_type = machine_type
+        self.resolution = resolution
         self.db = MPMFDBSetUp(db_info["user"], db_info["password"], db_info["database"], self.fs, db_info["port"])
         self.raw_file = file_path
         self.file_format = file_format
         self.metadata = {'filename': self.file_name, 'experiment': self.experiment, 'machine': self.machine}
         self.outfiles_dir = os.path.join(self.fs.out_dir, self.experiment, self.machine, self.file_name)
         self.morph_out_dir = os.path.join(self.outfiles_dir, "Morpheus")
+        self.fragpipe_out_dir = os.path.join(self.outfiles_dir, "Fragpipe")
 
         # make and set folder for outfiles
         os.chdir(self.fs.out_dir)
@@ -150,6 +152,138 @@ class ProcessRawFile:
         
         return check_run
 
+    def run(self):
+
+        # return codes from run functions
+        return_codes = {"file":"Incorrect file format " + self.file_name, 
+                        "run":"Already Inserted " + self.file_name, 
+                        "msconvert":"msconvert: conversion to mzML error  " + self.file_name, 
+                        "mzmine":"mzMine: processing error " + self.file_name, 
+                        "insert":"Insert run details error " + self.file_name,
+                        "morpheus":"Morpheus error " + self.file_name,
+                        "fragpipe":"Fragpipe error " + self.file_name,
+                         "success":""}
+
+        # run logic
+        success = True
+        if self.experiment == "METABOLOMICS":
+            return_result = self.run_metabolomics()
+            if return_result != "success":
+                logger.error(return_codes[return_result])
+                success = False
+        elif self.experiment == "PROTEOMICS":
+            if self.check_msfragger(): # use Fragpipe if MSFragger is installed, otherwise use Morpheus
+                logger.info("MSFragger found, using Fragpipe workflow for " + self.file_name)
+                return_result = self.run_proteomics('fragpipe')
+                if return_result != "success":
+                    logger.error(return_codes[return_result])
+                    success = False
+            else: # no Morpheus check, it will error if not found
+                logger.info("MSFragger not found, using Morpheus workflow for " + self.file_name)
+                return_result = self.run_proteomics('morpheus')
+                if return_result != "success":
+                    logger.error(return_codes[return_result])
+                    success = False
+
+        
+        # reset to main
+        os.chdir(self.fs.main_dir)
+        
+        # close database conn. and cursor
+        self.db.cursor.close()
+        self.db.db.close()
+
+        return success
+
+    def run_proteomics(self, software):
+
+        # check file and run and then convert
+        if not self.check_file_name():
+            return "file"
+
+        if self.check_run():
+            return "run"
+
+        if not self.run_msconvert():
+            return "msconvert" 
+
+        # create xml for mzmine and run
+        self.create_proteo_xml()
+
+        if not self.run_mzmine():
+            return "mzmine"
+
+        # insert qc run
+        if not self.insert_qc_run_data():
+            return "insert"
+
+        # insert MS1 data
+        self.insert_pos_csv()
+        self.fwhm_to_seconds()
+
+        # run morpheus or fragpipe
+        if software == "fragpipe":
+            if not self.run_fragpipe():
+                return "fragpipe"
+        elif not self.run_morpheus():
+            return "morpheus"
+
+        # insert MS2 data and send email
+        if software == "fragpipe":
+            self.insert_fragpipe()
+        else:
+            self.insert_morpheus()
+
+        email_data = self.check_email_thresholds_prot()
+        self.insert_summary(email_data)
+        if self.send_email:
+            if len(email_data) > 0:
+                email_data['metadata'] = self.metadata
+                SendEmail(email_data, self.db, self.fs)
+            else:
+                logger.info("No Thresholds breached, No Email Sent")
+        
+        return "success"
+
+       
+    def run_metabolomics(self):
+
+        # check file and run and then convert
+        if not self.check_file_name():
+            return "file"
+        
+        if self.check_run():
+            return "run"
+
+        if not self.run_msconvert():
+            return "msconvert"
+
+        # create xml for mzmine and run
+        self.create_metab_xml()
+
+        if not self.run_mzmine():
+            return "mzmine"
+
+        # insert qc run
+        if not self.insert_qc_run_data():
+            return "insert"
+
+        # insert data and check thresholds for email
+        self.insert_pos_csv()
+        self.insert_neg_csv()
+        self.fwhm_to_seconds()
+        email_data = self.check_email_thresholds_metab()
+        self.insert_summary(email_data)
+        if self.send_email:
+            if len(email_data) > 0:
+                email_data['metadata'] = self.metadata
+                SendEmail(email_data, self.db, self.fs)
+            else:
+                logger.info("No Thresholds breached, No Email Sent")
+
+        return "success"
+
+
     def run_mzmine(self):
 
         # check platform for loc and command
@@ -215,7 +349,6 @@ class ProcessRawFile:
 
         # search database 
         morph_db = os.path.join(self.fs.sw_dir, morph_loc, "CUSTOM.fasta")
-        print(morph_db)
         if not os.path.exists(morph_db):
             logger.error("Please add a CUSTOM.fasta file to the Morpheus(mzML) folder and process again")
             return False
@@ -321,7 +454,47 @@ class ProcessRawFile:
 
         return True
 
+    def run_fragpipe(self):
+
+        # TEST command formats and manifest format
+
+        # create the manifest
+        self.create_fragpipe_manifest()
+
+        # check platform 
+        platform_sys = platform.system()
+
+        if platform_sys == 'Windows': # using MaSpeQC installed Python
+            command = ".fragpipe.bat --headless --config-tools-folder " \
+                        + os.path.join(self.fs.sw_dir, "FragPipe-24.0", "tools")  + " --config-diann " \
+                        + os.path.join(self.fs.sw_dir, "FragPipe-24.0","tools","diann","1.8.2_beta_8","windows","DiaNN.exe")  \
+                        + " --config-python "  +  os.path.join(self.fs.sw_dir, "Python") + " --workflow " \
+                        + os.path.join(self.fs.config_dir, "fragpipe.workflow") + " --manifest " \
+                        + os.path.join(self.outfiles_dir, "fragpipe.manifest") + " --workdir " + os.path.join(self.outfiles_dir, "Fragpipe")
+        else: # Linux, using usual Linux system installed Python
+            command = "./fragpipe --headless --config-tools-folder " \
+                        + os.path.join(self.fs.sw_dir, "fragpipe-24.0")  + " --config-diann " \
+                        + os.path.join(self.fs.sw_dir, "fragpipe-24.0","tools","diann","1.8.2_beta_8","linux","diann-1.8.1.8")  \
+                        + " --config-python /usr/bin/python3 --workflow " + os.path.join(self.fs.config_dir, "fragpipe.workflow") + " --manifest " \
+                        + os.path.join(self.outfiles_dir, "fragpipe.manifest") + " --workdir " + os.path.join(self.outfiles_dir, "Fragpipe")
+
+        # run fragpipe
+        returnvalue = os.system(command)
+        if returnvalue:
+            return False
+        else:
+            return True
+
+    
     # CHECK
+    def check_msfragger(self):
+
+        platform_sys = platform.system()
+        if platform_sys == 'Windows':
+            return os.path.isdir(os.path.join(self.fs.sw_dir, "Fragpipe-24.0", "tools", "MSFragger-4.4.1"))
+        else # Linux
+            return os.path.isdir(os.path.join(self.fs.sw_dir, "fragpipe-24.0", "tools", "MSFragger-4.4.1"))
+
     def check_run(self):
         # check hasn't already been inserted
         sql = "SELECT * FROM qc_run WHERE file_name = " + "'" + self.file_name + "'"
@@ -342,6 +515,15 @@ class ProcessRawFile:
             self.db.db.commit()
         except Exception as e:
             logger.exception(e)
+
+    def create_fragpipe_manifest(self):
+
+        # create the manifest file needed for Fragpipe 
+        manifest = os.path.join(self.outfiles_dir, self.file_name + "_pos.mzML") + "\t" +"\t" + "DDA"
+        
+        # write to manifest file ... check format with first test
+        with open(os.path.join(self.outfiles_dir, "fragpipe.manifest"), 'w') as outfile:
+            outfile.write(manifest)
 
     def check_file_name(self):
         # QC_Metabolomics_Timestamp
@@ -424,41 +606,10 @@ class ProcessRawFile:
         for i in range(len(keys)):
             summary[keys[i].strip()] = values[i].strip()
 
-        # get run id
-        run_id = self.db.get_run_id(self.file_name)
+        self.insert_ms2_metrics(summary)
+        self.insert_morpheus_ppms()
 
-        # get hela component_id
-        sql = "SELECT component_id FROM sample_component WHERE component_name = 'Hela Digest'"
-        try:
-            self.db.cursor.execute(sql)
-            hela_id = self.db.cursor.fetchone()[0]
-        except Exception as e:
-            logger.exception(e)
-
-        for key in summary:
-            # get metric_id
-            sql = "SELECT metric_id FROM metric WHERE metric_name = '" + key.strip() + "'"
-            try:
-                self.db.cursor.execute(sql)
-                met_id = self.db.cursor.fetchone()
-            except Exception as e:
-                logger.exception(e)
-
-            # insert measurement
-            if met_id is not None:
-                sql = "INSERT INTO measurement VALUES ( '" + str(met_id[0]) + "','" + str(hela_id) + \
-                      "','" + str(run_id) + "','" + str(summary[key]) + "')"
-
-                try:
-                    self.db.cursor.execute(sql)
-                except Exception as e:
-                    logger.exception(e)
-
-                self.db.db.commit()
-
-        self.insert_morpheus_ppms(run_id, hela_id)
-
-    def insert_morpheus_ppms(self, rid, hid):
+    def insert_morpheus_ppms(self):
 
         with open(os.path.join(self.morph_out_dir, self.file_name + "_pos.PSMs.tsv"), "r") as infile:
             lines = infile.readlines()
@@ -483,7 +634,7 @@ class ProcessRawFile:
             score = float(line.split('\t')[indexes['Morpheus Score']])
 
 
-            if ppm > -50 and ppm < 50 and target == 'True' and score > 13: # constraints -50 to 50, score = 13, for ion trap???
+            if ppm > -50 and ppm < 50 and target == 'True' and score > 13: # constraints -50 to 50, score = 13, for ion trap (use Fragpipe!)???
                 total += ppm
                 count +=1
             
@@ -493,25 +644,138 @@ class ProcessRawFile:
         else:
             average = -1
 
+        self.insert_ms2_metrics({"Precursor Mass Error": average})
 
-        # get id for Precursor Mass Error
-        sql = "SELECT metric_id FROM metric WHERE metric_name = 'Precursor Mass Error'"
+    def insert_ms2_metrics(self, metrics):
+        # inserts the standard ms2 metrics from Morpheus and Fragpipe (PSMs, peptides, protein groups, spectra)
+        # metrics is a dict with metric name as key and value as value, e.g. {"Target PSMs": 1000, "Unique Target Peptides": 500}
+
+        # get run id
+        run_id = self.db.get_run_id(self.file_name)
+
+        # get hela component_id
+        sql = "SELECT component_id FROM sample_component WHERE component_name = 'Hela Digest'"
         try:
             self.db.cursor.execute(sql)
-            mid = self.db.cursor.fetchone()
+            hela_id = self.db.cursor.fetchone()[0]
         except Exception as e:
             logger.exception(e)
 
-        # insert
-        sql = "INSERT INTO measurement VALUES ( '" + str(mid[0]) + "','" + str(hid) + \
-              "','" + str(rid) + "','" + str(average) + "')"
+        
+        for key in metrics:
+            # get metric_id
+            sql = "SELECT metric_id FROM metric WHERE metric_name = '" + key.strip() + "'"
+            try:
+                self.db.cursor.execute(sql)
+                met_id = self.db.cursor.fetchone()
+            except Exception as e:
+                logger.exception(e)
 
-        try:
-            self.db.cursor.execute(sql)
-        except Exception as e:
-            logger.exception(e)
+            # insert measurement
+            if met_id is not None:
+                sql = "INSERT INTO measurement VALUES ( '" + str(met_id[0]) + "','" + str(hela_id) + \
+                      "','" + str(run_id) + "','" + str(metrics[key]) + "')"
 
-        self.db.db.commit()
+                try:
+                    self.db.cursor.execute(sql)
+                except Exception as e:
+                    logger.exception(e)
+
+                self.db.db.commit()
+
+    def insert_fragpipe(self):
+
+        # put metric data in a dict
+        summary = {}
+
+        # read Target PSMs
+        with open(os.path.join(self.fragpipe_out_dir, "psm.tsv"), "r") as infile:
+            lines = infile.readlines()
+        
+        summary['Target PSMs'] = len(lines) - 1 # remove header
+
+        # read Unique Target Peptides
+        with open(os.path.join(self.fragpipe_out_dir, "peptide.tsv"), "r") as infile:
+            lines = infile.readlines()
+        
+        summary['Unique Target Peptides'] = len(lines) - 1 # remove header
+
+        # read Target Protein Groups
+        with open(os.path.join(self.fragpipe_out_dir, "protein.tsv"), "r") as infile:
+            lines = infile.readlines()
+        
+        summary['Target Protein Groups'] = len(lines) - 1 # remove header
+
+        # MS/MS Spectra
+
+        # find log file
+        log_file = glob.glob(os.path.join(self.fragpipe_out_dir, "log*.txt"))[0]
+
+        # open the log
+        with open(log_file, "r") as infile:
+            lines = infile.readlines()
+
+        # search for 'progress' to find spectra count 
+        for line in lines:
+            if "progress" in line:
+                new_line = line.strip().split("/")[0] # split on '/
+                msms = new_line.split(" ")[-1] # split on space
+                summary['MS/MS Spectra'] = msms
+                break
+        
+        # INSERT METRICS 
+        self.insert_ms2_metrics(summary)
+        self.insert_fragpipe_pme()
+
+    def insert_fragpipe_pme(self):
+        
+        # read Target PSMs
+        with open(os.path.join(self.fragpipe_out_dir, "psm.tsv"), "r") as infile:
+            lines = infile.readlines()
+
+        # get and remove headers
+        headers = lines[0].split('\t')
+        lines.pop(0)
+
+        # dict to find index of headers
+        index = 0
+        indexes = {}
+        for header in headers:
+            indexes[header.strip()] = index
+            index +=1
+
+        # set ppm ranges based on low/high res data
+        if self.is_low_res():
+            lower = -300
+            upper = 300
+        else:
+            lower = -50
+            upper = 50
+
+
+        # compute average based on constraints
+        # ppm is not given in Fragpipe and needs to be calculated
+        count = 0
+        total = 0
+        for line in lines:
+            # calculate ppm
+            ppm = (float(line.split('\t')[indexes['Observed M/Z']]) - float(line.split('\t')[indexes['Calculated M/Z']])) / float(line.split('\t')[indexes['Calculated M/Z']]) * 1e6
+            decoy = line.split('\t')[indexes['Is Decoy']].strip() 
+            score = float(line.split('\t')[indexes['Hyperscore']])
+            prob = float(line.split('\t')[indexes['Probability']])
+
+            #print(ppm,decoy,score, prob)
+
+            if decoy == 'false' and prob > 0.98 and ppm > lower and ppm < upper: # constraints for Fragpipe PSMs (using prob over hyperscore as deemed more reliable)
+                total += ppm
+                count +=1
+            
+        if count > 0:
+            average = total/count
+        else:
+            average = -1
+       
+        self.insert_ms2_metrics({"Precursor Mass Error": average})
 
     def insert_pos_csv(self):
         # insert pos for v4
@@ -1172,9 +1436,9 @@ if __name__ == "__main__":
     machine_names = ()
 
     if experiment_type.strip() == "METABOLOMICS":
-        sql = "SELECT machine_name, machine_type FROM machine WHERE use_metab = 'Y'"
+        sql = "SELECT machine_name, machine_type, resolving_power FROM machine WHERE use_metab = 'Y'"
     elif experiment_type.strip() == "PROTEOMICS":
-        sql = "SELECT machine_name, machine_type FROM machine WHERE use_prot = 'Y'"
+        sql = "SELECT machine_name, machine_type, resolving_power FROM machine WHERE use_prot = 'Y'"
     else:
         logger.error("Enter metabolomics or proteomics")
         run_check = False
@@ -1202,7 +1466,7 @@ if __name__ == "__main__":
                     raw_files = glob.glob(os.path.join(in_dir, machine[0], 'QC_Metabolomics_*' + _format))
                     if len(raw_files) > 0:
                         raw_files.sort(key=lambda x: os.path.getmtime(x), reverse=True)
-                        machines[machine[0]] = [raw_files, machine[1]]
+                        machines[machine[0]] = [raw_files, machine[1], machine[2]]
                         ext_length = len(_format)
                         file_format = _format
                         break
@@ -1213,7 +1477,7 @@ if __name__ == "__main__":
                     #print(os.path.join(in_dir, machine[0], 'QC_Proteomics_*' + _format))
                     if len(raw_files) > 0:
                         raw_files.sort(key=lambda x: os.path.getmtime(x), reverse=True)
-                        machines[machine[0]] = [raw_files, machine[1]]
+                        machines[machine[0]] = [raw_files, machine[1], machine[2]]
                         ext_length = len(_format)
                         file_format = _format
                         break
@@ -1224,7 +1488,7 @@ if __name__ == "__main__":
         for machine in machines:
             logger.info("Machine: " + machine)
             logger.info("Found " + str(len(machines[machine][0])) + " files")
-            fs = FileSystem(in_dir, out_dir, machine, experiment_type)  # used in processing and chrom and stats
+            fs = FileSystem(in_dir, out_dir, machine, experiment_type, machines[machine][2])  # used in processing and chrom and stats
 
             # set loop variable
             if depth == -1:
@@ -1242,7 +1506,7 @@ if __name__ == "__main__":
                 file_id = tail[:-ext_length]
 
                 # process raw file for mzmine and morpheus metrics
-                qc_run = ProcessRawFile(file_id, machines[machine][0][k], machine, experiment_type, fs, db_info, email, machines[machine][1], file_format)
+                qc_run = ProcessRawFile(file_id, machines[machine][0][k], machine, experiment_type, fs, db_info, email, machines[machine][1], file_format, machines[machine][2])
 
                 # only do thermo metrics, pressure and chroms if successful metric (mzmine/morpheus) insert
                 if qc_run.run():

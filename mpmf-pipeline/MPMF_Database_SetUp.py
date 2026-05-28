@@ -668,7 +668,7 @@ if __name__ == "__main__":
 
 
     # file system obj
-    fs = FileSystem("", "", "", "")
+    fs = FileSystem("", "", "", "", "")
 
     # connect to db
     db = MPMFDBSetUp(user, password, database_name, fs, port)
