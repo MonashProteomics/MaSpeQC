@@ -32,6 +32,7 @@ exports.reconfig_home = function(req, res) {
     var vendors = {"0": "other", "1": "agilent", "2": "bruker", "3": "thermo"};
     var use = {"Y": 0, "N": 1};
     var convert = {"0": "Y", "1": "N"};
+    var resolving_power = {"High_Resolution":0,"Low_Resolution":1};
 
     // machines for instruments grid
     var machines;
@@ -91,9 +92,9 @@ exports.reconfig_home = function(req, res) {
                 ); 
             }
             else{
-                // *update ms2 (REMOVE this comment after testing)
+                // *update ms2 
                 var p1 = update_config();
-                // *update lcms (REMOVE this comment after testing)
+                // *update lcms 
                 var p2 = update_components();
                 
                 // wait for the functions to run then render
@@ -146,6 +147,7 @@ exports.reconfig_home = function(req, res) {
         // add instruments settings
         machine_no = machines.length;
 
+    
         // read instruments file and add settings
         fs.readFile('./public/data/instruments.json', function (err, data) {
             if (err) error_handle(err);
@@ -158,6 +160,7 @@ exports.reconfig_home = function(req, res) {
                 var new_machine = {};
                 new_machine["Name"] = machines[machine]["machine_name"];
                 new_machine["Type"] = types[machines[machine]["machine_type"]];
+                new_machine["Resolving Power"] = resolving_power[machines[machine]["resolving_power"]];
                 new_machine["Use Proteomics"] = use[machines[machine]["use_prot"]];
                 new_machine["Use Metabolomics"] = use[machines[machine]["use_metab"]];
                 new_machine["Custom"] = "<button data-name=" +  machines[machine]["machine_name"] + " onclick='loadCustom()' class='btn btn-dark custom'>Customize</button>";
@@ -404,170 +407,6 @@ exports.reconfig_home = function(req, res) {
         }  
     }
 
-    // OLD NOT USED (remove after testing)
-    function update_lcms(){
-        /* DATABASE UPDATES lcms thresholds*/
-        var config = JSON.parse(req.query.config);
-        var thresholds = config.thresholds.settings;
-        var exp = req.query.experiment;
-        var exp_id ;
-        var all_promises = [];
-        
-        // update thresholds in DB (LC-MS)
-        let sql_exp = "SELECT experiment_id FROM experiment WHERE experiment_type = '" + exp.toLowerCase() + "'";
-
-        let p1 = db.execute(sql_exp).then(
-            result => exp_id = result[0]["experiment_id"]
-        ).catch(
-            error => error_handle(error)
-        );
-
-        Promise.all([p1])
-        .then(async function(){
-            
-            for(var index=0; index < thresholds.length; index++){
-                let sql = "SELECT metric_id FROM metric WHERE metric_name = '" + metric_names[thresholds[index]["Metric"]] + "'";
-                var results;
-
-                let p2 = await db.execute(sql).then(
-                    result => results = [result[0]["metric_id"],index]
-                ).catch(
-                    error => error_handle(error)
-                );
-                
-                Promise.all([p2]).then(function(){
-                    // triggers
-                    var sql = "UPDATE threshold SET threshold_trigger = '" + thresholds[results[1]]["Trigger"] +
-                        "' WHERE experiment_id = '" + exp_id + "' AND metric_id = '" + results[0] + "'";
-                    
-                    var p3 = db.execute(sql).catch(
-                        error => error_handle(error)
-                    );
-        
-                    all_promises.push(p3);
-
-                    // upper (if exists)
-                    if("Upper Threshold" in thresholds[results[1]]){
-                        if(thresholds[results[1]]["Upper Threshold"] != ""){
-                            var sql = "UPDATE threshold SET threshold_high = '" + thresholds[results[1]]["Upper Threshold"] +
-                            "' WHERE experiment_id = '" + exp_id + "' AND metric_id = '" + results[0] + "'";
-                            
-                            var p3 = db.execute(sql).catch(
-                                error => error_handle(error)
-                            );
-                
-                            all_promises.push(p3);
-                        }
-                    }
-
-                    // lower (if exists)
-                    if("Lower Threshold" in thresholds[results[1]]){
-                        if(thresholds[results[1]]["Lower Threshold"] != ""){
-                            var sql = "UPDATE threshold SET threshold_low = '" + thresholds[results[1]]["Lower Threshold"] +
-                            "' WHERE experiment_id = '" + exp_id + "' AND metric_id = '" + results[0] + "'";
-                            
-                            var p3 = db.execute(sql).catch(
-                                error => error_handle(error)
-                            );
-                
-                            all_promises.push(p3);
-                        }
-                    }
-
-                })
-            }   
-        })
-        .catch(
-            error => error_handle(error)
-        );
-
-        Promise.all(all_promises).then(result => {
-            setTimeout(function(){
-                return;
-            },100);
-        });
-    }
-
-    // OLD NOT USED (remove after testing)
-    function update_ms2(){
-
-        var exp = req.query.experiment;
-        if(exp.toLowerCase() == "metabolomics"){
-            return;
-        }
-
-        /* DATABASE UPDATES ms2 thresholds*/
-        var config = JSON.parse(req.query.config);
-        var thresholds = config.thresholds_ms2.settings;
-        var exp_id ;
-        var all_promises = [];
-        
-        // update thresholds in DB (MS2)
-        let sql_exp = "SELECT experiment_id FROM experiment WHERE experiment_type = '" + exp.toLowerCase() + "'";
-
-        let p1 = db.execute(sql_exp).then(
-            result => exp_id = result[0]["experiment_id"]
-        ).catch(
-            error => error_handle(error)
-        );
-
-        Promise.all([p1])
-        .then(async function(){
-            
-            for(var index=0; index < thresholds.length; index++){
-                let sql = "SELECT metric_id FROM metric WHERE metric_name = '" + metric_names[thresholds[index]["Metric"]] + "'";
-                var results;
-
-                let p2 = await db.execute(sql).then(
-                    result => results = [result[0]["metric_id"],index]
-                ).catch(
-                    error => error_handle(error)
-                );
-                
-                Promise.all([p2]).then(function(){
-
-                    // upper (if exists)
-                    if("Upper Threshold" in thresholds[results[1]]){
-                        if(thresholds[results[1]]["Upper Threshold"] != ""){
-                            var sql = "UPDATE threshold SET threshold_high = '" + thresholds[results[1]]["Upper Threshold"] +
-                            "' WHERE experiment_id = '" + exp_id + "' AND metric_id = '" + results[0] + "'";
-                            
-                            var p3 = db.execute(sql).catch(
-                                error => error_handle(error)
-                            );
-                
-                            all_promises.push(p3);
-                        }
-                    }
-
-                    // lower (if exists)
-                    if("Lower Threshold" in thresholds[results[1]]){
-                        if(thresholds[results[1]]["Lower Threshold"] != ""){
-                            var sql = "UPDATE threshold SET threshold_low = '" + thresholds[results[1]]["Lower Threshold"] +
-                            "' WHERE experiment_id = '" + exp_id + "' AND metric_id = '" + results[0] + "'";
-                            
-                            var p3 = db.execute(sql).catch(
-                                error => error_handle(error)
-                            );
-                
-                            all_promises.push(p3);
-                        }
-                    }
-
-                })
-            }   
-        })
-        .catch(
-            error => error_handle(error)
-        );
-
-        Promise.all(all_promises).then(result => {
-            setTimeout(function(){
-                return;
-            },100);
-        });
-    }
-
     function update_components(){
         /* DATABASE UPDATES lcms thresholds*/
         var config = JSON.parse(req.query.config);
@@ -578,7 +417,7 @@ exports.reconfig_home = function(req, res) {
             var sql = "UPDATE sample_component SET exp_mass_charge = '" + components[index]["mz"] + 
                         "', exp_rt = '" + components[index]["RT (minutes)"] + "' WHERE component_name = '" +
                         components[index]["Name"] + "'";
-            //console.log(sql);
+            
 
             var p1 = db.execute(sql).catch(
                 error => error_handle(error)
