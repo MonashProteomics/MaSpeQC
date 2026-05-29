@@ -680,7 +680,7 @@ class ProcessRawFile:
             index +=1
 
         # set ppm ranges based on low/high res data
-        if self.is_low_res():
+        if self.resolution == "Low_Resolution":
             lower = -300
             upper = 300
         else:

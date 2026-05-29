@@ -33,6 +33,7 @@ exports.reconfig_home = function(req, res) {
     var use = {"Y": 0, "N": 1};
     var convert = {"0": "Y", "1": "N"};
     var resolving_power = {"High_Resolution":0,"Low_Resolution":1};
+    var convert_resolving_power = {"0": "High_Resolution", "1": "Low_Resolution"};
 
     // machines for instruments grid
     var machines;
@@ -205,7 +206,7 @@ exports.reconfig_home = function(req, res) {
                 for(let i=machine_length; i<instruments_no; i++){
                     let sql = "INSERT INTO machine VALUES (NULL, '" + instruments[i]["Name"] + "',NULL, NULL,'" +
                         convert[instruments[i]["Use Metabolomics"]] + "','" + convert[instruments[i]["Use Proteomics"]] +
-                        "','" + vendors[instruments[i]["Type"]] + "')";
+                        "','" + vendors[instruments[i]["Type"]] + "','" + convert_resolving_power[instruments[i]["Resolving Power"]] + "')";
 
                     var p1 = db.execute(sql).catch(
                         error => error_handle(error)
