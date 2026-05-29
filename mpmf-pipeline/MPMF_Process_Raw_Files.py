@@ -406,12 +406,14 @@ class ProcessRawFile:
                         + " --config-python "  +  os.path.join(self.fs.sw_dir, "Python") + " --workflow " \
                         + os.path.join(self.fs.config_dir, "fragpipe.workflow") + " --manifest " \
                         + os.path.join(self.outfiles_dir, "fragpipe.manifest") + " --workdir " + os.path.join(self.outfiles_dir, "Fragpipe")
+            os.chdir(os.path.join(self.fs.sw_dir, "FragPipe-24.0", "bin"))
         else: # Linux, using usual Linux system installed Python
             command = "./fragpipe --headless --config-tools-folder " \
                         + os.path.join(self.fs.sw_dir, "fragpipe-24.0")  + " --config-diann " \
                         + os.path.join(self.fs.sw_dir, "fragpipe-24.0","tools","diann","1.8.2_beta_8","linux","diann-1.8.1.8")  \
                         + " --config-python /usr/bin/python3 --workflow " + os.path.join(self.fs.config_dir, "fragpipe.workflow") + " --manifest " \
                         + os.path.join(self.outfiles_dir, "fragpipe.manifest") + " --workdir " + os.path.join(self.outfiles_dir, "Fragpipe")
+            os.chdir(os.path.join(self.fs.sw_dir, "fragpipe-24.0", "bin"))
 
         # run fragpipe
         returnvalue = os.system(command)
@@ -427,7 +429,7 @@ class ProcessRawFile:
         platform_sys = platform.system()
         if platform_sys == 'Windows':
             return os.path.isdir(os.path.join(self.fs.sw_dir, "Fragpipe-24.0", "tools", "MSFragger-4.4.1"))
-        else # Linux
+        else: # Linux
             return os.path.isdir(os.path.join(self.fs.sw_dir, "fragpipe-24.0", "tools", "MSFragger-4.4.1"))
 
     def check_run(self):
@@ -454,7 +456,7 @@ class ProcessRawFile:
     def create_fragpipe_manifest(self):
 
         # create the manifest file needed for Fragpipe 
-        manifest = os.path.join(self.outfiles_dir, self.file_name + "_pos.mzML") + "\t" +"\t" + "DDA"
+        manifest = os.path.join(self.outfiles_dir, self.file_name + "_pos.mzML") + "\t" + "exp_a" + "\t" + "1" + "\t" + "DDA"
         
         # write to manifest file ... check format with first test
         with open(os.path.join(self.outfiles_dir, "fragpipe.manifest"), 'w') as outfile:
@@ -624,19 +626,19 @@ class ProcessRawFile:
         summary = {}
 
         # read Target PSMs
-        with open(os.path.join(self.fragpipe_out_dir, "psm.tsv"), "r") as infile:
+        with open(os.path.join(self.fragpipe_out_dir, "exp_a_1", "psm.tsv"), "r") as infile:
             lines = infile.readlines()
         
         summary['Target PSMs'] = len(lines) - 1 # remove header
 
         # read Unique Target Peptides
-        with open(os.path.join(self.fragpipe_out_dir, "peptide.tsv"), "r") as infile:
+        with open(os.path.join(self.fragpipe_out_dir, "exp_a_1", "peptide.tsv"), "r") as infile:
             lines = infile.readlines()
         
         summary['Unique Target Peptides'] = len(lines) - 1 # remove header
 
         # read Target Protein Groups
-        with open(os.path.join(self.fragpipe_out_dir, "protein.tsv"), "r") as infile:
+        with open(os.path.join(self.fragpipe_out_dir, "exp_a_1", "protein.tsv"), "r") as infile:
             lines = infile.readlines()
         
         summary['Target Protein Groups'] = len(lines) - 1 # remove header
@@ -665,7 +667,7 @@ class ProcessRawFile:
     def insert_fragpipe_pme(self):
         
         # read Target PSMs
-        with open(os.path.join(self.fragpipe_out_dir, "psm.tsv"), "r") as infile:
+        with open(os.path.join(self.fragpipe_out_dir, "exp_a_1", "psm.tsv"), "r") as infile:
             lines = infile.readlines()
 
         # get and remove headers
