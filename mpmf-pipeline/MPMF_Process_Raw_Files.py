@@ -104,20 +104,20 @@ class ProcessRawFile:
         if self.experiment == "METABOLOMICS":
             return_result = self.run_metabolomics()
             if return_result != "success":
-                logger.error(return_codes[return_result])
+                logger.info(return_codes[return_result])
                 success = False
         elif self.experiment == "PROTEOMICS":
             if self.check_msfragger(): # use Fragpipe if MSFragger is installed, otherwise use Morpheus
                 logger.info("MSFragger found, using Fragpipe workflow for " + self.file_name)
                 return_result = self.run_proteomics('fragpipe')
                 if return_result != "success":
-                    logger.error(return_codes[return_result])
+                    logger.info(return_codes[return_result])
                     success = False
             else: # no Morpheus check, it will error if not found
                 logger.info("MSFragger not found, using Morpheus workflow for " + self.file_name)
                 return_result = self.run_proteomics('morpheus')
                 if return_result != "success":
-                    logger.error(return_codes[return_result])
+                    logger.info(return_codes[return_result])
                     success = False
 
         

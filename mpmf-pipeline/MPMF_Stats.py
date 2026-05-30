@@ -60,7 +60,7 @@ class Stat:
                 self.compute_morpheus_stats()
                 self.update_current_thresholds()
                 self.insert_update_morpheus_stats()
-                logger.info("Updated morpheus stats " + self.machine + " " + self.e_type)
+                logger.info("Updated MS2 stats " + self.machine + " " + self.e_type)
             self.update_completed()
 
         else:
