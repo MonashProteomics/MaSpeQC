@@ -32,6 +32,7 @@ exports.metab_home = function(req, res) {
     var display_metric = req.query.metric;
     var machine_data = {};
     var machine_type;
+    var machine_res;
 
     // number of runs
     const RUNS = 200;
@@ -54,6 +55,10 @@ exports.metab_home = function(req, res) {
                             "AND use_metab='Y' AND metric_type = 'thermo' ORDER BY display_order";
 
     let machine_type_sql = "SELECT machine_type FROM machine WHERE machine_name = '" + machine + "'";
+
+    
+    let machine_res_sql = "SELECT resolving_power FROM machine WHERE machine_name = '" + machine + "'";
+
 
     // execute query as a promise
     let p1 = db.execute(runs_sql).then(
@@ -83,15 +88,24 @@ exports.metab_home = function(req, res) {
         error => error_handle(error)
     );
 
+    
     // execute query as a promise
-    let p5 = db.execute(pressure_metrics_sql).then(
+    let p5 = db.execute(machine_res_sql).then(
+        result => machine_res = result[0].resolving_power
+    ).catch(
+        error => error_handle(error)
+    );
+
+
+    // execute query as a promise
+    let p6 = db.execute(pressure_metrics_sql).then(
         result => machine_data["pressure_metrics"] = JSON.parse(JSON.stringify(result))
     ).catch(
         error => error_handle(error)
     );
 
     // wait for all the promises
-    Promise.all([p1, p2, p3, p4, p5]).then(
+    Promise.all([p1, p2, p3, p4, p5, p6]).then(
         result => add_run_data()
     ).catch(
         error => error_handle(error)
@@ -313,6 +327,7 @@ exports.metab_home = function(req, res) {
     function render(){
         var machine_details = {"machine_name": machine, 
                                 "machine_type": machine_type, 
+                                "machine_resolution": machine_res,
                                 "experiment": experiment,
                                 "display_metric": display_metric}
         machine_data["machine_details"] = machine_details;

@@ -4032,6 +4032,58 @@
             // get indexes of checked components
             var component_indexes = getComponentIndexes();
 
+            // get y-axis extents from the data for ppm,mda and rt
+            var y_max_ppm = -Infinity;
+            var y_min_ppm = Infinity;
+            for(let i in machine_data.components){
+                if(component_indexes.includes(i)){
+                    var new_values = machine_data.components[i]["lcms_metrics"]["Mass Error (ppm)"].values;
+                    var new_min = d3.min(new_values);
+                    var new_max = d3.max(new_values);
+                    if(new_max > y_max_ppm){
+                        y_max_ppm = new_max;
+                    }
+                    if(new_min < y_min_ppm){
+                        y_min_ppm = new_min;
+                    }
+                }
+            }
+           
+
+            var y_max_mda = -Infinity;
+            var y_min_mda = Infinity;
+            for(let i in machine_data.components){
+                if(component_indexes.includes(i)){
+                    var new_values = machine_data.components[i]["lcms_metrics"]["Mass Error (mDa)"].values;
+                    var new_min = d3.min(new_values);
+                    var new_max = d3.max(new_values);
+                    if(new_max > y_max_mda){
+                        y_max_mda = new_max;
+                    }
+                    if(new_min < y_min_mda){
+                        y_min_mda = new_min;
+                    }
+                }
+            }
+            
+
+            var y_max_rt = -Infinity;
+            var y_min_rt = Infinity;
+            for(let i in machine_data.components){
+                if(component_indexes.includes(i)){
+                    var new_values = machine_data.components[i]["lcms_metrics"]["Retention Time"].values;
+                    var new_min = d3.min(new_values);
+                    var new_max = d3.max(new_values);
+                    if(new_max > y_max_rt){
+                        y_max_rt = new_max;
+                    }
+                    if(new_min < y_min_rt){
+                        y_min_rt = new_min;
+                    }
+                }
+            }
+            
+
             // set scales function
             function setScales(){
                 let Scales = {};
@@ -4040,10 +4092,10 @@
                             .range([height-currentRadius, currentRadius]);
                             
                     if(metrics[j] == "Mass Error (ppm)"){
-                        newScale.domain([-4, 4]);
+                        newScale.domain([y_min_ppm-2, y_max_ppm+2]);
                     }
                     else if(metrics[j] == "Mass Error (mDa)"){
-                        newScale.domain([-3, 3]);
+                        newScale.domain([y_min_mda-1, y_max_mda+1]);
                     }
                     else if(metrics[j]== "Tailing"){
                         newScale.domain([0, 2]);
@@ -4052,7 +4104,7 @@
                         newScale.domain([0, 2]);
                     }
                     else if(metrics[j] == "Retention Time"){
-                        newScale.domain([0, 50]); // get from processing??
+                        newScale.domain([0, y_max_rt + 3]); 
                     }
                     else if(metrics[j] == "Full Width Half Maximum"){
                         newScale.domain([0, 30]);
@@ -4071,10 +4123,10 @@
             // get scale domain for reset
             function getDomain(metricName){
                 if(metricName == "Mass Error (ppm)"){
-                        return [-4, 4];
+                        return [y_min_ppm-2, y_max_ppm+2];
                 }
                 else if(metricName == "Mass Error (mDa)"){
-                    return [-3, 3];
+                    return [y_min_mda-1, y_max_mda+1];
                 }
                 else if(metricName== "Tailing"){
                     return [0, 2];
@@ -4083,7 +4135,7 @@
                     return [0, 2];
                 }
                 else if(metricName == "Retention Time"){
-                    return [0, 50];
+                    return [0, y_max_rt + 3];
                 }
                 else if(metricName == "Full Width Half Maximum"){
                     return [0, 30];
@@ -4509,7 +4561,12 @@
                             .range([height-currentRadius, currentRadius]);
                             
                     if(machine_data.ms2_metrics[j].display_name == "Precursor Mass Error"){
-                        newScale.domain([-9,9])
+                        // get y-axis extents from the data for pme
+                        
+                        var new_values = machine_data.ms2_metrics[j].values;
+                        var new_min = d3.min(new_values);
+                        var new_max = d3.max(new_values);
+                        newScale.domain([new_min-1,new_max+1]);
                     }
                     else{
                         newScale.domain([0, machine_data.ms2_metrics[j].stats.max]);
@@ -4518,18 +4575,6 @@
                     Scales[machine_data.ms2_metrics[j].display_name] = newScale;
                 }
                 return Scales;
-            }
-
-            // get scale domain for reset
-            function getDomain(metricName){
-                for(let i in machine_data.ms2_metrics){
-                    if(machine_data.ms2_metrics[i].display_name == metricName){
-                        if(machine_data.ms2_metrics[j].display_name == "Precursor Mass Error"){
-                            return [-9,9];
-                        }
-                        return [0, machine_data.ms2_metrics[j].stats.max];
-                    }
-                } 
             }
             
             if(Object.keys(yScales_ms2).length == 0){
@@ -7633,6 +7678,15 @@
                 .attr("transform",
                     "translate(" + margin.left + "," + margin.top + ")");
 
+            
+            // cange heat ranges for low res data
+            if (machine_data.machine_details.machine_resolution == "Low_Resolution"){
+                heat_ranges["Mass Error (ppm)"].hi = 200;
+                heat_ranges["Mass Error (ppm)"].low = -200;
+                heat_ranges["Mass Error (mDa)"].hi = 100;
+                heat_ranges["Mass Error (mDa)"].low = -100;
+            }
+            
             // create data range for legend
             var heat_range = heat_ranges[display_metric].hi - heat_ranges[display_metric].low;
             var step = heat_range/5000; // granularity of legend
@@ -8725,13 +8779,7 @@
             }
 
             // cap 
-            if(display_metric == "Mass Error (ppm)"){
-                if(component_indexes.length > 3){
-                    y_min = - 6;
-                    y_max = 6;
-                }
-            }
-            else if(display_metric == "Tailing" || display_metric == "Asymmetry"){
+            if(display_metric == "Tailing" || display_metric == "Asymmetry"){
                 if(component_indexes.length > 3){
                         y_min = 0;
                         y_max = 4;
@@ -9357,13 +9405,7 @@
             }
 
             //cap
-            if(display_metric == "Mass Error (ppm)"){
-                if(component_indexes.length > 4){
-                    y_min = - 5;
-                    y_max = 5;
-                }
-            }
-            else if(display_metric == "Tailing" || display_metric == "Asymmetry"){
+            if(display_metric == "Tailing" || display_metric == "Asymmetry"){
                 if(component_indexes.length > 4){
                     y_min = 0;
                     y_max = 3;
