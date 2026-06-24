@@ -56,6 +56,19 @@ class FileSystem:
                         else:
                             f.write(line)
 
+                # set the database location for fragger params
+                with open(os.path.join(self.config_dir, "fragger.params"), "r") as f:
+                    lines = f.readlines()
+
+                with open(os.path.join(self.config_dir, "fragger.params"), "w") as f:
+
+                    for line in lines:
+                        if "database_name" in line:
+                            f.write("database_name = " + os.path.join(self.config_dir, "CUSTOM.fas") + "\n")
+                        else:
+                            f.write(line)
+
+
             # set the Mzine template files
             if self.res == "Low_Resolution":                
                 self.xml_template_metab = os.path.join(self.config_dir, "metab_template_low_res.xml")

@@ -262,14 +262,6 @@ class ProcessRawFile:
 
     def run_morpheus(self):
 
-       
-        # needs .NET 4.5 or higher (or MONO for Linux) and MSFileReader x86
-        # NOTE: morpheus uses relative paths, current method for out folder
-        #        removes C: (by splicing below) which means the path starts with /
-        #           This is a path relative to the current drive root (WATCH for production env)
-
-        # http://cwenger.github.io/Morpheus/faq.html
-
         # check platform for loc and command
         platform_sys = platform.system()
 
@@ -391,8 +383,6 @@ class ProcessRawFile:
 
     def run_fragpipe(self):
 
-        # TEST command formats and manifest format
-
         # create the manifest
         self.create_fragpipe_manifest()
 
@@ -403,7 +393,7 @@ class ProcessRawFile:
             command = ".fragpipe.bat --headless --config-tools-folder " \
                         + os.path.join(self.fs.sw_dir, "FragPipe-24.0", "tools")  + " --config-diann " \
                         + os.path.join(self.fs.sw_dir, "FragPipe-24.0","tools","diann","1.8.2_beta_8","windows","DiaNN.exe")  \
-                        + " --config-python "  +  os.path.join(self.fs.sw_dir, "Python") + " --workflow " \
+                        + " --config-python "  +  os.path.join(self.fs.sw_dir, "FragPipe-24.0", "python", "python.exe") + " --workflow " \
                         + os.path.join(self.fs.config_dir, "fragpipe.workflow") + " --manifest " \
                         + os.path.join(self.outfiles_dir, "fragpipe.manifest") + " --workdir " + os.path.join(self.outfiles_dir, "Fragpipe")
             os.chdir(os.path.join(self.fs.sw_dir, "FragPipe-24.0", "bin"))
@@ -422,7 +412,65 @@ class ProcessRawFile:
         else:
             return True
 
-    
+    def run_msfragger(self):
+
+        # OUTPUTS: .pepxml, .pin
+        
+        # go to s/w location
+        os.chdir(self.fs.sw_dir)
+
+        command = "java -jar -Dfile.encoding=UTF-8 -Xmx12G MSFragger-4.4.1.jar " \
+                    + os.path.join(self.fs.config_dir + "fragger.params") + " " + os.path.join(self.outfiles_dir, self.file_name + "_pos.mzML") \
+                    + " > " + os.path.join(self.outfiles_dir, self.file_name, "log_" + self.file_name + ".txt")
+
+        # run msfragger
+        returnvalue = os.system(command)
+        if returnvalue:
+            return False
+        else:
+            return True
+
+    def run_msbooster(self):
+
+        # OUTPUTS: _edited.pin
+        
+        # go to s/w location
+        os.chdir(self.fs.sw_dir)
+
+        # set msbooster params
+        self.set_msbooster()
+
+        command = "java -jar MSBooster-1.3.31.jar --paramsList " \
+                    + os.path.join(self.fs.config_dir, "msbooster_params.txt") 
+
+        # run msbooster
+        returnvalue = os.system(command)
+        if returnvalue:
+            return False
+        else:
+            return True
+
+    def run_percolator(self):
+
+        # OUTPUTS: targets.tsv, decoys.tsv
+
+        # check for edited pin from msbooster (auto uses msbooster if it was run)
+        if not os.path.exists(os.path.join(self.outfiles_dir, self.file_name + "_pos_edited.pin")):
+            perc_pin = self.file_name + "_pos.pin"
+        else:
+            perc_pin = self.file_name + "_pos_edited.pin"
+        
+        command = "percolator --only-psms --no-terminate --post-processing-tdc --results-psms targets.tsv --decoy-results-psms decoys.tsv " \
+                    + os.path.join(self.outfiles_dir, perc_pin) 
+
+        # run percolator
+        returnvalue = os.system(command)
+        if returnvalue:
+            return False
+        else:
+            return True
+
+        
     # CHECK
     def check_msfragger(self):
 
@@ -701,9 +749,7 @@ class ProcessRawFile:
             score = float(line.split('\t')[indexes['Hyperscore']])
             prob = float(line.split('\t')[indexes['Probability']])
 
-            #print(ppm,decoy,score, prob)
-
-            if decoy == 'false' and prob > 0.98 and ppm > lower and ppm < upper: # constraints for Fragpipe PSMs (using prob over hyperscore as deemed more reliable)
+            if decoy == 'false' and prob > 0.98 and ppm >= lower and ppm <= upper: # constraints for Fragpipe PSMs (using prob over hyperscore as deemed more reliable)
                 total += ppm
                 count +=1
             
@@ -711,7 +757,7 @@ class ProcessRawFile:
             average = total/count
         else:
             average = -1
-       
+        logger.info("Precursor Mass Error calculated using " + str(count) + " of " + str(len(lines)) + " PSMs that met the constraints of decoy=false, prob>0.98 and ppm between " + str(lower) + " and " + str(upper))
         self.insert_ms2_metrics({"Precursor Mass Error": average})
 
     def insert_pos_csv(self):
@@ -1256,6 +1302,33 @@ class ProcessRawFile:
         return breaches
 
     # OTHER
+    def set_msbooster(self):
+
+        # get platform
+        platform_sys = platform.system()
+
+        # set the locations for msbooster
+        with open(os.path.join(self.fs.config_dir, "msbooster_params.txt"), "r") as f:
+            lines = f.readlines()
+
+        with open(os.path.join(self.fs.config_dir, "msbooster_params.txt"), "w") as f:
+
+            for line in lines:
+                if "mzmlDirectory" in line:
+                    f.write("mzmlDirectory = " + self.outfiles_dir + "\n") 
+                elif "pinPepXMLDirectory" in line:
+                    f.write("pinPepXMLDirectory = " + self.outfiles_dir + "\n")
+                elif "fragger" in line:
+                    f.write("fragger = " + os.path.join(self.fs.config_dir, "fragger.params") + "\n")
+                elif "DiaNN" in line:
+                    if platform_sys == "Windows":
+                        f.write("DiaNN = " + os.path.join(self.fs.sw_dir, "diann", "1.8.2_beta_8", "windows", "DiaNN.exe") + "\n")
+                    else: # Linux
+                        f.write("DiaNN = " + os.path.join(self.fs.sw_dir, "diann", "1.8.2_beta_8", "linux", "diann-1.8.1.8") + "\n")
+                else:
+                    f.write(line)
+
+
     def fwhm_to_seconds(self):
         sql = "SELECT metric_id FROM metric WHERE metric_name = 'fwhm'"
 
