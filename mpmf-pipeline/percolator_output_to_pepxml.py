@@ -68,12 +68,12 @@ def get_spectrum_rank(s: str) -> SpectrumRank:
     rank = int(charge_rank.split("_")[1])
     return SpectrumRank(s[:s.rfind(".")], rank)
 
-def get_max_rank(basename: str, is_dia: bool) -> int:
-    path_dia = Path(f"{basename}_rank1.pepXML")
-    path_dda = Path(f"{basename}.pepXML")
+def get_max_rank(output_dir: str, basename: str, is_dia: bool) -> int:
+    path_dia = Path(output_dir) / f"{basename}_rank1.pepXML"
+    path_dda = Path(output_dir) / f"{basename}.pepXML"
     path = path_dia if is_dia else path_dda
     compile_pattern = re.compile(r'<parameter name="output_report_topN" value="(\d+)"/>')
-
+    
     try:
         with open(path, 'r', encoding='utf-8') as br:
             for line in br:
@@ -82,10 +82,10 @@ def get_max_rank(basename: str, is_dia: bool) -> int:
                     return int(match.group(1))
     except IOError:
         print(f"Cannot find output_report_topN parameter from {path.absolute()}", file=sys.stderr)
-        sys.exit(1)
+        return 0
 
     print(f"Cannot find output_report_topN parameter from {path.absolute()}", file=sys.stderr)
-    sys.exit(1)
+    return 0
 
 def handle_search_hit(search_hit: List[str], ntt_nmc: NttNmc, pep_score: PepScore, old_rank: int, new_rank: int) -> str:
     if not ntt_nmc or not pep_score:
@@ -106,8 +106,9 @@ def handle_search_hit(search_hit: List[str], ntt_nmc: NttNmc, pep_score: PepScor
             calc_neutral_pep_mass = float(e[len("calc_neutral_pep_mass=\""):-1])
 
     gap = float('inf')
+    C13C12_MASSDIFF_U = 1.0033548378
     for isotope in range(-6, 7):
-        current_gap = abs(massdiff - isotope * 1.0033548378)
+        current_gap = abs(massdiff - isotope * C13C12_MASSDIFF_U)
         if current_gap < gap:
             gap = current_gap
             isomassd = isotope
@@ -135,19 +136,19 @@ def handle_search_hit(search_hit: List[str], ntt_nmc: NttNmc, pep_score: PepScor
         lines.append(f'<search_score name="imscore" value="{ntt_nmc.im_score:f}"/>')
 
     prob = 1.0 - pep_score.pep
-    massd_val = (massdiff - isomassd * 1.0033548378) * 1000000.0 / calc_neutral_pep_mass
+    massd_val = (massdiff - isomassd * C13C12_MASSDIFF_U) * 1000000.0 / calc_neutral_pep_mass
     
     analysis_result = f"""<analysis_result analysis="peptideprophet">
-<peptideprophet_result probability="{prob:f}" all_ntt_prob="({prob:f},{prob:f},{prob:f})">
-<search_score_summary>
-<parameter name="fval" value="{pep_score.score:f}"/>
-<parameter name="ntt" value="{ntt_nmc.ntt:d}"/>
-<parameter name="nmc" value="{ntt_nmc.nmc:d}"/>
-<parameter name="massd" value="{massd_val:f}"/>
-<parameter name="isomassd" value="{isomassd:d}"/>
-</search_score_summary>
-</peptideprophet_result>
-</analysis_result>"""
+                            <peptideprophet_result probability="{prob:f}" all_ntt_prob="({prob:f},{prob:f},{prob:f})">
+                            <search_score_summary>
+                            <parameter name="fval" value="{pep_score.score:f}"/>
+                            <parameter name="ntt" value="{ntt_nmc.ntt:d}"/>
+                            <parameter name="nmc" value="{ntt_nmc.nmc:d}"/>
+                            <parameter name="massd" value="{massd_val:f}"/>
+                            <parameter name="isomassd" value="{isomassd:d}"/>
+                            </search_score_summary>
+                            </peptideprophet_result>
+                            </analysis_result>"""
     lines.append(analysis_result)
     lines.append("</search_hit>")
     
@@ -215,40 +216,22 @@ def handle_spectrum_query(sq: List[str], pin_spectrum_rank_ntt_nmc: Dict[str, Li
 
     return "\n".join(lines) + "\n"
 
-def percolator_to_pep_xml(pin: Path, basename: str, percolator_target_psms: Path, 
-                          percolator_decoy_psms: Path, out_basename: Path, 
-                          dia_dda: str, min_prob: float, lcms_path: str):
-    
-    lcms_p = Path(lcms_path)
-    if not lcms_p.exists():
-        not_ok = True
-        lcms_lower = lcms_path.lower()
-        if lcms_lower.endswith("_calibrated.mzml"):
-            base_lcms = lcms_path[:-len("_calibrated.mzml")]
-            if Path(base_lcms + ".mzML").exists():
-                lcms_path = base_lcms + ".mzML"
-                not_ok = False
-            elif Path(base_lcms + "_uncalibrated.mzML").exists():
-                lcms_path = base_lcms + "_uncalibrated.mzML"
-                not_ok = False
-        elif lcms_lower.endswith("_uncalibrated.mzml"):
-            base_lcms = lcms_path[:-len("_uncalibrated.mzml")]
-            if Path(base_lcms + ".mzML").exists():
-                lcms_path = base_lcms + ".mzML"
-                not_ok = False
-            elif Path(base_lcms + "_calibrated.mzML").exists():
-                lcms_path = base_lcms + "_calibrated.mzML"
-                not_ok = False
+def percolator_to_pep_xml(output_dir: str, basename: str, dia_dda: str, min_prob: float):
 
-        if not_ok:
-            print(f"{lcms_path} does not exist.", file=sys.stderr)
-            sys.exit(1)
+    # set file paths
+    fragger_pin = Path(output_dir) / f"{basename}.pin"
+    booster_pin = Path(output_dir) / f"{basename}_edited.pin"
+    pin = booster_pin if booster_pin.exists() else fragger_pin    
+    percolator_target_psms = Path(output_dir) / "targets.tsv"
+    percolator_decoy_psms = Path(output_dir) / "decoys.tsv"
+    lcms_path = basename + ".mzML" 
+    out_basename = Path(output_dir) / "converted"
 
     is_dia = dia_dda == "DIA"
-    max_rank = get_max_rank(basename, is_dia)
+    max_rank = get_max_rank(output_dir, basename, is_dia)
     if max_rank < 1:
         print(f"Cannot find output_report_topN parameter from {basename}'s pepXML file.", file=sys.stderr)
-        sys.exit(1)
+        return False
 
     pin_spectrum_rank_ntt_nmc: Dict[str, List[Optional[NttNmc]]] = {}
     pin_spectrum_rank_pep_score: Dict[str, List[Optional[PepScore]]] = {}
@@ -319,8 +302,9 @@ def percolator_to_pep_xml(pin: Path, basename: str, percolator_target_psms: Path
 
     # Generiere Output XMLs
     for rank in range(1, max_rank + 1 if is_dia else 2):
-        output_rank = Path(f"{out_basename}_rank{rank}.pep.xml") if is_dia else Path(f"{out_basename}.pep.xml")
-        pepxml_rank = Path(f"{basename}_rank{rank}.pepXML") if is_dia else Path(f"{basename}.pepXML")
+        
+        output_rank = Path(output_dir) / f"{out_basename}_rank{rank}.pep.xml" if is_dia else Path(output_dir) / f"{out_basename}.pep.xml"
+        pepxml_rank = Path(output_dir) / f"{basename}_rank{rank}.pepXML" if is_dia else Path(output_dir) / f"{basename}.pepXML"
 
         with open(pepxml_rank, 'r', encoding='utf-8') as brpepxml, open(output_rank, 'w', encoding='utf-8') as out:
             for line in brpepxml:
@@ -334,7 +318,7 @@ def percolator_to_pep_xml(pin: Path, basename: str, percolator_target_psms: Path
                             line = PATTERN_3.sub(f'raw_data="{after_last_dot(lcms_path)}"', line, count=1)
                     else:
                         print(f"Could not find the base_name from {pepxml_rank}", file=sys.stderr)
-                        sys.exit(1)
+                        return False
 
                 out.write(line)
 
@@ -369,31 +353,13 @@ def percolator_to_pep_xml(pin: Path, basename: str, percolator_target_psms: Path
                         sq = []
 
             out.write("</msms_run_summary>\n</msms_pipeline_analysis>\n")
+    return True
 
 if __name__ == "__main__":
     import sys
-    if len(sys.argv) == 1:
-        # Fallback Hardcoded-Pfade wie in Java
-        percolator_to_pep_xml(
-            Path(r"G:\dev\msfragger\dev2\5ngHeLaosmoothCE20-52lowguessSRIG450easy4_30t_C2_01_3451.pin"),
-            r"G:\dev\msfragger\dev2\5ngHeLaosmoothCE20-52lowguessSRIG450easy4_30t_C2_01_3451",
-            Path(r"G:\dev\msfragger\dev2\5ngHeLaosmoothCE20-52lowguessSRIG450easy4_30t_C2_01_3451_percolator_target_psms.tsv"),
-            Path(r"G:\dev\msfragger\dev2\5ngHeLaosmoothCE20-52lowguessSRIG450easy4_30t_C2_01_3451_percolator_decoy_psms.tsv"),
-            Path(r"G:\dev\msfragger\dev2\interact-5ngHeLaosmoothCE20-52lowguessSRIG450easy4_30t_C2_01_3451_2"),
-            "DDA", 0.0, ""
-        )
-    else:
-        pin_path = Path(sys.argv[1])
-        edited_pin = Path(sys.argv[1].replace(".pin", "_edited.pin"))
-        target_pin = edited_pin if edited_pin.exists() else pin_path
-        
-        percolator_to_pep_xml(
-            target_pin,
-            sys.argv[2],
-            Path(sys.argv[3]),
-            Path(sys.argv[4]),
-            Path(sys.argv[5]),
-            sys.argv[6],
-            float(sys.argv[7]),
-            sys.argv[8].strip() if len(sys.argv) > 8 else ""
-        )
+    percolator_to_pep_xml(
+        sys.argv[1],
+        sys.argv[2],
+        sys.argv[3],
+        float(sys.argv[4])
+    )

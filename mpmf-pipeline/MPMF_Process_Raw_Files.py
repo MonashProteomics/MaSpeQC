@@ -33,6 +33,8 @@ from MPMF_Stats import Stat
 from MPMF_Chromatogram import Chromatogram
 from MPMF_Email import SendEmail
 from MPMF_Thermo_Metrics import ThermoMetrics
+from percolator_output_to_pepxml import *
+
 getcontext().prec = 12
 
 # LOGGING
@@ -86,7 +88,7 @@ class ProcessRawFile:
         if not os.path.isdir(self.outfiles_dir):
             os.makedirs(os.path.join(self.experiment, self.machine, self.file_name))
 
-    # RUN
+    # RUN FUNCTIONS
     def run(self):
 
         # return codes from run functions
@@ -97,6 +99,9 @@ class ProcessRawFile:
                         "insert":"Insert run details error " + self.file_name,
                         "morpheus":"Morpheus error " + self.file_name,
                         "fragpipe":"Fragpipe error " + self.file_name,
+                        "percolator":"Percolator error " + self.file_name, 
+                        "philosopher":"Philosopher error " + self.file_name,
+                        "pepxml":"pepxml conversion error " + self.file_name,
                          "success":""}
 
         # run logic
@@ -107,14 +112,20 @@ class ProcessRawFile:
                 logger.info(return_codes[return_result])
                 success = False
         elif self.experiment == "PROTEOMICS":
-            if self.check_msfragger(): # use Fragpipe if MSFragger is installed, otherwise use Morpheus
-                logger.info("MSFragger found, using Fragpipe workflow for " + self.file_name)
+            if self.check_pipeline(): # use MS/MS pipeline
+                logger.info("Using MSFragger,MSBooster,Percolator,Philosopher MS/MS workflow for " + self.file_name)
+                return_result = self.run_proteomics('pipeline')
+                if return_result != "success":
+                    logger.info(return_codes[return_result])
+                    success = False
+            elif self.check_fragpipe(): # use Fragpipe 
+                logger.info("Using Fragpipe MS/MS workflow for " + self.file_name)
                 return_result = self.run_proteomics('fragpipe')
                 if return_result != "success":
                     logger.info(return_codes[return_result])
                     success = False
             else: # no Morpheus check, it will error if not found
-                logger.info("MSFragger not found, using Morpheus workflow for " + self.file_name)
+                logger.info("Using Morpheus MS/MS workflow for " + self.file_name)
                 return_result = self.run_proteomics('morpheus')
                 if return_result != "success":
                     logger.info(return_codes[return_result])
@@ -156,16 +167,28 @@ class ProcessRawFile:
         self.insert_pos_csv()
         self.fwhm_to_seconds()
 
-        # run morpheus or fragpipe
-        if software == "fragpipe":
+        # run ms/ms workflow
+        if software == "pipeline":
+            if not self.run_msfragger():
+                return "fragger"
+            self.run_msbooster()
+            if not self.run_percolator():
+                return "percolator"
+            if not percolator_to_pep_xml(self.outfiles_dir, self.file_name + "_pos", "DDA", 0.5):
+                return "pepxml"
+            if not self.run_philosopher():
+                return "philosopher"
+        elif software == "fragpipe":
             if not self.run_fragpipe():
                 return "fragpipe"
         elif not self.run_morpheus():
             return "morpheus"
 
         # insert MS2 data and send email
+        if software == "pipeline":
+            self.insert_pipeline("pipeline")
         if software == "fragpipe":
-            self.insert_fragpipe()
+            self.insert_pipeline("fragpipe")
         else:
             self.insert_morpheus()
 
@@ -389,7 +412,7 @@ class ProcessRawFile:
         # check platform 
         platform_sys = platform.system()
 
-        if platform_sys == 'Windows': # using MaSpeQC installed Python
+        if platform_sys == 'Windows': 
             command = ".fragpipe.bat --headless --config-tools-folder " \
                         + os.path.join(self.fs.sw_dir, "FragPipe-24.0", "tools")  + " --config-diann " \
                         + os.path.join(self.fs.sw_dir, "FragPipe-24.0","tools","diann","1.8.2_beta_8","windows","DiaNN.exe")  \
@@ -433,6 +456,11 @@ class ProcessRawFile:
     def run_msbooster(self):
 
         # OUTPUTS: _edited.pin
+
+        # check if the jar exists
+        if not os.path.exists(os.path.join(self.fs.sw_dir, "MSBooster-1.3.31.jar")):
+            logger.info("MSBooster-1.3.31.jar not found in " + self.fs.sw_dir)
+            return False
         
         # go to s/w location
         os.chdir(self.fs.sw_dir)
@@ -470,37 +498,40 @@ class ProcessRawFile:
         else:
             return True
 
-        
-    # CHECK
-    def check_msfragger(self):
+    def run_philosopher(self):
 
-        platform_sys = platform.system()
-        if platform_sys == 'Windows':
-            return os.path.isdir(os.path.join(self.fs.sw_dir, "Fragpipe-24.0", "tools", "MSFragger-4.4.1"))
-        else: # Linux
-            return os.path.isdir(os.path.join(self.fs.sw_dir, "fragpipe-24.0", "tools", "MSFragger-4.4.1"))
+        # OUTPUTS .prot.xml, peptide.tsv, psm.tsv, protein.tsv
 
-    def check_run(self):
-        # check hasn't already been inserted
-        sql = "SELECT * FROM qc_run WHERE file_name = " + "'" + self.file_name + "'"
-        try:
-            self.db.cursor.execute(sql)
-            data = self.db.cursor.fetchall()
-        except Exception as e:
-            logger.exception(e)
+        # go to ouput files dir location
+        os.chdir(self.outfiles_dir)
 
-        return len(data)
-        
-    def delete_run(self):
-        # delete run when error
-        sql = "DELETE FROM qc_run WHERE file_name = " + "'" + self.file_name + "'"
-        
-        try:
-            self.db.cursor.execute(sql)
-            self.db.db.commit()
-        except Exception as e:
-            logger.exception(e)
+        commands = []
 
+        # clean and init workspace
+        commands.append("philosopher workspace --clean")
+        commands.append("philosopher workspace --init")
+
+        # annotate the database
+        commanmds.append("philosopher database --annotate --prefix rev_ " + os.path.join(self.fs.config_dir, "CUSTOM.fasta"))
+
+        # run peptide prophet
+        commands.append("philosopher proteinprophet --maxppmdiff 2000000 converted.pep.xml")
+
+        # perform fdr filtering
+        commands.append("philosopher filter --sequential --picked --prot 0.01 --pepxml converted.pep.xml --protxml interact.prot.xml --razor")
+
+        # report for tsvs
+        commands.append("philosopher report")
+
+        # loop and execute commands
+        for command in commands:
+            returnvalue = os.system(command)
+            if returnvalue:
+                return False
+        return True
+
+
+    # CREATE TEMPLATES   
     def create_fragpipe_manifest(self):
 
         # create the manifest file needed for Fragpipe 
@@ -510,22 +541,7 @@ class ProcessRawFile:
         with open(os.path.join(self.outfiles_dir, "fragpipe.manifest"), 'w') as outfile:
             outfile.write(manifest)
 
-    def check_file_name(self):
-        # QC_Metabolomics_Timestamp
-        # QC_Proteomics_Timestamp
-        # Timestamp = YYYYMMDDHHMMSS or YYYYMMDDHHMM
-        try:
-            datetime.datetime.strptime(self.file_name[-14:], "%Y%m%d%H%M%S")
-            return True
-        except ValueError as e:
-            try:
-                datetime.datetime.strptime(self.file_name[-12:], "%Y%m%d%H%M")
-                return True
-            except ValueError as e:
-                logger.error("Not a valid timestamp " + self.file_name)
-                return False
-
-    # CREATE
+    
     def create_metab_xml(self):
         self.pos_file = os.path.join(self.outfiles_dir, self.file_name + "_pos.mzML")
         self.neg_file = os.path.join(self.outfiles_dir, self.file_name + "_neg.mzML")
@@ -577,7 +593,7 @@ class ProcessRawFile:
             for line in new_xml:
                 outfile.write(line + "\n")
 
-    # INSERT
+    # INSERT FUNCTIONS
     def insert_morpheus(self):
 
         # read and insert summary data from morpheus
@@ -668,25 +684,30 @@ class ProcessRawFile:
 
                 self.db.db.commit()
 
-    def insert_fragpipe(self):
+    def insert_pipeline(self, name):
+
+        if name == "fragpipe":
+            filepath = os.path.join(self.fragpipe_out_dir, "exp_a_1")
+        else:
+            filepath = self.outfiles_dir
 
         # put metric data in a dict
         summary = {}
 
         # read Target PSMs
-        with open(os.path.join(self.fragpipe_out_dir, "exp_a_1", "psm.tsv"), "r") as infile:
+        with open(os.path.join(filepath "psm.tsv"), "r") as infile:
             lines = infile.readlines()
         
         summary['Target PSMs'] = len(lines) - 1 # remove header
 
         # read Unique Target Peptides
-        with open(os.path.join(self.fragpipe_out_dir, "exp_a_1", "peptide.tsv"), "r") as infile:
+        with open(os.path.join(filepath, "peptide.tsv"), "r") as infile:
             lines = infile.readlines()
         
         summary['Unique Target Peptides'] = len(lines) - 1 # remove header
 
         # read Target Protein Groups
-        with open(os.path.join(self.fragpipe_out_dir, "exp_a_1", "protein.tsv"), "r") as infile:
+        with open(os.path.join(filepath, "protein.tsv"), "r") as infile:
             lines = infile.readlines()
         
         summary['Target Protein Groups'] = len(lines) - 1 # remove header
@@ -694,13 +715,16 @@ class ProcessRawFile:
         # MS/MS Spectra
 
         # find log file
-        log_file = glob.glob(os.path.join(self.fragpipe_out_dir, "log*.txt"))[0]
+        if name == "fragpipe":
+            log_file = glob.glob(os.path.join(self.fragpipe_out_dir, "log*.txt"))[0]
+        else:
+            log_file = glob.glob(os.path.join(self.outfiles_dir, "log*.txt"))[0]
 
         # open the log
         with open(log_file, "r") as infile:
             lines = infile.readlines()
 
-        # search for 'progress' to find spectra count 
+        # search for 'progress' to find spectra count (could also use Scans =)
         for line in lines:
             if "progress" in line:
                 new_line = line.strip().split("/")[0] # split on '/
@@ -710,12 +734,17 @@ class ProcessRawFile:
         
         # INSERT METRICS 
         self.insert_ms2_metrics(summary)
-        self.insert_fragpipe_pme()
+        self.insert_pipeline_pme(name)
 
-    def insert_fragpipe_pme(self):
+    def insert_pipeline_pme(self, name):
+
+        if name == "fragpipe":
+            filepath = os.path.join(self.fragpipe_out_dir, "exp_a_1")
+        else:
+            filepath = self.outfiles_dir
         
         # read Target PSMs
-        with open(os.path.join(self.fragpipe_out_dir, "exp_a_1", "psm.tsv"), "r") as infile:
+        with open(os.path.join(filepath, "psm.tsv"), "r") as infile:
             lines = infile.readlines()
 
         # get and remove headers
@@ -914,7 +943,7 @@ class ProcessRawFile:
         except Exception as e:
             logger.exception(e)
 
-    # EMAIL
+    # CERATE and SEND EMAIL
     def check_email_thresholds_prot(self):
         # checks metric values against the thresholds in config files
         # and sends email if any outsdide limits
@@ -1301,7 +1330,54 @@ class ProcessRawFile:
 
         return breaches
 
-    # OTHER
+    # CHECK, SET, GET, DELETE FUNCTIONS
+    def check_file_name(self):
+        # QC_Metabolomics_Timestamp
+        # QC_Proteomics_Timestamp
+        # Timestamp = YYYYMMDDHHMMSS or YYYYMMDDHHMM
+        try:
+            datetime.datetime.strptime(self.file_name[-14:], "%Y%m%d%H%M%S")
+            return True
+        except ValueError as e:
+            try:
+                datetime.datetime.strptime(self.file_name[-12:], "%Y%m%d%H%M")
+                return True
+            except ValueError as e:
+                logger.error("Not a valid timestamp " + self.file_name)
+                return False
+
+    def check_pipeline(self):
+        return os.path.exists(os.path.join(self.fs.sw_dir, "MSFragger-4.4.1.jar"))
+
+    def check_fragpipe(self):
+
+        platform_sys = platform.system()
+        if platform_sys == 'Windows':
+            return os.path.isdir(os.path.join(self.fs.sw_dir, "Fragpipe-24.0", "tools", "MSFragger-4.4.1"))
+        else: # Linux
+            return os.path.isdir(os.path.join(self.fs.sw_dir, "fragpipe-24.0", "tools", "MSFragger-4.4.1"))
+
+    def check_run(self):
+        # check hasn't already been inserted
+        sql = "SELECT * FROM qc_run WHERE file_name = " + "'" + self.file_name + "'"
+        try:
+            self.db.cursor.execute(sql)
+            data = self.db.cursor.fetchall()
+        except Exception as e:
+            logger.exception(e)
+
+        return len(data)
+        
+    def delete_run(self):
+        # delete run when error
+        sql = "DELETE FROM qc_run WHERE file_name = " + "'" + self.file_name + "'"
+        
+        try:
+            self.db.cursor.execute(sql)
+            self.db.db.commit()
+        except Exception as e:
+            logger.exception(e)
+
     def set_msbooster(self):
 
         # get platform
@@ -1515,10 +1591,10 @@ if __name__ == "__main__":
                 _, tail = os.path.split(machines[machine][0][k])
                 file_id = tail[:-ext_length]
 
-                # process raw file for mzmine and morpheus metrics
+                # process raw file 
                 qc_run = ProcessRawFile(file_id, machines[machine][0][k], machine, experiment_type, fs, db_info, email, machines[machine][1], file_format, machines[machine][2])
 
-                # only do thermo metrics, pressure and chroms if successful metric (mzmine/morpheus) insert
+                # only do thermo metrics, pressure and chroms if successful metric insert
                 if qc_run.run():
                     # process instrument metrics for thermo machines
                     if machines[machine][1] == "thermo":
