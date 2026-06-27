@@ -102,6 +102,7 @@ class ProcessRawFile:
                         "percolator":"Percolator error " + self.file_name, 
                         "philosopher":"Philosopher error " + self.file_name,
                         "pepxml":"pepxml conversion error " + self.file_name,
+                        "fragger":"MSFragger error " + self.file_name,
                          "success":""}
 
         # run logic
@@ -443,8 +444,8 @@ class ProcessRawFile:
         os.chdir(self.fs.sw_dir)
 
         command = "java -jar -Dfile.encoding=UTF-8 -Xmx12G MSFragger-4.4.1.jar " \
-                    + os.path.join(self.fs.config_dir + "fragger.params") + " " + os.path.join(self.outfiles_dir, self.file_name + "_pos.mzML") \
-                    + " > " + os.path.join(self.outfiles_dir, self.file_name, "log_" + self.file_name + ".txt")
+                    + os.path.join(self.fs.config_dir, "fragger.params") + " " + os.path.join(self.outfiles_dir, self.file_name + "_pos.mzML") \
+                    + " > " + os.path.join(self.outfiles_dir, "log_" + self.file_name + ".txt")
 
         # run msfragger
         returnvalue = os.system(command)
@@ -481,6 +482,9 @@ class ProcessRawFile:
     def run_percolator(self):
 
         # OUTPUTS: targets.tsv, decoys.tsv
+
+        # go to ouput files dir location
+        os.chdir(self.outfiles_dir)
 
         # check for edited pin from msbooster (auto uses msbooster if it was run)
         if not os.path.exists(os.path.join(self.outfiles_dir, self.file_name + "_pos_edited.pin")):
@@ -695,7 +699,7 @@ class ProcessRawFile:
         summary = {}
 
         # read Target PSMs
-        with open(os.path.join(filepath "psm.tsv"), "r") as infile:
+        with open(os.path.join(filepath, "psm.tsv"), "r") as infile:
             lines = infile.readlines()
         
         summary['Target PSMs'] = len(lines) - 1 # remove header
