@@ -33,7 +33,7 @@ from MPMF_Stats import Stat
 from MPMF_Chromatogram import Chromatogram
 from MPMF_Email import SendEmail
 from MPMF_Thermo_Metrics import ThermoMetrics
-from percolator_output_to_pepxml import *
+from MPMF_Convert_Pepxml import ConvertPepxml
 
 getcontext().prec = 12
 
@@ -175,7 +175,8 @@ class ProcessRawFile:
             self.run_msbooster()
             if not self.run_percolator():
                 return "percolator"
-            if not percolator_to_pep_xml(self.outfiles_dir, self.file_name + "_pos", "DDA", 0.5):
+            cp_obj = ConvertPepxml(self.outfiles_dir, self.file_name + "_pos", 0.5)
+            if not cp_obj.stream_and_write_xml():
                 return "pepxml"
             if not self.run_philosopher():
                 return "philosopher"
@@ -188,7 +189,7 @@ class ProcessRawFile:
         # insert MS2 data and send email
         if software == "pipeline":
             self.insert_pipeline("pipeline")
-        if software == "fragpipe":
+        elif software == "fragpipe":
             self.insert_pipeline("fragpipe")
         else:
             self.insert_morpheus()
@@ -360,11 +361,19 @@ class ProcessRawFile:
         returnvalue = os.system(command)
         if returnvalue:
             return False
-        else:
-            return True
+        
+        if self.experiment == "METABOLOMICS":
+            command = 'docker run -it --rm -v ' + self.fs.in_dir  + "/" + self.machine + ':/data -v ' + self.outfiles_dir + ':/output' \
+            + ' proteowizard/pwiz-skyline-i-agree-to-the-vendor-licenses wine msconvert /data/' + self.file_name + self.file_format + ' -o /output' \
+            + ' --filter "peakPicking true 1-" --filter "polarity negative" --outfile ' + self.file_name + '_neg.mzML'
 
+            returnvalue = os.system(command)
+            if returnvalue:
+                return False
+        
+        return True
 
-
+        
     def run_msconvert(self):
         '''Creates .mzML files in OutFiles'''
 
@@ -516,13 +525,15 @@ class ProcessRawFile:
         commands.append("philosopher workspace --init")
 
         # annotate the database
-        commanmds.append("philosopher database --annotate --prefix rev_ " + os.path.join(self.fs.config_dir, "CUSTOM.fasta"))
+        commands.append("philosopher database --annotate " + os.path.join(self.fs.config_dir, "CUSTOM.fas ") + "--prefix rev_")
 
         # run peptide prophet
-        commands.append("philosopher proteinprophet --maxppmdiff 2000000 converted.pep.xml")
+        commands.append("philosopher proteinprophet --maxppmdiff 2000000 " + os.path.join(self.outfiles_dir, "converted.pep.xml"))
 
         # perform fdr filtering
-        commands.append("philosopher filter --sequential --picked --prot 0.01 --pepxml converted.pep.xml --protxml interact.prot.xml --razor")
+        filter_command = "philosopher filter --sequential --picked --prot 0.01 --pepxml " \
+                        + os.path.join(self.outfiles_dir, "converted.pep.xml") + " --protxml " +  os.path.join(self.outfiles_dir, "interact.prot.xml") + " --razor"
+        commands.append(filter_command)
 
         # report for tsvs
         commands.append("philosopher report")
@@ -778,11 +789,17 @@ class ProcessRawFile:
         for line in lines:
             # calculate ppm
             ppm = (float(line.split('\t')[indexes['Observed M/Z']]) - float(line.split('\t')[indexes['Calculated M/Z']])) / float(line.split('\t')[indexes['Calculated M/Z']]) * 1e6
-            decoy = line.split('\t')[indexes['Is Decoy']].strip() 
+            try:
+                decoy = line.split('\t')[indexes['Is Decoy']].strip() 
+            except KeyError:
+                decoy = 'false' # if not found, assume false, depends on fagpipe version and settings
             score = float(line.split('\t')[indexes['Hyperscore']])
-            prob = float(line.split('\t')[indexes['Probability']])
+            try:
+                prob = float(line.split('\t')[indexes['Probability']])
+            except KeyError: # column name can be changed by philosopher and fragpipe
+                prob = float(line.split('\t')[indexes['PeptideProphet Probability']])
 
-            if decoy == 'false' and prob > 0.98 and ppm >= lower and ppm <= upper: # constraints for Fragpipe PSMs (using prob over hyperscore as deemed more reliable)
+            if decoy == 'false' and prob > 0.9 and ppm >= lower and ppm <= upper: # constraints for Fragpipe PSMs (using prob over hyperscore as deemed more reliable)
                 total += ppm
                 count +=1
             
