@@ -40,7 +40,7 @@ class Chromatogram:
         self.fs = filesystem
         self.db = db
         self.db.db.commit()  # commit for any other instances
-        self.run_id = self.db.get_run_id(self.file_name)
+        self.run_id = self.db.get_run_id(self.file_name, self.machine)
         self.outfiles_dir = os.path.join(self.fs.out_dir, self.experiment, self.machine, self.file_name)
         self.path = os.path.join(self.outfiles_dir, self.file_name + ".mzmine")
         self.peaklistfiles = []

@@ -552,8 +552,19 @@ class MPMFDBSetUp:
             logger.exception(e)
 
     # GETS
-    def get_run_id(self, datafile):
-        sql = "SELECT run_id FROM qc_run WHERE file_name = " + "'" + datafile + "'"
+    def get_run_id(self, datafile, machine):
+
+         # get machine id
+        m_sql = "SELECT machine_id FROM machine WHERE machine_name = " + "'" + machine + "'"
+
+        try:
+            self.cursor.execute(m_sql)
+            self.mid = self.cursor.fetchone() # store machine id
+        except Exception as e:
+            logger.exception(e)
+
+        sql = "SELECT run_id FROM qc_run WHERE file_name = " + "'" + datafile + "'" \
+                + " AND machine_id = " + "'" + str(self.mid[0]) + "'"
         try:
             self.cursor.execute(sql)
             run_id = self.cursor.fetchone()

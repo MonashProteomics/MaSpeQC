@@ -58,7 +58,7 @@ class ThermoMetrics:
         self.fs = fs
         self.machine = machine
         self.db.db.commit() # commit for any other instances
-        self.run_id = self.db.get_run_id(self.filename)
+        self.run_id = self.db.get_run_id(self.filename, self.machine)
         self.comp_id = self.set_component_id()
 
         if not self.rawfile.IsError:

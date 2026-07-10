@@ -667,7 +667,7 @@ class ProcessRawFile:
         # metrics is a dict with metric name as key and value as value, e.g. {"Target PSMs": 1000, "Unique Target Peptides": 500}
 
         # get run id
-        run_id = self.db.get_run_id(self.file_name)
+        run_id = self.db.get_run_id(self.file_name, self.machine)
 
         # get hela component_id
         sql = "SELECT component_id FROM sample_component WHERE component_name = 'Hela Digest'"
@@ -816,7 +816,7 @@ class ProcessRawFile:
         # mz, rt, height, area, fwhm, tf, af, min, max, (ppm), (dalton), (areaN), (heightN)
         # change metric names in xml templates and rewrite all insert functions to use names
 
-        run_id = self.db.get_run_id(self.file_name)
+        run_id = self.db.get_run_id(self.file_name, self.machine)
 
         with open(os.path.join(self.outfiles_dir, "posoutput.csv"), "r") as incsv:
             for line in incsv:
@@ -850,7 +850,7 @@ class ProcessRawFile:
         # mz, rt, height, area, fwhm, tf, af, min, max, ppm, dalton, areaN, heightN
 
         # get run_id
-        run_id = self.db.get_run_id(self.file_name)
+        run_id = self.db.get_run_id(self.file_name, self.machine)
 
         with open(os.path.join(self.outfiles_dir, "negoutput.csv"), "r") as incsv:
             for line in incsv:
@@ -952,7 +952,7 @@ class ProcessRawFile:
     def insert_summary(self, s_data):
 
         # get run id
-        run_id = self.db.get_run_id(self.file_name)
+        run_id = self.db.get_run_id(self.file_name, self.machine)
 
         # convert to json and update table
         json_data = json.dumps(s_data, separators=(",", ":"))
@@ -997,7 +997,7 @@ class ProcessRawFile:
                 thresholds[new_limit[0]] = [new_limit[1], new_limit[2], new_limit[3].strip()]
 
         # get run_id
-        run_id = self.db.get_run_id(self.file_name)
+        run_id = self.db.get_run_id(self.file_name, self.machine)
 
         breaches = {}
         for metric in thresholds:
@@ -1219,7 +1219,7 @@ class ProcessRawFile:
                 thresholds[new_limit[0]] = [new_limit[1], new_limit[2], new_limit[3].strip()]
 
         # get run_id
-        run_id = self.db.get_run_id(self.file_name)
+        run_id = self.db.get_run_id(self.file_name, self.machine)
 
         breaches = {}
         for metric in thresholds:
@@ -1380,7 +1380,19 @@ class ProcessRawFile:
 
     def check_run(self):
         # check hasn't already been inserted
-        sql = "SELECT * FROM qc_run WHERE file_name = " + "'" + self.file_name + "'"
+
+        # get machine id (allows for same files on different machines)
+        m_sql = "SELECT machine_id FROM machine WHERE machine_name = " + "'" + self.machine + "'"
+
+        try:
+            self.db.cursor.execute(m_sql)
+            self.mid = self.db.cursor.fetchone() # store machine id
+        except Exception as e:
+            logger.exception(e)
+
+
+        sql = "SELECT * FROM qc_run WHERE file_name = " + "'" + self.file_name + "'" \
+                + " AND machine_id = " + "'" + str(self.mid[0]) + "'"
         try:
             self.db.cursor.execute(sql)
             data = self.db.cursor.fetchall()

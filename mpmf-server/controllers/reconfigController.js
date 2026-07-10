@@ -66,14 +66,7 @@ exports.reconfig_home = function(req, res) {
     );
 
     // wait for promise and chain next functions
-    Promise.all([p1]).then(
-       function(){
-            setTimeout(function(){
-                return create_instruments_grid();
-            }, 200);
-           
-       }
-    ).then((machine_length) => {
+    Promise.all([p1]).then(() => {
         var size = Object.keys(req.query).length;
         if(size == 0){ // no query strings, load normal page
             res.render('reconfig',  {op_system: os.platform()});
@@ -82,15 +75,15 @@ exports.reconfig_home = function(req, res) {
         else{
             var exp = req.query.experiment; 
             if(exp == "Instruments"){
-                var p1 = update_instruments(machine_length);
-                var p2 = update_ms2_json(); // threshold file (current percentiles)
+
+                // update instruments in database and json file
+                update_instruments(machines.length);
+                update_ms2_json(); // threshold file (current percentiles)
 
                 // wait for the functions to run then render
-                Promise.all([p1 ,p2]).then(function(){
+                setTimeout(function(){
                     res.render('reconfig',  {op_system: os.platform()});
-                }).catch(
-                    error => error_handle(error)
-                ); 
+                },100);
             }
             else{
                 // *update ms2 
@@ -99,13 +92,10 @@ exports.reconfig_home = function(req, res) {
                 var p2 = update_components();
                 
                 // wait for the functions to run then render
-                Promise.all([p1, p2]).then(function(){
-                    setTimeout(function(){
-                        res.render('reconfig',  {op_system: os.platform()});
-                    },100);
-                }).catch(
-                    error => error_handle(error)
-                );
+                setTimeout(function(){
+                    res.render('reconfig',  {op_system: os.platform()});
+                },100);
+               
             }
         }
     })
@@ -144,50 +134,14 @@ exports.reconfig_home = function(req, res) {
 
     }
     
-    function create_instruments_grid(){
-        // add instruments settings
-        machine_no = machines.length;
-
-    
-        // read instruments file and add settings
-        fs.readFile('./public/data/instruments.json', function (err, data) {
-            if (err) error_handle(err);
-            
-            var instruments_file = JSON.parse(data);
-
-            // add settings to instrument file (from database)
-            var settings = [];
-            for(let machine in machines){
-                var new_machine = {};
-                new_machine["Name"] = machines[machine]["machine_name"];
-                new_machine["Type"] = types[machines[machine]["machine_type"]];
-                new_machine["Resolving Power"] = resolving_power[machines[machine]["resolving_power"]];
-                new_machine["Use Proteomics"] = use[machines[machine]["use_prot"]];
-                new_machine["Use Metabolomics"] = use[machines[machine]["use_metab"]];
-                new_machine["Custom"] = "<button data-name=" +  machines[machine]["machine_name"] + " onclick='loadCustom()' class='btn btn-dark custom'>Customize</button>";
-                settings.push(new_machine);
-            }
-
-            instruments_file["instruments"]["settings"] = settings;
-            
-
-            // save instruments with settings 
-            fs.writeFile('./public/data/instruments.json', JSON.stringify(instruments_file), function (err) {
-                if (err) error_handle(err);
-            });
-            
-        });
-
-        return machine_no;
-    }
-
     function update_instruments(machine_length){
         var config = JSON.parse(req.query.config);
         var instruments = config.instruments.settings;
         var instruments_no = instruments.length;
         var all_promises = [];
         
-    
+        
+        // update instrument settings
         for(var i = 0; i<machine_length; i++){
             let sql = "UPDATE machine SET use_prot = '" + convert[instruments[i]["Use Proteomics"]] + 
                         "', use_metab = '" + convert[instruments[i]["Use Metabolomics"]] +
@@ -196,37 +150,40 @@ exports.reconfig_home = function(req, res) {
             var p1 = db.execute(sql).catch(
                 error => error_handle(error)
             );
-
             all_promises.push(p1);
         }
 
-        setTimeout(function(){
-            // check for added machines and insert
-            if(instruments_no > machine_length){
-                for(let i=machine_length; i<instruments_no; i++){
-                    let sql = "INSERT INTO machine VALUES (NULL, '" + instruments[i]["Name"] + "',NULL, NULL,'" +
-                        convert[instruments[i]["Use Metabolomics"]] + "','" + convert[instruments[i]["Use Proteomics"]] +
-                        "','" + vendors[instruments[i]["Type"]] + "','" + convert_resolving_power[instruments[i]["Resolving Power"]] + "')";
-
-                    var p1 = db.execute(sql).catch(
-                        error => error_handle(error)
-                    );
         
-                    all_promises.push(p1);
-                }
+        // check for added machines and insert
+        if(instruments_no > machine_length){
+            for(let i=machine_length; i<instruments_no; i++){
+                let sql = "INSERT INTO machine VALUES (NULL, '" + instruments[i]["Name"] + "',NULL, NULL,'" +
+                    convert[instruments[i]["Use Metabolomics"]] + "','" + convert[instruments[i]["Use Proteomics"]] +
+                    "','" + vendors[instruments[i]["Type"]] + "','" + convert_resolving_power[instruments[i]["Resolving Power"]] + "')";
+
+                var p1 = db.execute(sql).catch(
+                    error => error_handle(error)
+                );
+    
+                all_promises.push(p1);
             }
-        }, 50)
-        
+        }
 
-        setTimeout(function(){
-            // save instruments with settings
-            fs.writeFile('./public/data/instruments.json', JSON.stringify(config), function (err) {
+        // read instruments file and add settings
+        fs.readFile('./public/data/instruments.json', function (err, data) {
+            if (err) error_handle(err);
+            
+            var instruments_file = JSON.parse(data);
+            instruments_file["instruments"]["settings"] = instruments;
+
+            // write instruments with settings
+            fs.writeFile('./public/data/instruments.json', JSON.stringify(instruments_file), function (err) {
                 if (err) error_handle(err);
             });
-        }, 50);
-
-        Promise.all(all_promises).then(result => {return});
+                
+        });
         
+        Promise.all(all_promises).then(result => {return});
     }
 
     // updates for metabolomics and proteomics buttons
