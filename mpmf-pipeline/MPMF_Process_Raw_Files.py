@@ -495,17 +495,20 @@ class ProcessRawFile:
         # go to ouput files dir location
         os.chdir(self.outfiles_dir)
 
+        # percolator executable
+        perc_path = os.path.join(self.fs.sw_dir, "Percolator", "percolator")
+
         # check for edited pin from msbooster (auto uses msbooster if it was run)
         if not os.path.exists(os.path.join(self.outfiles_dir, self.file_name + "_pos_edited.pin")):
             perc_pin = self.file_name + "_pos.pin"
         else:
             perc_pin = self.file_name + "_pos_edited.pin"
         
-        command = "percolator --only-psms --no-terminate --post-processing-tdc --results-psms targets.tsv --decoy-results-psms decoys.tsv " \
-                    + os.path.join(self.outfiles_dir, perc_pin) 
+        command_args = ["--only-psms", "--no-terminate", "--post-processing-tdc", "--results-psms", "targets.tsv", "--decoy-results-psms", "decoys.tsv", os.path.join(self.outfiles_dir, perc_pin)]
+        command = [perc_path] + command_args
 
         # run percolator
-        returnvalue = os.system(command)
+        returnvalue = subprocess.run(command)           
         if returnvalue:
             return False
         else:
@@ -520,27 +523,35 @@ class ProcessRawFile:
 
         commands = []
 
+        # philosopher executable
+        phil_path = os.path.join(self.fs.sw_dir, "Philosopher", "philosopher")
+
         # clean and init workspace
-        commands.append("philosopher workspace --clean")
-        commands.append("philosopher workspace --init")
+        command_args = ["workspace", "--clean"]
+        commands.append([phil_path] + command_args)
+
+        command_args = ["workspace", "--init"]
+        commands.append([phil_path] + command_args)
 
         # annotate the database
-        commands.append("philosopher database --annotate " + os.path.join(self.fs.config_dir, "CUSTOM.fas ") + "--prefix rev_")
+        command_args = ["database", "--annotate", os.path.join(self.fs.config_dir, "CUSTOM.fas"), "--prefix rev_"]
+        commands.append([phil_path] + command_args)
 
         # run peptide prophet
-        commands.append("philosopher proteinprophet --maxppmdiff 2000000 " + os.path.join(self.outfiles_dir, "converted.pep.xml"))
+        command_args = ["proteinprophet", "--maxppmdiff", "2000000", os.path.join(self.outfiles_dir, "converted.pep.xml")]
+        commands.append([phil_path] + command_args)
 
         # perform fdr filtering
-        filter_command = "philosopher filter --sequential --picked --prot 0.01 --pepxml " \
-                        + os.path.join(self.outfiles_dir, "converted.pep.xml") + " --protxml " +  os.path.join(self.outfiles_dir, "interact.prot.xml") + " --razor"
-        commands.append(filter_command)
+        command_args = ["filter", "--sequential", "--picked", "--prot", "0.01", "--pepxml", os.path.join(self.outfiles_dir, "converted.pep.xml"), "--protxml", os.path.join(self.outfiles_dir, "interact.prot.xml"), "--razor"]
+        commands.append([phil_path] + command_args)
+        
 
         # report for tsvs
-        commands.append("philosopher report")
+        commands.append([phil_path] + ["report"])
 
         # loop and execute commands
         for command in commands:
-            returnvalue = os.system(command)
+            returnvalue = subprocess.run(command)
             if returnvalue:
                 return False
         return True
