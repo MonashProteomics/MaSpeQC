@@ -166,8 +166,7 @@ class ProcessRawFile:
 
         # insert MS1 data
         self.insert_pos_csv()
-        self.fwhm_to_seconds()
-
+        
         # run ms/ms workflow
         if software == "pipeline":
             if not self.run_msfragger():
@@ -231,7 +230,7 @@ class ProcessRawFile:
         # insert data and check thresholds for email
         self.insert_pos_csv()
         self.insert_neg_csv()
-        self.fwhm_to_seconds()
+        
         email_data = self.check_email_thresholds_metab()
         self.insert_summary(email_data)
         if self.send_email:
@@ -495,8 +494,14 @@ class ProcessRawFile:
         # go to ouput files dir location
         os.chdir(self.outfiles_dir)
 
+        # check platform 
+        platform_sys = platform.system()
+
         # percolator executable
-        perc_path = os.path.join(self.fs.sw_dir, "Percolator", "percolator")
+        if platform_sys == 'Windows':
+            perc_path = os.path.join(self.fs.sw_dir, "Percolator", "percolator")
+        else: # Linux, system installed percolator for usr
+            perc_path = "percolator"
 
         # check for edited pin from msbooster (auto uses msbooster if it was run)
         if not os.path.exists(os.path.join(self.outfiles_dir, self.file_name + "_pos_edited.pin")):
@@ -508,11 +513,15 @@ class ProcessRawFile:
         command = [perc_path] + command_args
 
         # run percolator
-        returnvalue = subprocess.run(command)           
-        if returnvalue:
-            return False
-        else:
+        try:
+            result = subprocess.run(command, check=True)
+        except Exception as e:
+            logger.info(f"Error Message:\n{e.stderr}")
+
+        if result.returncode == 0:
             return True
+        else:
+            return False
 
     def run_philosopher(self):
 
@@ -534,7 +543,7 @@ class ProcessRawFile:
         commands.append([phil_path] + command_args)
 
         # annotate the database
-        command_args = ["database", "--annotate", os.path.join(self.fs.config_dir, "CUSTOM.fas"), "--prefix rev_"]
+        command_args = ["database", "--annotate", os.path.join(self.fs.config_dir, "CUSTOM.fas"), "--prefix", "rev_"]
         commands.append([phil_path] + command_args)
 
         # run peptide prophet
@@ -551,8 +560,8 @@ class ProcessRawFile:
 
         # loop and execute commands
         for command in commands:
-            returnvalue = subprocess.run(command)
-            if returnvalue:
+            result = subprocess.run(command, check=True)
+            if result.returncode != 0:
                 return False
         return True
 
@@ -845,6 +854,14 @@ class ProcessRawFile:
                         ins_value = str(in_data[i])
                         if ins_value == 'null':
                             ins_value = '0'
+
+                        # handle fwhm * 60
+                        if i == 5:
+                            ins_value = str(float(ins_value) * 60)
+
+                        # round to 10 decimal places for mysql
+                        ins_value = str(round(float(ins_value), 15))
+
                         ins_sql = "INSERT INTO measurement VALUES( " + "'" + str(i) + "', '" + str(comp_id[0]) \
                                   + "', '" + str(run_id) + "', '" + ins_value + "')"
                         try:
@@ -859,6 +876,7 @@ class ProcessRawFile:
         # insert neg for v4
         # INSERT ORDER (from DB)
         # mz, rt, height, area, fwhm, tf, af, min, max, ppm, dalton, areaN, heightN
+        # REFACTOR: change metric names in xml templates and rewrite all insert functions to use names
 
         # get run_id
         run_id = self.db.get_run_id(self.file_name, self.machine)
@@ -879,6 +897,14 @@ class ProcessRawFile:
                         ins_value = str(in_data[i])
                         if ins_value == 'null':
                             ins_value = '0'
+
+                        # handle fwhm * 60
+                        if i == 5:
+                            ins_value = str(float(ins_value) * 60)
+
+                        # round to 10 decimal places for mysql
+                        ins_value = str(round(float(ins_value), 15))
+
                         ins_sql = "INSERT INTO measurement VALUES( " + "'" + str(i) + "', '" + str(comp_id[0]) \
                                   + "', '" + str(run_id) + "', '" + ins_value + "')"
                         try:
@@ -1450,6 +1476,7 @@ class ProcessRawFile:
 
 
     def fwhm_to_seconds(self):
+        # NOT USED
         sql = "SELECT metric_id FROM metric WHERE metric_name = 'fwhm'"
 
         try:
