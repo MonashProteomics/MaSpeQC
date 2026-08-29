@@ -14,7 +14,7 @@ To install MaSpeQC on any _Windows_ system, download and unzip the latest releas
 
 <a href="https://github.com/MonashProteomics/MaSpeQC/archive/refs/tags/1.07.zip">MaSpeQC Zip Download</a>
 
-__***COMING SOON***__ Windows installer program with a GUI
+__\*\*\*COMING SOON\*\*\*__ Windows installer program with a GUI
 
 ### Software Licenses
 The installation script for MaSpeQC will download and install all of the necessary software and dependencies required. Linked below are the licenses for all of the software MaSpeQC will install. 
