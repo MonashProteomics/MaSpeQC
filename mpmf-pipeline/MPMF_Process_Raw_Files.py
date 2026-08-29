@@ -449,7 +449,7 @@ class ProcessRawFile:
         # OUTPUTS: .pepxml, .pin
         
         # go to s/w location
-        os.chdir(self.fs.sw_dir)
+        os.chdir(os.path.join(self.fs.sw_dir, "MSFragger-4.4.1"))
 
         command = "java -jar -Dfile.encoding=UTF-8 -Xmx12G MSFragger-4.4.1.jar " \
                     + os.path.join(self.fs.config_dir, "fragger.params") + " " + os.path.join(self.outfiles_dir, self.file_name + "_pos.mzML") \
@@ -467,12 +467,13 @@ class ProcessRawFile:
         # OUTPUTS: _edited.pin
 
         # check if the jar exists
-        if not os.path.exists(os.path.join(self.fs.sw_dir, "MSBooster-1.3.31.jar")):
-            logger.info("MSBooster-1.3.31.jar not found in " + self.fs.sw_dir)
+        booster_jar = os.path.join(self.fs.sw_dir, "MSBooster", "MSBooster-1.3.31.jar")
+        if not os.path.exists(booster_jar):
+            logger.info("MSBooster-1.3.31.jar not found at " + booster_jar)
             return False
         
         # go to s/w location
-        os.chdir(self.fs.sw_dir)
+        os.chdir(os.path.join(self.fs.sw_dir, "MSBooster"))
 
         # set msbooster params
         self.set_msbooster()
@@ -498,11 +499,8 @@ class ProcessRawFile:
         platform_sys = platform.system()
 
         # percolator executable
-        if platform_sys == 'Windows':
-            perc_path = os.path.join(self.fs.sw_dir, "Percolator", "percolator")
-        else: # Linux, system installed percolator for usr
-            perc_path = "percolator"
-
+        perc_path = os.path.join(self.fs.sw_dir, "Percolator", "percolator")
+        
         # check for edited pin from msbooster (auto uses msbooster if it was run)
         if not os.path.exists(os.path.join(self.outfiles_dir, self.file_name + "_pos_edited.pin")):
             perc_pin = self.file_name + "_pos.pin"
@@ -1405,7 +1403,7 @@ class ProcessRawFile:
                 return False
 
     def check_pipeline(self):
-        return os.path.exists(os.path.join(self.fs.sw_dir, "MSFragger-4.4.1.jar"))
+        return os.path.exists(os.path.join(self.fs.sw_dir, "MSFragger-4.4.1", "MSFragger-4.4.1.jar"))
 
     def check_fragpipe(self):
 
